@@ -1,6 +1,7 @@
 import * as THREE from "./three.module.js";
 import { OrbitControls } from "./OrbitControls.module.js";
-document.addEventListener("DOMContentLoaded", function () {
+
+function init() {
   setupExpandingCirclesPreloader();
   let audioContext = null;
   let audioAnalyser = null;
@@ -1523,37 +1524,45 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function makePanelDraggable(element, handle = null) {
-    Draggable.create(element, {
-      type: "x,y",
-      edgeResistance: 0.65,
-      bounds: document.body,
-      handle: handle || element,
-      inertia: true,
-      throwResistance: 0.85,
-      onDragStart: function () {
-        const panels = document.querySelectorAll(
-          ".terminal-panel, .control-panel, .spectrum-analyzer, .data-panel"
-        );
-        let maxZ = 10;
-        panels.forEach((panel) => {
-          const z = parseInt(window.getComputedStyle(panel).zIndex);
-          if (z > maxZ) maxZ = z;
-        });
-        element.style.zIndex = maxZ + 1;
-        addTerminalMessage(`PANEL DRAG INITIATED: ${element.className}`);
-      },
-      onDragEnd: function () {
-        addTerminalMessage(
-          `DRAGGABLE.INERTIA({TARGET: '${
-            element.className
-          }', VELOCITY: {X: ${this.getVelocity("x").toFixed(
-            2
-          )}, Y: ${this.getVelocity("y").toFixed(2)}}});`,
-          true
-        );
-      }
-    });
+    if (!element || typeof Draggable === 'undefined') return;
+    try {
+      Draggable.create(element, {
+        type: "x,y",
+        edgeResistance: 0.65,
+        bounds: document.body,
+        handle: handle || element,
+        inertia: true,
+        throwResistance: 0.85,
+        onDragStart: function () {
+          const panels = document.querySelectorAll(
+            ".terminal-panel, .control-panel, .spectrum-analyzer, .data-panel"
+          );
+          let maxZ = 10;
+          panels.forEach((panel) => {
+            const z = parseInt(window.getComputedStyle(panel).zIndex);
+            if (z > maxZ) maxZ = z;
+          });
+          element.style.zIndex = maxZ + 1;
+          addTerminalMessage(`PANEL DRAG INITIATED: ${element.className}`);
+        },
+        onDragEnd: function () {
+          const vx = (this.getVelocity ? this.getVelocity("x") : 0) || 0;
+          const vy = (this.getVelocity ? this.getVelocity("y") : 0) || 0;
+          addTerminalMessage(
+            `DRAGGABLE.INERTIA({TARGET: '${
+              element.className
+            }', VELOCITY: {X: ${Number(vx).toFixed(
+              2
+            )}, Y: ${Number(vy).toFixed(2)}}});`,
+            true
+          );
+        }
+      });
+    } catch (err) {
+      console.warn("Draggable init skipped:", err);
+    }
   }
+
   // Live DNA Mutation listener from gallery workbench
   window.addEventListener('message', function(e) {
     if (e.data && e.data.type === 'DNA_MUTATION') {
@@ -1600,4 +1609,10 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector(".spectrum-analyzer"),
     document.getElementById("spectrum-handle")
   );
-});
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}

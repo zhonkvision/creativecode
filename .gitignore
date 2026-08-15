@@ -75,3 +75,4 @@ temp/
 # Large binary assets (add specific ones you don't want to track)
 # *.mp4
 # *.mov
+.vercel

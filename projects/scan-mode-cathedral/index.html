@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scan-Mode Cathedral // CreativeCode.my</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #050709;
+      color: #F1F5F9;
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+    }
+    #viewportCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="viewportCanvas"></canvas>
+
+  <script type="module">
+    import ScanModeCathedralExperiment from './experiment.js';
+
+    const canvas = document.getElementById('viewportCanvas');
+    const config = {
+      parameters: {
+        archPillars: { default: 12 },
+        vaultHeight: { default: 220 },
+        sweepVelocity: { default: 1 },
+        wireframeGlow: { default: 0.65 }
+      }
+    };
+
+    const runner = new ScanModeCathedralExperiment(canvas, config);
+    runner.start();
+
+    // Listen for live DNA Mutation messages from gallery / modal workbench
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.type === 'DNA_MUTATION' && e.data.parameters) {
+        runner.setParameters(e.data.parameters);
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      runner.resize();
+    });
+  </script>
+</body>
+</html>

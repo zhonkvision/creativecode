@@ -53,6 +53,20 @@
                 opacity: 0.9;
             }
 
+            /* Clean Thumbnail Embed Mode — Hide dat.gui parameter controls and promo popups */
+            body.hide-ui .dg,
+            body.hide-ui .dg.ac,
+            body.hide-ui .dg.main,
+            body.hide-ui .promo {
+                display: none !important;
+            }
+
+            @media (max-width: 580px), (max-height: 440px) {
+                .dg, .dg.ac, .dg.main, .promo {
+                    display: none !important;
+                }
+            }
+
             .dg .property-name {
                 overflow: visible;
             }
@@ -213,6 +227,13 @@
             </div>
         </div>
 
+        <script>
+            // Auto-detect thumbnail and card viewports to hide dat.gui parameter controls
+            if (window.self !== window.top || window.location.search.includes('thumbnail=1') || window.location.search.includes('hide_ui=1')) {
+                document.addEventListener('DOMContentLoaded', () => document.body.classList.add('hide-ui'));
+                if (document.body) document.body.classList.add('hide-ui');
+            }
+        </script>
         <script src="./script.js"></script>
     </body>
 </html>

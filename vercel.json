@@ -1,19 +1,16 @@
 {
-  "version": 2,
   "cleanUrls": true,
-  "buildCommand": "node src/engine/discovery.js",
-  "outputDirectory": ".",
   "rewrites": [
     {
       "source": "/api/projects",
       "destination": "/projects/projects.json"
     },
     {
-      "source": "/experiment/:slug*",
+      "source": "/experiment/:path*",
       "destination": "/index.html"
     },
     {
-      "source": "/specimen/:slug*",
+      "source": "/specimen/:path*",
       "destination": "/index.html"
     }
   ]

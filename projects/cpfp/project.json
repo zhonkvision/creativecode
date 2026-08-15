@@ -18,7 +18,8 @@
   "metadata": {
     "status": "OPERATIONAL",
     "seed": "0x7F9E41",
-    "description": "Tactical Cyberpunk Reticle & CRT Telemetry PFP Generator. Upload any portrait, customize sniper crosshairs, rain physics, smoke particles, and live HUD telemetry."
+    "description": "Tactical Cyberpunk Reticle & CRT Telemetry PFP Generator. Upload any portrait, customize sniper crosshairs, rain physics, smoke particles, and live HUD telemetry.",
+    "preview": "./projects/cpfp/preview.png"
   },
   "parameters": {
     "hudText": {

@@ -57,9 +57,12 @@ export class MutationWorkbench {
 
       <div class="drawer-block">
         <div class="drawer-block-title">
-          <span>DNA LINEAGE</span>
+          <span>ENGINE & DNA LINEAGE</span>
         </div>
-        <div style="font-size: 10px; color: var(--muted-telemetry); line-height: 1.5;">
+        <div style="font-size: 10px; color: var(--muted-telemetry); line-height: 1.6;">
+          ENGINE: <strong style="color: var(--phosphor-cyan);">${this.config.technology || 'WebGL / Canvas / Interactive'}</strong><br>
+          YEAR: <strong style="color: var(--mono-white);">${this.config.year || '2026'}</strong><br>
+          RENDER: <strong style="color: var(--phosphor-green);">60 FPS (HW ACCEL)</strong><br>
           CHANNEL: <strong style="color: var(--phosphor-cyan);">${this.config.visualDNA_channel || 'CH-01'}</strong><br>
           LINEAGE REF: <strong style="color: var(--mono-white);">${this.config.metadata?.lineage || 'REF-001'}</strong><br>
           STATUS: <strong style="color: var(--phosphor-green);">${this.config.metadata?.status || 'OPERATIONAL'}</strong>

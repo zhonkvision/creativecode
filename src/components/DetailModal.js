@@ -41,11 +41,6 @@ export class DetailModal {
         <div class="modal-body-layout">
           <div class="modal-viewport-pane" id="modalViewportContainer">
             <!-- Canvas or Iframe injected dynamically -->
-            <div class="viewport-telemetry-overlay">
-              <div>ENGINE: <span id="modalTechVal" style="color: var(--phosphor-cyan);">Canvas 2D</span></div>
-              <div>YEAR: <span style="color: var(--mono-white);">2026</span></div>
-              <div>RENDER: <span style="color: var(--phosphor-green);">60 FPS</span></div>
-            </div>
           </div>
 
           <aside class="mutation-drawer drawer-closed" id="modalWorkbenchMount">
@@ -364,7 +359,6 @@ export class DetailModal {
 
     this.container.querySelector('#modalTitle').innerText = projectConfig.title;
     this.container.querySelector('#modalChannelBadge').innerText = projectConfig.visualDNA_channel || 'CH-01';
-    this.container.querySelector('#modalTechVal').innerText = projectConfig.technology || 'Canvas 2D';
 
     // Deep Linking URL and Page Title Update
     if (updateHistory) {

@@ -10,13 +10,11 @@ import { Preloader } from './components/Preloader.js';
 import { FeaturedSlider } from './components/FeaturedSlider.js';
 import { audioEngine } from './engine/audio.js';
 
-// Import Canonical DNA Database manifests
-import manifestData from '../dna/manifest.json' with { type: 'json' };
-import channelsData from '../dna/channels.json' with { type: 'json' };
-
 class App {
   constructor() {
     this.projects = [];
+    this.manifest = [];
+    this.channels = [];
     this.activeTab = 'specimens'; // 'specimens' | 'atlas'
     this.activeChannel = 'ALL';
     this.searchQuery = '';
@@ -37,7 +35,7 @@ class App {
     const modalMount = document.getElementById('modal-mount');
     this.modal = new DetailModal(modalMount);
 
-    // 3. Dynamically discover and load all projects
+    // 3. Dynamically discover and load all projects & manifests
     await this.loadProjects();
 
     // 4. Mount Cyberpunk Preloader & ASCII Ambigram
@@ -58,20 +56,27 @@ class App {
 
     // 6. Initialize Atlas View
     const atlasMount = document.getElementById('atlas-mount');
-    this.atlas = new AtlasView(
-      atlasMount,
-      manifestData,
-      channelsData,
-      this.projects,
-      (slug) => {
-        const item = this.projects.find(p => p.slug === slug);
-        if (item) {
-          audioEngine.playSelect();
-          this.setTab('specimens');
-          this.modal.open(item);
+    if (atlasMount) {
+      this.atlas = new AtlasView(
+        atlasMount,
+        this.manifest.length ? this.manifest : this.projects,
+        this.channels.length ? this.channels : [
+          { id: "CH-01-CRT-TELEMETRY", name: "CRT Optics & Telemetry HUD", lineage_refs: ["REF-01"] },
+          { id: "CH-02-NUMERIC-GRID", name: "Numeric Typography & Dense Grid", lineage_refs: ["REF-02"] },
+          { id: "CH-03-VECTOR-PERSPECTIVE", name: "Vector Wireframe & 3D Perspective", lineage_refs: ["REF-03"] },
+          { id: "CH-04-STEPPED-RASTER", name: "Stepped Raster & Colorways", lineage_refs: ["REF-04", "REF-05"] }
+        ],
+        this.projects,
+        (slug) => {
+          const item = this.projects.find(p => p.slug === slug);
+          if (item) {
+            audioEngine.playSelect();
+            this.setTab('specimens');
+            this.modal.open(item);
+          }
         }
-      }
-    );
+      );
+    }
 
     // 7. Render Specimen Cards
     await this.renderCards();
@@ -169,6 +174,23 @@ class App {
   }
 
   async loadProjects() {
+    // 1. Asynchronously load DNA manifest and channels
+    try {
+      const [mRes, cRes] = await Promise.allSettled([
+        fetch('/dna/manifest.json'),
+        fetch('/dna/channels.json')
+      ]);
+      if (mRes.status === 'fulfilled' && mRes.value.ok) {
+        this.manifest = await mRes.value.json();
+      }
+      if (cRes.status === 'fulfilled' && cRes.value.ok) {
+        this.channels = await cRes.value.json();
+      }
+    } catch (e) {
+      console.warn('[DNA] Manifest fetch warning:', e);
+    }
+
+    // 2. Fetch projects list via API or static fallback
     try {
       const res = await fetch('/api/projects');
       if (res.ok) {
@@ -181,7 +203,7 @@ class App {
     }
 
     try {
-      const res = await fetch('./projects/projects.json');
+      const res = await fetch('/projects/projects.json');
       if (res.ok) {
         this.projects = await res.json();
         console.log(`[DISCOVERY] Loaded ${this.projects.length} projects from static catalog`);

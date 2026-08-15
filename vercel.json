@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/api/projects",
+      "destination": "/projects/projects.json"
+    },
+    {
+      "source": "/experiment/:slug*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/specimen/:slug*",
+      "destination": "/index.html"
+    }
+  ]
+}

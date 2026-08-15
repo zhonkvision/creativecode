@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "node server.js",
+    "build": "node src/engine/discovery.js",
     "start": "node server.js",
     "serve": "python3 -m http.server 8080"
   },

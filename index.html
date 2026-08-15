@@ -3,9 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <base href="/">
   <title>CreativeCode.my — Living Visual DNA & Experimental Generative Gallery</title>
   <meta name="description" content="An experimental playground for creative coding, generative art, interactive visual systems, and live parameter mutation.">
+
+  <!-- Base Dark Mode Surface Styles (Instant Render) -->
+  <style>
+    html, body {
+      background-color: #050709 !important;
+      color: #f0f3fa !important;
+      margin: 0;
+      padding: 0;
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      -webkit-font-smoothing: antialiased;
+    }
+  </style>
 
   <!-- Typography: JetBrains Mono and VT323 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,9 +24,12 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=VT323&display=swap" rel="stylesheet">
 
   <!-- Core Anti-Generic Design System Stylesheets -->
-  <link rel="stylesheet" href="./src/styles/tokens.css">
-  <link rel="stylesheet" href="./src/styles/system.css">
-  <link rel="stylesheet" href="./src/styles/crt.css">
+  <link rel="stylesheet" href="/src/styles/tokens.css">
+  <link rel="stylesheet" href="/src/styles/theme.css">
+  <link rel="stylesheet" href="/src/styles/system.css">
+  <link rel="stylesheet" href="/src/styles/gallery.css">
+  <link rel="stylesheet" href="/src/styles/hud.css">
+  <link rel="stylesheet" href="/src/styles/crt.css">
 </head>
 <body>
   <!-- Preloader Mount -->
@@ -78,6 +92,6 @@
   <div id="modal-mount"></div>
 
   <!-- Application Entrypoint -->
-  <script type="module" src="./src/main.js"></script>
+  <script type="module" src="/src/main.js"></script>
 </body>
 </html>

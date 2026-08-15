@@ -32,7 +32,13 @@ class ChiptuneSynth {
       'violinNatural': { wave: 'sawtooth', filterType: 'lowpass', cutoff: 1400, attack: 0.3, decay: 0.8, sustain: 0.85, release: 3.0 },
       'contrabass': { wave: 'triangle', filterType: 'lowpass', cutoff: 500, attack: 0.1, decay: 0.5, sustain: 0.9, release: 2.5 },
       'cello': { wave: 'sawtooth', filterType: 'lowpass', cutoff: 900, attack: 0.15, decay: 0.6, sustain: 0.8, release: 2.2 },
-      'pluck': { wave: 'square', filterType: 'lowpass', cutoff: 3200, attack: 0.005, decay: 0.25, sustain: 0.1, release: 0.8 }
+      'pluck': { wave: 'square', filterType: 'lowpass', cutoff: 3200, attack: 0.005, decay: 0.25, sustain: 0.1, release: 0.8 },
+      'organ': { wave: 'sine', filterType: 'lowpass', cutoff: 3500, attack: 0.04, decay: 0.2, sustain: 0.85, release: 2.0 },
+      'marimba': { wave: 'triangle', filterType: 'lowpass', cutoff: 2800, attack: 0.005, decay: 0.35, sustain: 0.15, release: 1.2 },
+      'harp': { wave: 'triangle', filterType: 'lowpass', cutoff: 3000, attack: 0.01, decay: 0.5, sustain: 0.2, release: 2.0 },
+      'bell': { wave: 'sine', filterType: 'bandpass', cutoff: 2400, attack: 0.01, decay: 0.8, sustain: 0.2, release: 3.0 },
+      'lead': { wave: 'sawtooth', filterType: 'lowpass', cutoff: 3200, attack: 0.02, decay: 0.3, sustain: 0.7, release: 1.4 },
+      'lead8bit': { wave: 'square', filterType: 'lowpass', cutoff: 4000, attack: 0.01, decay: 0.2, sustain: 0.6, release: 1.0 }
     };
   }
 

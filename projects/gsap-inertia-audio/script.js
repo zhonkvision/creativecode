@@ -1,5 +1,5 @@
-import * as THREE from "./three.module.js";
-import { OrbitControls } from "./OrbitControls.module.js";
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 function init() {
   setupExpandingCirclesPreloader();
@@ -430,17 +430,18 @@ function init() {
     }
   }
   const circularCanvas = document.getElementById("circular-canvas");
-  const circularCtx = circularCanvas.getContext("2d");
+  const circularCtx = circularCanvas ? circularCanvas.getContext("2d") : null;
 
   function resizeCircularCanvas() {
-    circularCanvas.width = circularCanvas.offsetWidth;
-    circularCanvas.height = circularCanvas.offsetHeight;
+    if (!circularCanvas) return;
+    circularCanvas.width = circularCanvas.offsetWidth || 450;
+    circularCanvas.height = circularCanvas.offsetHeight || 450;
   }
   resizeCircularCanvas();
   window.addEventListener("resize", resizeCircularCanvas);
 
   function drawCircularVisualizer() {
-    if (!audioAnalyser) return;
+    if (!audioAnalyser || !circularCanvas || !circularCtx || circularCanvas.width === 0) return;
     const width = circularCanvas.width;
     const height = circularCanvas.height;
     const centerX = width / 2;
@@ -448,7 +449,7 @@ function init() {
     circularCtx.clearRect(0, 0, width, height);
     audioAnalyser.getByteFrequencyData(frequencyData);
     const numPoints = 180;
-    const baseRadius = Math.min(width, height) * 0.4;
+    const baseRadius = Math.max(10, Math.min(width, height) * 0.4);
     circularCtx.beginPath();
     circularCtx.arc(centerX, centerY, baseRadius * 1.2, 0, Math.PI * 2);
     circularCtx.fillStyle = "rgba(255, 78, 66, 0.05)";
@@ -465,13 +466,13 @@ function init() {
         const freqRangeEnd = Math.floor(
           ((ring + 1) * audioAnalyser.frequencyBinCount) / (numRings * 1.5)
         );
-        const freqRange = freqRangeEnd - freqRangeStart;
+        const freqRange = Math.max(1, freqRangeEnd - freqRangeStart);
         let sum = 0;
-        const segmentSize = Math.floor(freqRange / numPoints);
+        const segmentSize = Math.max(1, Math.floor(freqRange / numPoints));
         for (let j = 0; j < segmentSize; j++) {
           const freqIndex =
             freqRangeStart + ((i * segmentSize + j) % freqRange);
-          sum += frequencyData[freqIndex];
+          sum += frequencyData[freqIndex] || 0;
         }
         const value = sum / (segmentSize * 255);
         const adjustedValue = value * (audioSensitivity / 5) * audioReactivity;
@@ -487,14 +488,16 @@ function init() {
       }
       circularCtx.closePath();
       let gradient;
+      const rInner = Math.max(0.1, ringRadius * 0.8);
+      const rOuter = Math.max(rInner + 1, ringRadius * 1.2);
       if (ring === 0) {
         gradient = circularCtx.createRadialGradient(
           centerX,
           centerY,
-          ringRadius * 0.8,
+          rInner,
           centerX,
           centerY,
-          ringRadius * 1.2
+          rOuter
         );
         gradient.addColorStop(0, `rgba(255, 78, 66, ${opacity})`);
         gradient.addColorStop(1, `rgba(194, 54, 47, ${opacity * 0.7})`);
@@ -502,10 +505,10 @@ function init() {
         gradient = circularCtx.createRadialGradient(
           centerX,
           centerY,
-          ringRadius * 0.8,
+          rInner,
           centerX,
           centerY,
-          ringRadius * 1.2
+          rOuter
         );
         gradient.addColorStop(0, `rgba(194, 54, 47, ${opacity})`);
         gradient.addColorStop(1, `rgba(255, 179, 171, ${opacity * 0.7})`);
@@ -513,10 +516,10 @@ function init() {
         gradient = circularCtx.createRadialGradient(
           centerX,
           centerY,
-          ringRadius * 0.8,
+          rInner,
           centerX,
           centerY,
-          ringRadius * 1.2
+          rOuter
         );
         gradient.addColorStop(0, `rgba(255, 179, 171, ${opacity})`);
         gradient.addColorStop(1, `rgba(255, 78, 66, ${opacity * 0.7})`);
@@ -530,11 +533,12 @@ function init() {
     circularCtx.shadowBlur = 0;
   }
   const spectrumCanvas = document.getElementById("spectrum-canvas");
-  const spectrumCtx = spectrumCanvas.getContext("2d");
+  const spectrumCtx = spectrumCanvas ? spectrumCanvas.getContext("2d") : null;
 
   function resizeSpectrumCanvas() {
-    spectrumCanvas.width = spectrumCanvas.offsetWidth;
-    spectrumCanvas.height = spectrumCanvas.offsetHeight;
+    if (!spectrumCanvas) return;
+    spectrumCanvas.width = spectrumCanvas.offsetWidth || 300;
+    spectrumCanvas.height = spectrumCanvas.offsetHeight || 120;
   }
   resizeSpectrumCanvas();
   window.addEventListener("resize", resizeSpectrumCanvas);

@@ -3,8 +3,10 @@
   "title": "CPFP // Cyberpunk Reticle PFP Studio",
   "slug": "cpfp",
   "channel": "CH-01-CRT-TELEMETRY",
+  "visualDNA_channel": "CH-01-CRT-TELEMETRY",
   "year": "2026",
   "engine": "Canvas 2D / CRT Shader",
+  "technology": "Canvas 2D / CRT Shader",
   "tags": [
     "CYBERPUNK",
     "RETICLE",

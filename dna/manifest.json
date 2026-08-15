@@ -72,7 +72,7 @@
       },
       "ascii_theme": {
         "type": "select",
-        "default": "phosphor",
+        "default": "blood",
         "options": [
           "phosphor",
           "cyber",
@@ -138,7 +138,15 @@
       "Typography",
       "CRT Phosphor",
       "Matrix Rain"
-    ]
+    ],
+    "metadata": {
+      "author": "CreativeCode BBS",
+      "seed": "0x4F19E2",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "High-fidelity Text-to-ASCII Art generator featuring TheDraw BBS & FIGlet typography engines with Blood Neon phosphor and matrix digital rain.",
+      "preview": "./projects/ascii-text-art/preview.png"
+    }
   },
   {
     "id": "EXP-002",
@@ -393,8 +401,10 @@
     "title": "CPFP // Cyberpunk Reticle PFP Studio",
     "slug": "cpfp",
     "channel": "CH-01-CRT-TELEMETRY",
+    "visualDNA_channel": "CH-01-CRT-TELEMETRY",
     "year": "2026",
     "engine": "Canvas 2D / CRT Shader",
+    "technology": "Canvas 2D / CRT Shader",
     "tags": [
       "CYBERPUNK",
       "RETICLE",
@@ -408,7 +418,8 @@
     "metadata": {
       "status": "OPERATIONAL",
       "seed": "0x7F9E41",
-      "description": "Tactical Cyberpunk Reticle & CRT Telemetry PFP Generator. Upload any portrait, customize sniper crosshairs, rain physics, smoke particles, and live HUD telemetry."
+      "description": "Tactical Cyberpunk Reticle & CRT Telemetry PFP Generator. Upload any portrait, customize sniper crosshairs, rain physics, smoke particles, and live HUD telemetry.",
+      "preview": "./projects/cpfp/preview.png"
     },
     "parameters": {
       "hudText": {
@@ -1226,19 +1237,70 @@
     "entryType": "iframe",
     "entryPoint": "./projects/webgl-fluid-simulation/index.html",
     "parameters": {
+      "show_gui": {
+        "type": "boolean",
+        "default": false,
+        "label": "SHOW FLUID CONTROLS"
+      },
+      "colorful": {
+        "type": "boolean",
+        "default": true,
+        "label": "MULTI-COLOR PALETTE"
+      },
+      "shading": {
+        "type": "boolean",
+        "default": true,
+        "label": "SPECULAR SHADING"
+      },
+      "bloom": {
+        "type": "boolean",
+        "default": true,
+        "label": "BLOOM GLOW"
+      },
+      "sunrays": {
+        "type": "boolean",
+        "default": true,
+        "label": "VOLUMETRIC SUNRAYS"
+      },
+      "curl": {
+        "type": "range",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "default": 30,
+        "label": "VORTICITY CURL"
+      },
+      "splat_radius": {
+        "type": "range",
+        "min": 0.05,
+        "max": 1,
+        "step": 0.05,
+        "default": 0.25,
+        "label": "SPLAT RADIUS"
+      },
+      "density_dissipation": {
+        "type": "range",
+        "min": 0.1,
+        "max": 4,
+        "step": 0.1,
+        "default": 1,
+        "label": "DENSITY DIFFUSION"
+      },
       "speed": {
         "type": "range",
         "min": 0.1,
         "max": 3,
         "step": 0.1,
-        "default": 1
+        "default": 1,
+        "label": "SIMULATION SPEED"
       },
       "intensity": {
         "type": "range",
         "min": 0.1,
         "max": 2,
         "step": 0.1,
-        "default": 1
+        "default": 1,
+        "label": "GLOW INTENSITY"
       }
     },
     "metadata": {

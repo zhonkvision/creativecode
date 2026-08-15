@@ -4,7 +4,7 @@
  * 1. ZHONK (retro-noise) [Default Active Slide]
  * 2. Chromarad // Isotope Matrix (chromarad-isotope-matrix)
  * 3. Echo Of Aria (echo-of-aria)
- * 4. Ambient Chiptune (ambient-chiptune)
+ * 4. CPFP // Cyberpunk Reticle PFP Studio (cpfp)
  */
 import { audioEngine } from '../engine/audio.js';
 
@@ -27,7 +27,7 @@ export class FeaturedSlider {
       'retro-noise',               // 1. ZHONK (Default active slide)
       'chromarad-isotope-matrix', // 2. Chromarad // Isotope Matrix
       'echo-of-aria',              // 3. Echo Of Aria
-      'ambient-chiptune'           // 4. Ambient Chiptune
+      'cpfp'                       // 4. CPFP // Cyberpunk Reticle PFP Studio
     ];
 
     this.items = this.getFeaturedItems();

@@ -34,7 +34,7 @@ export class DetailModal {
         </header>
 
         <!-- Toast Feedback Notification -->
-        <div id="modalShareToast" style="display:none; position:absolute; top:54px; right:20px; z-index:999; background:var(--surface-elevated); border:1px solid var(--phosphor-green); color:var(--phosphor-green); padding:6px 14px; font-size:11px; letter-spacing:0.08em; box-shadow:0 0 16px rgba(37,232,110,0.3);">
+        <div id="modalShareToast" style="display:none; position:absolute; top:54px; right:20px; z-index:999; background:var(--surface-elevated); border:1px solid var(--signal-red); color:var(--signal-red); padding:6px 14px; font-size:11px; letter-spacing:0.08em; box-shadow:0 0 16px var(--glow-red);">
           ✓ COPIED EXPERIMENT URL TO CLIPBOARD
         </div>
 
@@ -67,8 +67,8 @@ export class DetailModal {
     const updateAudioButtonUi = () => {
       const isPlaying = audioEngine.isMusicPlaying && !audioEngine.isMuted;
       audioToggleBtn.innerHTML = isPlaying ? '🔊 MUSIC: ON' : '🔇 MUSIC: OFF';
-      audioToggleBtn.style.color = isPlaying ? 'var(--phosphor-green)' : 'var(--muted-telemetry)';
-      audioToggleBtn.style.borderColor = isPlaying ? 'var(--phosphor-green)' : 'var(--border-wire)';
+      audioToggleBtn.style.color = isPlaying ? 'var(--signal-red)' : 'var(--muted-telemetry)';
+      audioToggleBtn.style.borderColor = isPlaying ? 'var(--signal-red)' : 'var(--border-wire)';
     };
 
     audioToggleBtn.addEventListener('click', () => {
@@ -343,8 +343,8 @@ export class DetailModal {
     if (audioToggleBtn) {
       const isPlaying = audioEngine.isMusicPlaying && !audioEngine.isMuted;
       audioToggleBtn.innerHTML = isPlaying ? '🔊 MUSIC: ON' : '🔇 MUSIC: OFF';
-      audioToggleBtn.style.color = isPlaying ? 'var(--phosphor-green)' : 'var(--muted-telemetry)';
-      audioToggleBtn.style.borderColor = isPlaying ? 'var(--phosphor-green)' : 'var(--border-wire)';
+      audioToggleBtn.style.color = isPlaying ? 'var(--signal-red)' : 'var(--muted-telemetry)';
+      audioToggleBtn.style.borderColor = isPlaying ? 'var(--signal-red)' : 'var(--border-wire)';
     }
 
     // Always hide Parameters & Mutation drawer by default on open

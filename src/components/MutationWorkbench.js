@@ -61,7 +61,7 @@ export class MutationWorkbench {
           <span>SEED & CHROMOSOME</span>
         </div>
         <div style="font-size: 11px; margin-bottom: 8px;">
-          ACTIVE SEED: <strong id="workbenchActiveSeed" style="color: var(--phosphor-green);">${this.seed}</strong>
+          ACTIVE SEED: <strong id="workbenchActiveSeed" style="color: var(--signal-red);">${this.seed}</strong>
         </div>
         <div style="display: flex; gap: 6px; flex-wrap: wrap;">
           <button class="sys-btn sys-btn-primary" id="btnMutateSeed">⚡ MUTATE SEED</button>
@@ -75,12 +75,12 @@ export class MutationWorkbench {
           <span>ENGINE & DNA LINEAGE</span>
         </div>
         <div style="font-size: 10px; color: var(--muted-telemetry); line-height: 1.6;">
-          ENGINE: <strong style="color: var(--phosphor-cyan);">${this.config.technology || 'WebGL / Canvas / Interactive'}</strong><br>
+          ENGINE: <strong style="color: var(--mono-white);">${this.config.technology || 'WebGL / Canvas / Interactive'}</strong><br>
           YEAR: <strong style="color: var(--mono-white);">${this.config.year || '2026'}</strong><br>
-          RENDER: <strong style="color: var(--phosphor-green);">60 FPS (HW ACCEL)</strong><br>
-          CHANNEL: <strong style="color: var(--phosphor-cyan);">${this.config.visualDNA_channel || 'CH-01'}</strong><br>
+          RENDER: <strong style="color: var(--mono-white);">60 FPS (HW ACCEL)</strong><br>
+          CHANNEL: <strong style="color: var(--signal-red);">${this.config.visualDNA_channel || 'CH-01'}</strong><br>
           LINEAGE REF: <strong style="color: var(--mono-white);">${this.config.metadata?.lineage || 'REF-001'}</strong><br>
-          STATUS: <strong style="color: var(--phosphor-green);">${this.config.metadata?.status || 'OPERATIONAL'}</strong>
+          STATUS: <strong style="color: var(--signal-red);">${this.config.metadata?.status || 'OPERATIONAL'}</strong>
         </div>
       </div>
     `;
@@ -137,7 +137,7 @@ export class MutationWorkbench {
                 data-key="${key}"
                 value="${currentVal}"
                 placeholder="Enter custom word..."
-                style="background: var(--void-black); border: 1px solid var(--border-wire); color: var(--phosphor-green); font-family: var(--font-mono); font-size: 11px; padding: 5px 8px; outline: none; width: 100%;"
+                style="background: var(--void-black); border: 1px solid var(--border-wire); color: var(--mono-white); font-family: var(--font-mono); font-size: 11px; padding: 5px 8px; outline: none; width: 100%;"
               />
             </div>
           </div>

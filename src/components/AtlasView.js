@@ -55,8 +55,8 @@ export class AtlasView {
                       <div class="channel-name-text">${ch.name}</div>
                     </td>
                     <td data-label="REFERENCE SOURCE" class="cell-ref">
-                      <strong style="color: var(--phosphor-cyan); font-size: 11px;">${ref?.id || 'REF'}</strong>
-                      <div style="font-size: 11px; color: var(--text-primary); margin-top: 2px;">${ref?.title || 'Archival Reference'}</div>
+                      <strong style="color: var(--mono-white); font-size: 11px;">${ref?.id || 'REF'}</strong>
+                      <div style="font-size: 11px; color: var(--mono-white); margin-top: 2px;">${ref?.title || 'Archival Reference'}</div>
                     </td>
                     <td data-label="ARCHETYPAL TRAITS" class="cell-traits">
                       <div class="traits-pill-group">
@@ -69,7 +69,7 @@ export class AtlasView {
                       <div class="experiments-link-list">
                         ${linkedProjects.map(p => `
                           <button class="sys-btn select-exp-btn" data-slug="${p.slug}">
-                            <span style="color: var(--phosphor-green); font-weight: 700;">&gt;</span>
+                            <span style="color: var(--signal-red); font-weight: 700;">&gt;</span>
                             <span>${p.title}</span>
                             <span class="exp-id-tag">(${p.id})</span>
                           </button>

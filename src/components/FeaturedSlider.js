@@ -120,9 +120,9 @@ export class FeaturedSlider {
 
       <div class="featured-meta-pane">
         <div class="featured-tag-strip">
-          <span class="spec-badge active-green">${current.visualDNA_channel || 'CH-04'}</span>
+          <span class="spec-badge active-coral">${current.visualDNA_channel || 'CH-04'}</span>
           <span class="spec-badge">${current.technology || 'Procedural'}</span>
-          <span class="spec-badge" style="color: var(--phosphor-amber);">LINEAGE: ${current.metadata?.lineage || 'REF-001'}</span>
+          <span class="spec-badge" style="color: var(--muted-telemetry);">LINEAGE: ${current.metadata?.lineage || 'REF-001'}</span>
         </div>
 
         <h2 class="featured-title">${current.title}</h2>
@@ -131,8 +131,8 @@ export class FeaturedSlider {
 
         <div class="featured-stats-row">
           <div>ID: <strong style="color: var(--mono-white);">${current.id}</strong></div>
-          <div>SEED: <strong style="color: var(--phosphor-green);">${current.metadata?.seed || '0x453EA6'}</strong></div>
-          <div>STATUS: <strong style="color: var(--phosphor-cyan);">${current.metadata?.status || 'OPERATIONAL'}</strong></div>
+          <div>SEED: <strong style="color: var(--mono-white);">${current.metadata?.seed || '0x453EA6'}</strong></div>
+          <div>STATUS: <strong style="color: var(--signal-red);">${current.metadata?.status || 'OPERATIONAL'}</strong></div>
         </div>
 
         <div class="featured-action-deck">
@@ -168,8 +168,8 @@ export class FeaturedSlider {
           navigator.clipboard.writeText(url);
           const orig = heroShare.innerText;
           heroShare.innerText = '✓ COPIED LINK';
-          heroShare.style.color = '#25e86e';
-          setTimeout(() => { heroShare.innerText = orig; heroShare.style.color = 'var(--phosphor-amber)'; }, 2000);
+          heroShare.style.color = 'var(--signal-red)';
+          setTimeout(() => { heroShare.innerText = orig; heroShare.style.color = 'var(--mono-white)'; }, 2000);
         } else {
           prompt('Copy experiment URL:', url);
         }

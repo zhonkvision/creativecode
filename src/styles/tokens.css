@@ -1,21 +1,33 @@
 /**
  * CreativeCode Visual DNA — CSS Tokens (Mapped from /dna/tokens.json)
- * Deep Obsidian-Black Hardware Console & Synthesizer Palette
+ * Restrained High-Contrast Red, Black & White Technical UI System
  */
 :root {
-  /* Colors */
-  --void-black: #050709;
-  --surface-slate: #0a0e15;
-  --surface-elevated: #101520;
-  --border-wire: #222a3c;
-  --border-active: #ff4d6d;
+  /* Core High-Contrast Palette */
+  --void-black: #000000;
+  --surface-slate: #0a0a0a;
+  --surface-elevated: #121212;
+  --surface-recessed: #050505;
+  --border-wire: #262626;
+  --border-subtle: #1a1a1a;
+  --border-active: #ff2424;
   
-  --phosphor-green: #22e5a0;
-  --phosphor-amber: #ff9e64;
-  --phosphor-cyan: #5b93ff;
-  --signal-red: #ff4d6d;
-  --mono-white: #f0f3fa;
-  --muted-telemetry: #7d89a6;
+  /* Primary Typography & Telemetry */
+  --mono-white: #ffffff;
+  --mono-dim: #a3a3a3;
+  --muted-telemetry: #666666;
+
+  /* Vivid Signal Red Accents */
+  --signal-red: #ff2424;
+  --signal-red-bright: #ff3b3b;
+  --signal-red-glow: rgba(255, 36, 36, 0.4);
+  --signal-red-dim: rgba(255, 36, 36, 0.12);
+  --signal-red-border: rgba(255, 36, 36, 0.5);
+
+  /* Semantic Aliases mapped cleanly to Red / White system */
+  --phosphor-green: #ffffff;
+  --phosphor-amber: #ff2424;
+  --phosphor-cyan: #d4d4d4;
 
   /* Typography */
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
@@ -28,36 +40,36 @@
   --tracking-ultra: 0.22em;
 
   /* Geometry & Layout Tokens */
-  --border-radius: 6px;
+  --border-radius: 4px;
   --border-width: 1px;
   --corner-bracket-size: 4px;
   --grid-unit: 8px;
   --layout-max-width: 1440px;
   --layout-pad-x: 28px;
 
-  /* Textures & CRT */
+  /* Textures & CRT Bloom */
   --scanline-pitch: 3px;
-  --scanline-opacity: 0.15;
+  --scanline-opacity: 0.12;
   --chroma-offset: 1.5px;
   --crt-bloom: 6px;
-  --glow-green: rgba(34, 229, 160, 0.35);
-  --glow-red: rgba(255, 77, 109, 0.35);
-  --glow-cyan: rgba(91, 147, 255, 0.35);
-  --glow-amber: rgba(255, 158, 100, 0.35);
+  --glow-green: rgba(255, 255, 255, 0.2);
+  --glow-red: rgba(255, 36, 36, 0.35);
+  --glow-cyan: rgba(255, 255, 255, 0.15);
+  --glow-amber: rgba(255, 36, 36, 0.35);
 
   /* Functional UI Design System Button Tokens */
   --btn-height-sm: 28px;
   --btn-height-md: 34px;
   --btn-height-lg: 42px;
-  --btn-radius: 6px;
+  --btn-radius: 4px;
   --btn-pad-sm: 0 10px;
   --btn-pad-md: 0 14px;
   --btn-pad-lg: 0 18px;
-  --btn-bg-surface: #0e121a;
-  --btn-bg-hover: #161c28;
-  --btn-bg-active: #090d14;
-  --btn-border-default: #222a3c;
-  --btn-border-hover: #3d4a66;
+  --btn-bg-surface: #0a0a0a;
+  --btn-bg-hover: #141414;
+  --btn-bg-active: #000000;
+  --btn-border-default: #262626;
+  --btn-border-hover: #ff2424;
 }
 
 @media (max-width: 768px) {
@@ -71,3 +83,4 @@
     --layout-pad-x: 10px;
   }
 }
+

@@ -317,8 +317,8 @@ video.featured-iframe {
   position: absolute;
   top: 8px; left: 8px;
   width: 8px; height: 8px;
-  border-top: 2px solid var(--phosphor-green);
-  border-left: 2px solid var(--phosphor-green);
+  border-top: 2px solid var(--signal-red);
+  border-left: 2px solid var(--signal-red);
   pointer-events: none;
 }
 
@@ -326,8 +326,8 @@ video.featured-iframe {
   position: absolute;
   bottom: 8px; right: 8px;
   width: 8px; height: 8px;
-  border-bottom: 2px solid var(--phosphor-green);
-  border-right: 2px solid var(--phosphor-green);
+  border-bottom: 2px solid var(--signal-red);
+  border-right: 2px solid var(--signal-red);
   pointer-events: none;
 }
 
@@ -639,17 +639,17 @@ video.featured-iframe {
 }
 
 .tech-tag {
-  background: rgba(5, 7, 9, 0.85);
+  background: rgba(0, 0, 0, 0.85);
   border: 1px solid var(--border-wire);
   padding: 1px 5px;
-  color: var(--phosphor-cyan);
+  color: var(--mono-white);
 }
 
 .dna-channel-tag {
-  background: rgba(5, 7, 9, 0.85);
-  border: 1px solid var(--border-wire);
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid var(--signal-red-border);
   padding: 1px 5px;
-  color: var(--phosphor-green);
+  color: var(--signal-red);
 }
 
 .card-body {
@@ -867,21 +867,21 @@ video.featured-iframe {
   gap: 6px;
   margin-bottom: 10px;
   padding: 8px 10px;
-  background: rgba(10, 14, 20, 0.4);
+  background: #080808;
   border: 1px solid var(--border-wire);
   border-radius: 2px;
   transition: all 0.2s ease;
 }
 
 .param-row.param-active {
-  border-color: rgba(37, 232, 110, 0.4);
-  background: rgba(37, 232, 110, 0.04);
-  box-shadow: 0 0 10px rgba(37, 232, 110, 0.1);
+  border-color: var(--signal-red-border);
+  background: var(--signal-red-dim);
+  box-shadow: 0 0 10px rgba(255, 36, 36, 0.15);
 }
 
 .param-row.param-bypassed {
-  border-color: rgba(30, 41, 59, 0.6);
-  opacity: 0.75;
+  border-color: var(--border-subtle);
+  opacity: 0.65;
 }
 
 .param-meta {
@@ -921,8 +921,8 @@ video.featured-iframe {
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.1em;
-  background: #06090d;
-  border: 1px solid #233040;
+  background: #050505;
+  border: 1px solid var(--border-wire);
   cursor: pointer;
   user-select: none;
   transition: all 0.15s cubic-bezier(0.19, 1, 0.22, 1);
@@ -937,36 +937,36 @@ video.featured-iframe {
 }
 
 .param-toggle-node.node-off {
-  border-color: #1e293b;
-  color: #64748b;
+  border-color: #222222;
+  color: #666666;
 }
 
 .param-toggle-node.node-off .node-led {
-  background: #334155;
+  background: #333333;
   box-shadow: none;
 }
 
 .param-toggle-node.node-off:hover {
-  border-color: #475569;
-  color: #94a3b8;
+  border-color: #444444;
+  color: #a0a0a0;
 }
 
 .param-toggle-node.node-on {
-  border-color: #25e86e;
-  color: #25e86e;
-  background: rgba(37, 232, 110, 0.12);
-  box-shadow: 0 0 10px rgba(37, 232, 110, 0.25);
+  border-color: var(--signal-red);
+  color: #ffffff;
+  background: rgba(255, 36, 36, 0.15);
+  box-shadow: 0 0 10px rgba(255, 36, 36, 0.25);
 }
 
 .param-toggle-node.node-on .node-led {
-  background: #25e86e;
-  box-shadow: 0 0 6px #25e86e, 0 0 12px #25e86e;
+  background: var(--signal-red);
+  box-shadow: 0 0 6px var(--signal-red), 0 0 12px var(--signal-red);
 }
 
 .param-num {
   font-family: var(--font-mono);
   font-size: 10px;
-  color: var(--phosphor-cyan);
+  color: var(--mono-white);
   font-weight: 700;
 }
 
@@ -991,23 +991,23 @@ video.featured-iframe {
 }
 
 .param-row.param-active .param-slider {
-  background: linear-gradient(90deg, #00f0ff, #25e86e);
+  background: linear-gradient(90deg, #ff2424, #880000);
 }
 
 .param-slider::-webkit-slider-thumb {
   appearance: none;
   width: 12px;
   height: 12px;
-  background: var(--phosphor-green);
-  border: 1px solid #ffffff;
+  background: #ffffff;
+  border: 1px solid var(--signal-red);
   cursor: pointer;
-  box-shadow: 0 0 6px rgba(37, 232, 110, 0.6);
+  box-shadow: 0 0 6px rgba(255, 36, 36, 0.6);
 }
 
 .param-select {
   background: var(--void-black);
   border: 1px solid var(--border-wire);
-  color: var(--phosphor-green);
+  color: var(--mono-white);
   font-family: var(--font-mono);
   font-size: 11px;
   padding: 4px 8px;
@@ -1028,8 +1028,13 @@ video.featured-iframe {
 }
 
 .bulk-switch-btn:hover {
-  color: var(--phosphor-green);
-  border-color: var(--phosphor-green);
+  color: #ffffff;
+  border-color: var(--signal-red);
+}
+
+.bulk-switch-btn.engage-all:hover {
+  color: var(--signal-red);
+  border-color: var(--signal-red);
 }
 
 /* =========================================================================

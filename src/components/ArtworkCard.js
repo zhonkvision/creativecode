@@ -55,7 +55,7 @@ export class ArtworkCard {
       <div class="card-footer-strip">
         <span style="color: var(--muted-telemetry);">SEED: ${this.config.metadata?.seed || '0x4A2F8B'}</span>
         <div style="display:flex; gap:6px; align-items:center;">
-          <button class="card-share-btn" title="Copy Shareable Link" style="background:transparent; border:1px solid var(--border-wire); color:var(--phosphor-amber); font-size:10px; padding:2px 6px; cursor:pointer;">🔗</button>
+          <button class="card-share-btn" title="Copy Shareable Link" style="background:transparent; border:1px solid var(--border-wire); color:var(--mono-white); font-size:10px; padding:2px 6px; cursor:pointer;">🔗</button>
           <button class="inspect-btn">INSPECT &gt;</button>
         </div>
       </div>
@@ -84,8 +84,8 @@ export class ArtworkCard {
           navigator.clipboard.writeText(url);
           const original = shareBtn.innerText;
           shareBtn.innerText = '✓';
-          shareBtn.style.color = '#25e86e';
-          setTimeout(() => { shareBtn.innerText = original; shareBtn.style.color = 'var(--phosphor-amber)'; }, 1500);
+          shareBtn.style.color = 'var(--signal-red)';
+          setTimeout(() => { shareBtn.innerText = original; shareBtn.style.color = 'var(--mono-white)'; }, 1500);
         } else {
           prompt('Copy experiment URL:', url);
         }

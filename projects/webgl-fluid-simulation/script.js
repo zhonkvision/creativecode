@@ -24,31 +24,52 @@ SOFTWARE.
 
 'use strict';
 
-// Mobile promo section
+window.ga = window.ga || function () {};
 
+// Mobile promo section
 const promoPopup = document.getElementsByClassName('promo')[0];
 const promoPopupClose = document.getElementsByClassName('promo-close')[0];
 
-if (isMobile()) {
+if (promoPopup && isMobile()) {
     setTimeout(() => {
         promoPopup.style.display = 'table';
     }, 20000);
 }
 
-promoPopupClose.addEventListener('click', e => {
-    promoPopup.style.display = 'none';
-});
+if (promoPopupClose && promoPopup) {
+    promoPopupClose.addEventListener('click', e => {
+        promoPopup.style.display = 'none';
+    });
+}
 
 const appleLink = document.getElementById('apple_link');
-appleLink.addEventListener('click', e => {
-    ga('send', 'event', 'link promo', 'app');
-    window.open('https://apps.apple.com/us/app/fluid-simulation/id1443124993');
-});
+if (appleLink) {
+    appleLink.addEventListener('click', e => {
+        window.open('https://apps.apple.com/us/app/fluid-simulation/id1443124993');
+    });
+}
 
 const googleLink = document.getElementById('google_link');
-googleLink.addEventListener('click', e => {
-    ga('send', 'event', 'link promo', 'app');
-    window.open('https://play.google.com/store/apps/details?id=games.paveldogreat.fluidsimfree');
+if (googleLink) {
+    googleLink.addEventListener('click', e => {
+        window.open('https://play.google.com/store/apps/details?id=games.paveldogreat.fluidsimfree');
+    });
+}
+
+// Live DNA Mutation listener from gallery workbench
+window.addEventListener('message', e => {
+    if (e.data && e.data.type === 'DNA_MUTATION' && e.data.parameters) {
+        const p = e.data.parameters;
+        if (p.speed !== undefined) {
+            config.COLOR_UPDATE_SPEED = 10 * p.speed;
+            config.VELOCITY_DISSIPATION = 0.2 / p.speed;
+        }
+        if (p.intensity !== undefined) {
+            config.SPLAT_RADIUS = 0.25 * p.intensity;
+            config.BLOOM_INTENSITY = 0.8 * p.intensity;
+        }
+        splatStack.push(parseInt(Math.random() * 10) + 3);
+    }
 });
 
 // Simulation section

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Quiet Worlds - Ambient Pixel Piano (C418 vibes)</title>
+    <link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <canvas id="world-canvas"></canvas>
+
+<div id="ui-layer">
+  <div id="title-bar">
+    <h1>Quiet Worlds</h1>
+    <span class="subtitle">an ambient piano experience</span>
+  </div>
+
+  <div id="info-display">
+    <div class="info-line">NOTES <span class="info-val" id="info-notes">0</span></div>
+    <div class="info-line">OCTAVE <span class="info-val" id="info-octave">4</span></div>
+    <div class="info-line" style="margin-top:6px">MODE <span class="info-val" id="info-mode">listen</span></div>
+  </div>
+
+  <div id="wave-bar">
+    <canvas id="waveform"></canvas>
+  </div>
+
+  <div id="note-display"></div>
+
+  <div id="piano-container">
+    <div id="piano"></div>
+    <div id="piano-controls">
+      <button class="piano-btn" id="btn-oct-down" title="Octave down">Oct -</button>
+      <button class="piano-btn active" id="btn-dream" title="Auto-play melody">Dream</button>
+      <button class="piano-btn" id="btn-oct-up" title="Octave up">Oct +</button>
+    </div>
+  </div>
+
+  <div id="footer-links">
+    <a href="https://chiptune-synth.8binami.com/" target="_blank" rel="noopener">ChiptuneSynth</a>
+    <span class="sep">·</span>
+    <a href="https://github.com/8Binami/chiptune-synth" target="_blank" rel="noopener">GitHub</a>
+    <span class="sep">·</span>
+    <a href="https://8binami.com/en/opensource" target="_blank" rel="noopener">8Binami OSS</a>
+  </div>
+</div>
+
+<div id="init-overlay">
+  <h2>Quiet Worlds</h2>
+  <span class="tagline">an ambient piano experience</span>
+  <span class="hint">play the piano or let it dream for you</span>
+  <button id="init-btn">Enter</button>
+</div>
+    <script src='https://cdn.chiptune-synth.8binami.com/3.0.0/chiptune-synth.min.js'></script>
+<script src='https://cdn.chiptune-synth.8binami.com/3.0.0/chiptune-sound-font.min.js'></script><script  src="./script.js"></script>
+
+  </body>
+  
+</html>

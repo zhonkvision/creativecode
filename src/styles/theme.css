@@ -1,0 +1,155 @@
+/**
+ * CreativeCode.my — Living Visual DNA Design System & Tokens
+ */
+
+:root {
+  /* Dynamic DNA Colorway Variables (Deep Obsidian-Black Console) */
+  --dna-primary: #22e5a0;
+  --dna-secondary: #ff4d6d;
+  --dna-cyan: #5b93ff;
+  --dna-amber: #ff9e64;
+  --dna-bg: #050709;
+  --dna-bg-subtle: #0a0e15;
+  --dna-bg-elevated: #101520;
+  --dna-accent: #f0f3fa;
+  --dna-glow: rgba(255, 77, 109, 0.4);
+  --dna-border: #222a3c;
+  --dna-border-hover: #ff4d6d;
+  --dna-text-muted: #7d89a6;
+
+  /* Typography */
+  --font-display: 'VT323', monospace;
+  --font-mono: 'JetBrains Mono', 'Share Tech Mono', monospace;
+  --font-code: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-arcade: 'Press Start 2P', cursive;
+
+  /* Transitions */
+  --ease-terminal: cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--dna-bg);
+  color: var(--dna-primary);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-x: hidden;
+  min-height: 100vh;
+  letter-spacing: 0.05em;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #06080a;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--dna-border);
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--dna-primary);
+  box-shadow: 0 0 6px var(--dna-glow);
+}
+
+/* Button & Control Resets (Tactile Modular Console Key) */
+button {
+  background: #121620;
+  color: var(--dna-accent);
+  border: 1px solid var(--dna-border);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 7px 14px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+button:hover {
+  border-color: #4f5b7d;
+  background: #1a1f2c;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+button.btn-primary {
+  background: #161b26;
+  color: #ffffff;
+  border: 1px solid #4a5472;
+  font-weight: bold;
+  position: relative;
+  overflow: hidden;
+}
+button.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 2px;
+  background: var(--dna-secondary);
+}
+button.btn-primary:hover {
+  background: #1a1f2c;
+  color: #ffffff;
+  border-color: var(--dna-secondary);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 14px var(--dna-glow);
+}
+
+button.btn-secondary {
+  border-color: var(--dna-secondary);
+  color: var(--dna-secondary);
+}
+button.btn-secondary:hover {
+  background: rgba(255, 42, 85, 0.12);
+  box-shadow: 0 0 10px rgba(255, 42, 85, 0.4);
+  color: #ffffff;
+}
+
+/* Input range styling */
+input[type="range"] {
+  appearance: none;
+  background: #141c26;
+  height: 4px;
+  border-radius: 0;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: var(--dna-primary);
+  box-shadow: 0 0 6px var(--dna-glow);
+  cursor: pointer;
+  border: none;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.3);
+}
+
+/* Text Selection */
+::selection {
+  background: var(--dna-secondary);
+  color: #ffffff;
+}

@@ -1,0 +1,48 @@
+{
+  "id": "EXP-004",
+  "slug": "retro-loader-84",
+  "title": "Retro Loader 84",
+  "year": 2026,
+  "category": "stepped-raster",
+  "technology": "Canvas 2D / CRT Optics",
+  "visualDNA_channel": "CH-04-STEPPED-RASTER",
+  "parameters": {
+    "slatCount": {
+      "type": "range",
+      "min": 8,
+      "max": 28,
+      "step": 2,
+      "default": 16
+    },
+    "chromaOffset": {
+      "type": "range",
+      "min": 0.5,
+      "max": 8,
+      "step": 0.5,
+      "default": 3
+    },
+    "waveSpeed": {
+      "type": "range",
+      "min": 0.2,
+      "max": 4,
+      "step": 0.1,
+      "default": 1.2
+    },
+    "loadSpeed": {
+      "type": "range",
+      "min": 0.1,
+      "max": 2.5,
+      "step": 0.1,
+      "default": 0.8
+    }
+  },
+  "metadata": {
+    "author": "Adib Zahran",
+    "seed": "0x84E1A9",
+    "status": "OPERATIONAL",
+    "lineage": "REF-004",
+    "description": "Stepped raster color-channel block rendering with RGB chromatic fringe offset, segmented boot progress telemetry, and Japanese terminal stamps."
+  },
+  "entryType": "module",
+  "entryPoint": "./projects/retro-loader-84/experiment.js"
+}

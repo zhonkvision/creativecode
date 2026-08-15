@@ -1,0 +1,34 @@
+{
+  "system": "CreativeCode Visual DNA Engine",
+  "methodology": "Collect -> Measure -> Map -> Generate -> Mutate -> Critique -> Encode -> Repeat",
+  "laws": [
+    {
+      "id": "LAW-01",
+      "title": "Strict Anti-Generic Geometry",
+      "rule": "0px border-radius everywhere. 1px solid crisp borders (#1E293B). 4px x 4px 90-degree corner brackets on specimen cards."
+    },
+    {
+      "id": "LAW-02",
+      "title": "Data-Driven Color Semantics",
+      "rule": "Color is purposeful telemetry: Phosphor Green (#25E86E) for normal operations, Signal Red (#FF2A42) for alert/defect states, Phosphor Amber (#FFB000) for warnings, Phosphor Cyan (#00F0FF) for coordinates and vector headers."
+    },
+    {
+      "id": "LAW-03",
+      "title": "Deterministic Mutation & Lineage",
+      "rule": "Every generative state must be reproducible from a hex seed (e.g. 0x4A2F8B) and hot-mutatable via normalized parameters."
+    },
+    {
+      "id": "LAW-04",
+      "title": "GPU & Battery Discipline",
+      "rule": "DPR clamped to Math.min(window.devicePixelRatio, 2.0). Canvases outside the viewport MUST pause animation loops immediately via IntersectionObserver."
+    }
+  ],
+  "forbidden_moves": [
+    "NO generic cyberpunk neon purple or pink gradients.",
+    "NO glassmorphism, blur-behind, or frosted translucency gimmicks.",
+    "NO random decorative terminal fake ASCII nonsense.",
+    "NO smooth floating parallax blobs.",
+    "NO rounded pill buttons or smooth bubble tags.",
+    "NO un-throttled continuous canvas loops when off-screen."
+  ]
+}

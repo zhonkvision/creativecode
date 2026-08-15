@@ -1,0 +1,64 @@
+{
+  "id": "EXP-017",
+  "slug": "chromarad-isotope-matrix",
+  "title": "Chromarad // Isotope Matrix",
+  "year": 2026,
+  "category": "generative-matrix",
+  "technology": "WebGL / WebGPU / Three.js",
+  "visualDNA_channel": "CH-02-NUMERIC-GRID",
+  "entryType": "iframe",
+  "entryPoint": "./projects/chromarad-isotope-matrix/index.html",
+  "parameters": {
+    "brightness": {
+      "type": "range",
+      "min": -100,
+      "max": 100,
+      "step": 1,
+      "default": 0
+    },
+    "contrast": {
+      "type": "range",
+      "min": -100,
+      "max": 100,
+      "step": 1,
+      "default": 0
+    },
+    "saturation": {
+      "type": "range",
+      "min": -100,
+      "max": 100,
+      "step": 1,
+      "default": 0
+    },
+    "gamma": {
+      "type": "range",
+      "min": 0.2,
+      "max": 3,
+      "step": 0.1,
+      "default": 1
+    },
+    "bloom": {
+      "type": "range",
+      "min": 0,
+      "max": 2,
+      "step": 0.1,
+      "default": 0
+    },
+    "scanlines": {
+      "type": "range",
+      "min": 0,
+      "max": 1,
+      "step": 0.05,
+      "default": 0
+    }
+  },
+  "metadata": {
+    "author": "Desmond Baker Jr / JackDog",
+    "seed": "0x4A2F8B",
+    "status": "OPERATIONAL",
+    "lineage": "REF-002",
+    "description": "Experimental radial isotope matrix with 15 styles, Original Colour retention, full Colour Editor, pre-adjustments, and batch export.",
+    "preview": "./projects/chromarad-isotope-matrix/preview.png",
+    "video": "./projects/chromarad-isotope-matrix/assets/tcozVqT9HvYsu.mp4"
+  }
+}

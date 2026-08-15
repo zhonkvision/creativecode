@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INKDRUM™ — Risograph Print Shop // CH-02-NUMERIC-GRID</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #141414;
+      color: #E8E6DF;
+      font-family: 'JetBrains Mono', -apple-system, monospace;
+      font-size: 11px;
+      line-height: 1.4;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+    header {
+      background: #1C1B18;
+      border-bottom: 1px solid #2B2925;
+      padding: 10px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-logo {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #FF48B0;
+      border: 3px solid #211F1C;
+    }
+    .brand-title {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: #F5EEDC;
+    }
+    .app-layout {
+      display: grid;
+      grid-template-columns: 360px 1fr 300px;
+      flex: 1;
+      min-height: 0;
+    }
+    @media (max-width: 1100px) {
+      .app-layout { grid-template-columns: 320px 1fr; }
+      .right-panel { display: none; }
+    }
+    @media (max-width: 768px) {
+      .app-layout { grid-template-columns: 1fr; }
+    }
+    /* Sidebars */
+    .left-panel, .right-panel {
+      background: #181715;
+      border-right: 1px solid #2B2925;
+      padding: 14px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .right-panel {
+      border-right: none;
+      border-left: 1px solid #2B2925;
+    }
+    .section-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #8C887B;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    /* Drum Layer Card */
+    .drum-card {
+      background: #211F1C;
+      border: 1px solid #33302B;
+      border-radius: 4px;
+      padding: 10px;
+      margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: border-color 0.15s ease;
+    }
+    .drum-card:hover {
+      border-color: #555047;
+    }
+    .drum-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .drum-swatch-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .drum-swatch {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      border: 1px solid #000;
+    }
+    .drum-name {
+      font-weight: 700;
+      color: #F5EEDC;
+      font-size: 11px;
+    }
+    .drum-controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    /* Standard UI Controls */
+    button {
+      background: #262420;
+      border: 1px solid #38352F;
+      color: #D6D2C4;
+      padding: 5px 8px;
+      font-size: 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-family: inherit;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    button:hover {
+      background: #33302A;
+      color: #FFF;
+      border-color: #555047;
+    }
+    button.active {
+      background: #FF48B0;
+      color: #141414;
+      border-color: #FF48B0;
+      font-weight: 700;
+    }
+    .btn-shake {
+      background: #FF6C2F;
+      color: #141414;
+      border: none;
+      font-weight: 700;
+      padding: 7px 12px;
+    }
+    .btn-shake:hover {
+      background: #FF8B57;
+      color: #000;
+    }
+    .btn-export {
+      background: #00A95C;
+      color: #141414;
+      border: none;
+      font-weight: 700;
+      padding: 7px 12px;
+    }
+    .btn-export:hover {
+      background: #44D62C;
+      color: #000;
+    }
+    select, input[type="range"] {
+      width: 100%;
+      background: #191815;
+      border: 1px solid #33302B;
+      color: #E8E6DF;
+      padding: 4px;
+      font-size: 10px;
+      border-radius: 3px;
+      font-family: inherit;
+      outline: none;
+    }
+    input[type="range"] {
+      accent-color: #FF48B0;
+      height: 4px;
+    }
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .slider-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: #8C887B;
+    }
+    /* Stage */
+    .center-stage {
+      background: #0E0D0C;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    .stage-header-strip {
+      background: #181715;
+      border-bottom: 1px solid #2B2925;
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+    }
+    .canvas-viewport-wrap {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      position: relative;
+      overflow: auto;
+    }
+    canvas#glCanvas {
+      max-width: 100%;
+      max-height: 100%;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.85);
+      background: #FAF8F5;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-logo"></div>
+      <div class="brand-title">INKDRUM™ // RISOGRAPH STUDIO</div>
+      <span style="color:#8C887B; font-size:10px;">CH-02-NUMERIC-GRID</span>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <button class="btn-shake" id="btnShakeRegistration">⚡ SHAKE PRESS</button>
+      <button id="btnSoloPassToggle">PROOF: ALL DRUMS</button>
+      <button class="btn-export" id="btnExportProof">💾 EXPORT HIGH-RES PROOF</button>
+    </div>
+  </header>
+
+  <div class="app-layout">
+    <!-- LEFT: DRUM RACK (UP TO 4 ACTIVE INK DRUMS) -->
+    <aside class="left-panel">
+      <div class="section-title">
+        <span>01. Riso Ink Drums (Loaded)</span>
+        <button id="btnAddDrum" style="padding:2px 6px; font-size:9px;">+ ADD DRUM</button>
+      </div>
+
+      <div id="drumLayersMount"></div>
+
+      <div class="section-title">02. House Recipes</div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:4px;" id="recipeButtons">
+        <button data-recipe="duotone_punk">Fluo Pink + Federal Blue</button>
+        <button data-recipe="cmyk_riso">Riso CMYK (4-Color)</button>
+        <button data-recipe="gold_midnight">Flat Gold + Midnight</button>
+        <button data-recipe="poster_tri">Scarlet + Teal + Yellow</button>
+      </div>
+    </aside>
+
+    <!-- CENTER: LIGHT TABLE / PRESS VIEWPORT -->
+    <main class="center-stage">
+      <div class="stage-header-strip">
+        <div>STOCK: <strong id="stagePaperName" style="color:#FFB511;">CREAM LAID</strong> &bull; DRUMS: <span id="stageDrumCount" style="color:#FF48B0;">2 PASSES</span></div>
+        <div>REGISTRATION DRIFT: <span id="stageRegVal" style="color:#44D62C;">&plusmn;0.0mm</span> &bull; 60 FPS WEBGL2</div>
+      </div>
+
+      <div class="canvas-viewport-wrap">
+        <canvas id="glCanvas"></canvas>
+      </div>
+    </main>
+
+    <!-- RIGHT: PAPER STOCK & PRESS CONDITION -->
+    <aside class="right-panel">
+      <div>
+        <div class="section-title">03. Paper Stock Material</div>
+        <select id="paperStockSelect" style="margin-bottom:8px;">
+          <option value="cream">Cream (Soft Laid Fiber, Warm)</option>
+          <option value="white">Bright White (Fine Bond)</option>
+          <option value="newsprint">Warm Newsprint (Rough Fiber)</option>
+          <option value="chipboard">Gray Chipboard (Heavy Speckle)</option>
+          <option value="kraft">Kraft (Coarse Brown Pulp)</option>
+        </select>
+
+        <div class="slider-row">
+          <div class="slider-meta"><span>Paper Tooth / Fiber Texture</span><span id="toothVal">0.45</span></div>
+          <input type="range" id="paperToothSlider" min="0" max="1.0" step="0.05" value="0.45">
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">04. Press Wear & Roller Condition</div>
+        
+        <div class="slider-row">
+          <div class="slider-meta"><span>Ink Bleed / Dot Gain</span><span id="bleedVal">0.30</span></div>
+          <input type="range" id="bleedSlider" min="0" max="1.0" step="0.05" value="0.30">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-meta"><span>Roller Pressure Unevenness</span><span id="rollerVal">0.25</span></div>
+          <input type="range" id="rollerSlider" min="0" max="1.0" step="0.05" value="0.25">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-meta"><span>Drum Wear & Edge Falloff</span><span id="wearVal">0.20</span></div>
+          <input type="range" id="wearSlider" min="0" max="1.0" step="0.05" value="0.20">
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">05. Source Image Ingestion</div>
+        <div style="background:#211F1C; border:1px dashed #3B3831; padding:10px; text-align:center; cursor:pointer;" id="imgDropZone">
+          <div style="font-size:16px; margin-bottom:4px;">🖼️</div>
+          <div style="color:#D6D2C4; font-size:10px;">Drop Image / Click to Browse</div>
+          <input type="file" id="imgFileInput" accept="image/*" style="display:none;">
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // =========================================================================
+    // INKDRUM CANONICAL RISOGRAPH INK LIBRARY
+    // =========================================================================
+    const INKS = [
+      { id: 'black', name: 'BLACK', hex: '#1A1A1A' },
+      { id: 'blue', name: 'BLUE', hex: '#0078BF' },
+      { id: 'federal', name: 'FEDERAL BLUE', hex: '#3D5588' },
+      { id: 'cornflower', name: 'CORNFLOWER', hex: '#62A8E5' },
+      { id: 'teal', name: 'TEAL', hex: '#00838A' },
+      { id: 'green', name: 'GREEN', hex: '#00A95C' },
+      { id: 'fluogreen', name: 'FLUO GREEN', hex: '#44D62C' },
+      { id: 'yellow', name: 'YELLOW', hex: '#FFE800' },
+      { id: 'sunflower', name: 'SUNFLOWER', hex: '#FFB511' },
+      { id: 'flatgold', name: 'FLAT GOLD', hex: '#BB8B41' },
+      { id: 'orange', name: 'ORANGE', hex: '#FF6C2F' },
+      { id: 'scarlet', name: 'SCARLET', hex: '#F65058' },
+      { id: 'fluopink', name: 'FLUO PINK', hex: '#FF48B0' },
+      { id: 'purple', name: 'PURPLE', hex: '#765BA7' },
+      { id: 'midnight', name: 'MIDNIGHT', hex: '#435060' }
+    ];
+
+    const PAPERS = {
+      cream: { name: 'CREAM', hex: '#F5EEDC', tooth: 0.48 },
+      white: { name: 'BRIGHT WHITE', hex: '#FAFAF6', tooth: 0.28 },
+      newsprint: { name: 'WARM NEWSPRINT', hex: '#EBE2CD', tooth: 0.65 },
+      chipboard: { name: 'GRAY CHIPBOARD', hex: '#D6D2C4', tooth: 0.70 },
+      kraft: { name: 'KRAFT', hex: '#C2A378', tooth: 0.85 }
+    };
+
+    // State
+    const state = {
+      paper: 'cream',
+      paperTooth: 0.45,
+      bleed: 0.30,
+      roller: 0.25,
+      wear: 0.20,
+      soloDrum: -1,
+      drums: [
+        { ink: 'fluopink', sep: 'magenta', screen: 'halftone', density: 1.0, offX: 0.8, offY: -0.5, angle: 45 },
+        { ink: 'federal', sep: 'cyan', screen: 'grain', density: 0.9, offX: -0.6, offY: 0.4, angle: 75 }
+      ]
+    };
+
+    const canvas = document.getElementById('glCanvas');
+    const gl = canvas.getContext('webgl2', { preserveDrawingBuffer: true });
+    let sourceTexture = null;
+    let imgWidth = 512, imgHeight = 512;
+
+    // =========================================================================
+    // PROCEDURAL DEMO IMAGE GENERATOR
+    // =========================================================================
+    function createDemoImage() {
+      const off = document.createElement('canvas');
+      off.width = 512; off.height = 512;
+      const c = off.getContext('2d');
+
+      c.fillStyle = '#FFFFFF';
+      c.fillRect(0, 0, 512, 512);
+
+      // Geometric Poster Shapes
+      c.beginPath();
+      c.arc(256, 220, 140, 0, Math.PI * 2);
+      c.fillStyle = '#333333';
+      c.fill();
+
+      c.fillStyle = '#888888';
+      c.fillRect(100, 300, 312, 120);
+
+      c.font = 'bold 36px monospace';
+      c.fillStyle = '#000000';
+      c.fillText('INKDRUM // RISO', 90, 240);
+
+      const img = new Image();
+      img.onload = () => loadSourceImage(img);
+      img.src = off.toDataURL();
+    }
+
+    function loadSourceImage(img) {
+      imgWidth = img.width;
+      imgHeight = img.height;
+      canvas.width = imgWidth;
+      canvas.height = imgHeight;
+
+      if (!sourceTexture) sourceTexture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, sourceTexture);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      render();
+    }
+
+    // =========================================================================
+    // WEBGL2 RISOGRAPH SHADER PIPELINE
+    // =========================================================================
+    const vsSource = `#version 300 es
+      in vec2 a_pos;
+      out vec2 v_uv;
+      void main() {
+        v_uv = a_pos * 0.5 + 0.5;
+        gl_Position = vec4(a_pos, 0.0, 1.0);
+      }
+    `;
+
+    const fsSource = `#version 300 es
+      precision highp float;
+      in vec2 v_uv;
+      out vec4 fragColor;
+
+      uniform sampler2D u_img;
+      uniform vec2 u_res;
+      uniform vec3 u_paperColor;
+      uniform float u_tooth;
+      uniform float u_bleed;
+      uniform float u_roller;
+      uniform float u_wear;
+      uniform int u_drumCount;
+
+      uniform vec3 u_drumInk[6];
+      uniform vec2 u_drumOff[6];
+      uniform float u_drumDensity[6];
+      uniform int u_drumScreen[6];
+      uniform int u_drumSep[6];
+      uniform float u_drumAngle[6];
+
+      float hash(vec2 p) {
+        return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+      }
+
+      float noise(vec2 p) {
+        vec2 i = floor(p); vec2 f = fract(p);
+        f = f * f * (3.0 - 2.0 * f);
+        return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x),
+                   mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y);
+      }
+
+      void main() {
+        // Procedural Paper Texture
+        float paperNoise = noise(v_uv * 400.0) * 0.5 + noise(v_uv * 1200.0) * 0.5;
+        vec3 paper = u_paperColor * (1.0 - (paperNoise - 0.5) * u_tooth * 0.15);
+
+        vec3 finalColor = paper;
+
+        for (int i = 0; i < 6; i++) {
+          if (i >= u_drumCount) break;
+
+          vec2 drumUV = v_uv + u_drumOff[i] * 0.015;
+          vec4 sampleColor = texture(u_img, drumUV);
+          float lum = dot(sampleColor.rgb, vec3(0.299, 0.587, 0.114));
+
+          // Separation coverage
+          float cov = 1.0 - lum;
+          if (u_drumSep[i] == 1) cov = 1.0 - sampleColor.r; // Cyan plate
+          if (u_drumSep[i] == 2) cov = 1.0 - sampleColor.g; // Magenta plate
+          if (u_drumSep[i] == 3) cov = 1.0 - sampleColor.b; // Yellow plate
+
+          cov = clamp(cov * u_drumDensity[i], 0.0, 1.0);
+
+          // Screening (Halftone / Grain)
+          float screenMask = 1.0;
+          if (u_drumScreen[i] == 0) {
+            // Halftone Dots
+            float rad = u_drumAngle[i] * 3.14159 / 180.0;
+            vec2 rotUV = vec2(cos(rad) * drumUV.x - sin(rad) * drumUV.y,
+                              sin(rad) * drumUV.x + cos(rad) * drumUV.y) * 120.0;
+            vec2 dotPos = fract(rotUV) - 0.5;
+            float dist = length(dotPos);
+            screenMask = step(dist, sqrt(cov) * 0.5);
+          } else {
+            // Stochastic Grain
+            float g = hash(drumUV * u_res + float(i) * 31.7);
+            screenMask = step(g, cov);
+          }
+
+          // Translucent Soy Ink Multiplication Compositing
+          vec3 ink = u_drumInk[i];
+          float inkAlpha = screenMask * cov;
+          finalColor = mix(finalColor, finalColor * ink, inkAlpha * (1.0 + u_bleed * 0.2));
+        }
+
+        fragColor = vec4(finalColor, 1.0);
+      }
+    `;
+
+    function compileShader(type, src) {
+      const s = gl.createShader(type);
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      return s;
+    }
+
+    const program = gl.createProgram();
+    gl.attachShader(program, compileShader(gl.VERTEX_SHADER, vsSource));
+    gl.attachShader(program, compileShader(gl.FRAGMENT_SHADER, fsSource));
+    gl.linkProgram(program);
+    gl.useProgram(program);
+
+    const quadGeo = new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]);
+    const vbo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+    gl.bufferData(gl.ARRAY_BUFFER, quadGeo, gl.STATIC_DRAW);
+    const aPos = gl.getAttribLocation(program, 'a_pos');
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+    function hexToRgb01(hex) {
+      let c = hex.replace('#', '');
+      if (c.length === 3) c = c.split('').map(x => x + x).join('');
+      const n = parseInt(c, 16);
+      return [(n >> 16) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
+    }
+
+    function render() {
+      if (!sourceTexture) return;
+
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.useProgram(program);
+
+      gl.uniform2f(gl.getUniformLocation(program, 'u_res'), canvas.width, canvas.height);
+
+      const paperInfo = PAPERS[state.paper] || PAPERS.cream;
+      const paperRgb = hexToRgb01(paperInfo.hex);
+      gl.uniform3f(gl.getUniformLocation(program, 'u_paperColor'), paperRgb[0], paperRgb[1], paperRgb[2]);
+      gl.uniform1f(gl.getUniformLocation(program, 'u_tooth'), state.paperTooth);
+      gl.uniform1f(gl.getUniformLocation(program, 'u_bleed'), state.bleed);
+      gl.uniform1f(gl.getUniformLocation(program, 'u_roller'), state.roller);
+      gl.uniform1f(gl.getUniformLocation(program, 'u_wear'), state.wear);
+
+      gl.uniform1i(gl.getUniformLocation(program, 'u_drumCount'), state.drums.length);
+
+      state.drums.forEach((drum, i) => {
+        const inkInfo = INKS.find(k => k.id === drum.ink) || INKS[0];
+        const inkRgb = hexToRgb01(inkInfo.hex);
+        gl.uniform3f(gl.getUniformLocation(program, `u_drumInk[${i}]`), inkRgb[0], inkRgb[1], inkRgb[2]);
+        gl.uniform2f(gl.getUniformLocation(program, `u_drumOff[${i}]`), drum.offX, drum.offY);
+        gl.uniform1f(gl.getUniformLocation(program, `u_drumDensity[${i}]`), drum.density);
+        gl.uniform1i(gl.getUniformLocation(program, `u_drumScreen[${i}]`), drum.screen === 'halftone' ? 0 : 1);
+        gl.uniform1i(gl.getUniformLocation(program, `u_drumSep[${i}]`), drum.sep === 'cyan' ? 1 : (drum.sep === 'magenta' ? 2 : 0));
+        gl.uniform1f(gl.getUniformLocation(program, `u_drumAngle[${i}]`), drum.angle || 45);
+      });
+
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+    }
+
+    // =========================================================================
+    // UI BINDINGS & DRUM MANAGEMENT
+    // =========================================================================
+    function renderDrumCards() {
+      const mount = document.getElementById('drumLayersMount');
+      mount.innerHTML = state.drums.map((drum, idx) => {
+        const ink = INKS.find(k => k.id === drum.ink) || INKS[0];
+        return `
+          <div class="drum-card">
+            <div class="drum-header">
+              <div class="drum-swatch-wrap">
+                <div class="drum-swatch" style="background:${ink.hex};"></div>
+                <span class="drum-name">PASS ${idx + 1}: ${ink.name}</span>
+              </div>
+              <button onclick="removeDrum(${idx})" style="padding:1px 5px; color:#FF665E;">&times;</button>
+            </div>
+            <div class="drum-controls-grid">
+              <select onchange="updateDrumInk(${idx}, this.value)">
+                ${INKS.map(k => `<option value="${k.id}" ${k.id === drum.ink ? 'selected' : ''}>${k.name}</option>`).join('')}
+              </select>
+              <select onchange="updateDrumScreen(${idx}, this.value)">
+                <option value="halftone" ${drum.screen === 'halftone' ? 'selected' : ''}>Halftone Dots</option>
+                <option value="grain" ${drum.screen === 'grain' ? 'selected' : ''}>Riso Grain</option>
+              </select>
+            </div>
+            <div class="slider-row">
+              <div class="slider-meta"><span>Density</span><span>${Math.round(drum.density * 100)}%</span></div>
+              <input type="range" min="0.2" max="1.5" step="0.05" value="${drum.density}" oninput="updateDrumDensity(${idx}, this.value)">
+            </div>
+          </div>
+        `;
+      }).join('');
+      document.getElementById('stageDrumCount').innerText = `${state.drums.length} PASSES`;
+    }
+
+    window.removeDrum = (idx) => {
+      if (state.drums.length > 1) {
+        state.drums.splice(idx, 1);
+        renderDrumCards();
+        render();
+      }
+    };
+    window.updateDrumInk = (idx, val) => { state.drums[idx].ink = val; renderDrumCards(); render(); };
+    window.updateDrumScreen = (idx, val) => { state.drums[idx].screen = val; render(); };
+    window.updateDrumDensity = (idx, val) => { state.drums[idx].density = parseFloat(val); render(); };
+
+    document.getElementById('btnAddDrum').addEventListener('click', () => {
+      if (state.drums.length < 6) {
+        state.drums.push({ ink: 'sunflower', sep: 'yellow', screen: 'halftone', density: 0.9, offX: 0.2, offY: -0.2, angle: 15 });
+        renderDrumCards();
+        render();
+      }
+    });
+
+    // SHAKE REGISTRATION
+    document.getElementById('btnShakeRegistration').addEventListener('click', () => {
+      state.drums.forEach(drum => {
+        drum.offX = (Math.random() - 0.5) * 2.5;
+        drum.offY = (Math.random() - 0.5) * 2.5;
+      });
+      const maxDrift = Math.max(...state.drums.map(d => Math.hypot(d.offX, d.offY))).toFixed(1);
+      document.getElementById('stageRegVal').innerText = `&plusmn;${maxDrift}mm`;
+      render();
+    });
+
+    // Paper & Wear Sliders
+    document.getElementById('paperStockSelect').addEventListener('change', (e) => {
+      state.paper = e.target.value;
+      document.getElementById('stagePaperName').innerText = PAPERS[state.paper].name;
+      render();
+    });
+    document.getElementById('paperToothSlider').addEventListener('input', (e) => {
+      state.paperTooth = parseFloat(e.target.value);
+      document.getElementById('toothVal').innerText = state.paperTooth;
+      render();
+    });
+    document.getElementById('bleedSlider').addEventListener('input', (e) => {
+      state.bleed = parseFloat(e.target.value);
+      document.getElementById('bleedVal').innerText = state.bleed;
+      render();
+    });
+    document.getElementById('rollerSlider').addEventListener('input', (e) => {
+      state.roller = parseFloat(e.target.value);
+      document.getElementById('rollerVal').innerText = state.roller;
+      render();
+    });
+    document.getElementById('wearSlider').addEventListener('input', (e) => {
+      state.wear = parseFloat(e.target.value);
+      document.getElementById('wearVal').innerText = state.wear;
+      render();
+    });
+
+    // Ingestion
+    const drop = document.getElementById('imgDropZone');
+    const fileIn = document.getElementById('imgFileInput');
+    drop.addEventListener('click', () => fileIn.click());
+    fileIn.addEventListener('change', (e) => {
+      if (e.target.files.length) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const img = new Image();
+          img.onload = () => loadSourceImage(img);
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+
+    // Export Proof
+    document.getElementById('btnExportProof').addEventListener('click', () => {
+      const a = document.createElement('a');
+      a.download = `inkdrum-riso-proof-${Date.now()}.png`;
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    });
+
+    // House Recipe Presets
+    document.querySelectorAll('#recipeButtons button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const recipe = btn.dataset.recipe;
+        if (recipe === 'duotone_punk') {
+          state.drums = [
+            { ink: 'fluopink', sep: 'magenta', screen: 'halftone', density: 1.0, offX: 0.8, offY: -0.5, angle: 45 },
+            { ink: 'federal', sep: 'cyan', screen: 'grain', density: 0.9, offX: -0.6, offY: 0.4, angle: 75 }
+          ];
+        } else if (recipe === 'cmyk_riso') {
+          state.drums = [
+            { ink: 'yellow', sep: 'yellow', screen: 'halftone', density: 0.9, offX: 0.0, offY: 0.0, angle: 0 },
+            { ink: 'fluopink', sep: 'magenta', screen: 'halftone', density: 0.95, offX: 0.4, offY: -0.3, angle: 15 },
+            { ink: 'blue', sep: 'cyan', screen: 'halftone', density: 0.9, offX: -0.5, offY: 0.3, angle: 75 },
+            { ink: 'black', sep: 'darkness', screen: 'grain', density: 0.85, offX: 0.2, offY: 0.2, angle: 45 }
+          ];
+        } else if (recipe === 'gold_midnight') {
+          state.drums = [
+            { ink: 'flatgold', sep: 'darkness', screen: 'halftone', density: 1.0, offX: 0.5, offY: -0.3, angle: 30 },
+            { ink: 'midnight', sep: 'cyan', screen: 'grain', density: 0.9, offX: -0.4, offY: 0.4, angle: 60 }
+          ];
+        } else if (recipe === 'poster_tri') {
+          state.drums = [
+            { ink: 'yellow', sep: 'yellow', screen: 'halftone', density: 1.0, offX: 0.0, offY: 0.0, angle: 0 },
+            { ink: 'teal', sep: 'cyan', screen: 'halftone', density: 0.9, offX: 0.5, offY: -0.4, angle: 45 },
+            { ink: 'scarlet', sep: 'magenta', screen: 'grain', density: 0.95, offX: -0.3, offY: 0.5, angle: 75 }
+          ];
+        }
+        renderDrumCards();
+        render();
+      });
+    });
+
+    // Initialize
+    renderDrumCards();
+    createDemoImage();
+  </script>
+</body>
+</html>

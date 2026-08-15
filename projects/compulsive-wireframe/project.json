@@ -1,0 +1,48 @@
+{
+  "id": "EXP-003",
+  "slug": "compulsive-wireframe",
+  "title": "Compulsive Wireframe HUD",
+  "year": 2026,
+  "category": "crt-telemetry",
+  "technology": "Canvas 2D / 3D Mesh",
+  "visualDNA_channel": "CH-01-CRT-TELEMETRY",
+  "parameters": {
+    "rotationRate": {
+      "type": "range",
+      "min": 0.2,
+      "max": 4,
+      "step": 0.1,
+      "default": 1.2
+    },
+    "wireDensity": {
+      "type": "range",
+      "min": 10,
+      "max": 36,
+      "step": 2,
+      "default": 20
+    },
+    "splitGap": {
+      "type": "range",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "default": 30
+    },
+    "waveFrequency": {
+      "type": "range",
+      "min": 1,
+      "max": 15,
+      "step": 0.5,
+      "default": 4.5
+    }
+  },
+  "metadata": {
+    "author": "Adib Zahran",
+    "seed": "0xC038FA",
+    "status": "OPERATIONAL",
+    "lineage": "REF-001",
+    "description": "Dual-tone segmented 3D wireframe cranial scan with real-time waveform ribbon oscilloscope, split HUD framing, and diagnostic status flags."
+  },
+  "entryType": "module",
+  "entryPoint": "./projects/compulsive-wireframe/experiment.js"
+}

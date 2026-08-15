@@ -1,0 +1,41 @@
+{
+  "id": "ref-01-compulsive-hud",
+  "name": "Compulsive Cyber-Neurology Telemetry HUD",
+  "archetype": "crt_telemetry",
+  "source": "Image Reference 01 (Compulsive Head Scan)",
+  "colorway": {
+    "primary": "#FF2A55",
+    "secondary": "#00F0A0",
+    "background": "#080B0E",
+    "accent": "#FFFFFF",
+    "glow": "rgba(255, 42, 85, 0.45)",
+    "spectrum": ["#FF2A55", "#00F0A0", "#FFFFFF", "#334455", "#003322"]
+  },
+  "typography": {
+    "displayFont": "'VT323', monospace",
+    "monoFont": "'Share Tech Mono', monospace",
+    "tracking": "0.18em",
+    "textTransform": "uppercase"
+  },
+  "telemetry": {
+    "gridResolution": "32x32",
+    "hasOscilloscope": true,
+    "hasWireframeGrid": true,
+    "hasHexDump": true,
+    "labels": ["DISP: FUSION", "END: [UNKNOWN]", "SEG: -6", "LOCAL 24.12.018", "TGT: HOPE 21/100", "CURRENT: HATRED", "RLP VECT 525.600 MIN", "TOXIC MENTALITY", "TEMP/RESULT: -2 **", "CONS: TERMINATED"]
+  },
+  "optics": {
+    "scanlines": 0.85,
+    "bloom": 0.65,
+    "chromaticAberration": 0.4,
+    "curvature": 0.25,
+    "flicker": 0.15
+  },
+  "parameters": {
+    "headRotationSpeed": { "value": 1.2, "min": 0.1, "max": 5.0, "step": 0.1, "label": "Lattice Spin Rate" },
+    "meshDivision": { "value": 24, "min": 8, "max": 48, "step": 2, "label": "Wireframe Density" },
+    "toxicRatio": { "value": 0.68, "min": 0.0, "max": 1.0, "step": 0.01, "label": "Mental Voltage Bias" },
+    "waveFrequency": { "value": 4.5, "min": 1.0, "max": 20.0, "step": 0.5, "label": "Oscilloscope Harmonics" },
+    "perspectiveDepth": { "value": 450, "min": 100, "max": 1000, "step": 10, "label": "Z-Focal Plane" }
+  }
+}

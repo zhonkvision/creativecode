@@ -1,0 +1,46 @@
+/**
+ * CreativeCode Visual DNA — Purposeful Phosphor & Raster Optics
+ */
+@import './tokens.css';
+
+/* Subtle Scanline Overlay */
+.crt-scanline-layer {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 99999;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, var(--scanline-opacity)) 50%
+  );
+  background-size: 100% var(--scanline-pitch);
+}
+
+/* Subtle Phosphor Text Glow */
+.phosphor-glow-green {
+  text-shadow: 0 0 var(--crt-bloom) var(--glow-green);
+}
+.phosphor-glow-red {
+  text-shadow: 0 0 var(--crt-bloom) var(--glow-red);
+}
+.phosphor-glow-cyan {
+  text-shadow: 0 0 var(--crt-bloom) var(--glow-cyan);
+}
+
+/* RGB Chromatic Fringe Shift */
+.chroma-fringe {
+  text-shadow: 
+    calc(var(--chroma-offset) * -1) 0 rgba(255, 42, 66, 0.7),
+    var(--chroma-offset) 0 rgba(0, 240, 255, 0.7);
+}
+
+/* Phosphor Persistence Flicker */
+@keyframes phosphorMicroFlicker {
+  0% { opacity: 0.99; }
+  50% { opacity: 0.97; }
+  100% { opacity: 1.0; }
+}
+
+.crt-flicker {
+  animation: phosphorMicroFlicker 0.12s infinite;
+}

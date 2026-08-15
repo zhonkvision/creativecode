@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CPFP // Cyberpunk Reticle PFP Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=VT323&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    :root {
+      --bg-dark: #050709;
+      --panel-bg: #0c1017;
+      --border-wire: #222a3c;
+      --border-active: #ff4d6d;
+      --text-white: #f0f3fa;
+      --text-muted: #7d89a6;
+      --signal-red: #ff4d6d;
+      --signal-cyan: #5b93ff;
+      --signal-mint: #22e5a0;
+      --signal-amber: #ff9e64;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      background: var(--bg-dark);
+      color: var(--text-white);
+      font-family: 'JetBrains Mono', monospace;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation Control Bar */
+    header {
+      background: var(--panel-bg);
+      border-bottom: 1px solid var(--border-wire);
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      z-index: 100;
+    }
+
+    .brand-cluster {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-badge {
+      background: rgba(255, 77, 109, 0.15);
+      border: 1px solid var(--signal-red);
+      color: var(--signal-red);
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.1em;
+    }
+
+    .brand-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text-white);
+    }
+
+    .controls-deck {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .ctrl-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #121620;
+      border: 1px solid var(--border-wire);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+    }
+
+    .ctrl-label {
+      color: var(--text-muted);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    input[type="text"], select {
+      background: #080b10;
+      border: 1px solid var(--border-wire);
+      color: var(--text-white);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      outline: none;
+    }
+
+    input[type="text"]:focus, select:focus {
+      border-color: var(--signal-red);
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 75px;
+      height: 4px;
+      background: var(--border-wire);
+      border-radius: 2px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 10px;
+      height: 10px;
+      background: var(--signal-red);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 6px var(--signal-red);
+    }
+
+    /* Functional UI Buttons */
+    .btn {
+      background: #121620;
+      border: 1px solid var(--border-wire);
+      border-radius: 6px;
+      color: var(--text-white);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 12px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.18s ease;
+    }
+
+    .btn:hover {
+      background: #1c2232;
+      border-color: #4f5b7d;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-primary {
+      background: #161c28;
+      border-color: var(--signal-red);
+      color: #ffffff;
+      box-shadow: 0 0 10px rgba(255, 77, 109, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: #22293a;
+      box-shadow: 0 0 14px rgba(255, 77, 109, 0.4);
+    }
+
+    .btn-amber {
+      color: var(--signal-amber);
+    }
+    .btn-amber:hover {
+      border-color: var(--signal-amber);
+    }
+
+    .btn-cyan {
+      color: var(--signal-cyan);
+    }
+    .btn-cyan:hover {
+      border-color: var(--signal-cyan);
+    }
+
+    /* Main Viewport Container */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: #020406;
+      overflow: hidden;
+    }
+
+    #stageCanvas {
+      max-width: 92vh;
+      max-height: 92vh;
+      width: auto;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5);
+      cursor: grab;
+    }
+
+    #stageCanvas:active {
+      cursor: grabbing;
+    }
+
+    /* Upload Drop Zone Overlay */
+    .dropzone-hint {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(12, 16, 23, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px dashed var(--border-wire);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      pointer-events: none;
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: #101824;
+      border: 1px solid var(--signal-mint);
+      color: var(--signal-mint);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 0 12px rgba(34, 229, 160, 0.3);
+    }
+
+    #fileInput {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand-cluster">
+      <span class="brand-badge">OPTICAL RETICLE</span>
+      <span class="brand-title">CPFP // SNIPER PFP STUDIO</span>
+    </div>
+
+    <div class="controls-deck">
+      <!-- Upload Trigger -->
+      <button class="btn btn-primary" id="btnUpload" title="Upload custom photo or avatar">
+        <span>📁</span>
+        <span>CHANGE PHOTO</span>
+      </button>
+      <input type="file" id="fileInput" accept="image/*">
+
+      <!-- Target Text -->
+      <div class="ctrl-group">
+        <span class="ctrl-label">TARGET:</span>
+        <input type="text" id="targetTextInput" value="DELETE" maxlength="16" style="width: 85px;">
+      </div>
+
+      <!-- Color Theme -->
+      <div class="ctrl-group">
+        <span class="ctrl-label">THEME:</span>
+        <select id="themeSelect">
+          <option value="crimson" selected>CRIMSON NEON</option>
+          <option value="cyan">CYBER CYAN</option>
+          <option value="mint">PHOSPHOR MINT</option>
+          <option value="amber">AMBER CRT</option>
+          <option value="purple">TOXIC VIOLET</option>
+          <option value="ice">ICE GHOST</option>
+        </select>
+      </div>
+
+      <!-- Reticle Style -->
+      <div class="ctrl-group">
+        <span class="ctrl-label">RETICLE:</span>
+        <select id="reticleSelect">
+          <option value="milliradian" selected>MILLIRADIAN CROSSHAIR</option>
+          <option value="tactical-circle">TACTICAL HUD RING</option>
+          <option value="cyber-grid">CYBER TARGET LOCK</option>
+          <option value="minimal">MINIMAL LASER</option>
+        </select>
+      </div>
+
+      <!-- Rain & Smoke -->
+      <div class="ctrl-group">
+        <span class="ctrl-label">RAIN:</span>
+        <input type="range" id="rainSlider" min="0" max="100" value="65">
+      </div>
+
+      <div class="ctrl-group">
+        <span class="ctrl-label">SMOKE:</span>
+        <input type="checkbox" id="smokeToggle" checked style="accent-color: var(--signal-red);">
+      </div>
+
+      <!-- Zoom -->
+      <div class="ctrl-group">
+        <span class="ctrl-label">ZOOM:</span>
+        <input type="range" id="zoomSlider" min="50" max="250" value="100">
+      </div>
+
+      <!-- Export Studio Action Deck -->
+      <button class="btn" id="btnExportPng" title="Export High-Res 1:1 Avatar PNG">
+        <span>⚡</span>
+        <span>PNG</span>
+      </button>
+      <button class="btn btn-cyan" id="btnExportTrans" title="Export Transparent Scope PNG">
+        <span>⚡</span>
+        <span>TRANS</span>
+      </button>
+      <button class="btn btn-amber" id="btnExportJpg" title="Export JPEG">
+        <span>📷</span>
+        <span>JPG</span>
+      </button>
+      <button class="btn btn-primary" id="btnRecMp4" title="Record 60 FPS Animated Video Avatar">
+        <span>▶</span>
+        <span>REC MP4</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <canvas id="stageCanvas" width="900" height="900"></canvas>
+    <div class="dropzone-hint">
+      DRAG & DROP ANY PHOTO • DRAG CANVAS TO PAN IMAGE
+    </div>
+    <div id="toast"></div>
+  </main>
+
+  <script>
+    (() => {
+      const canvas = document.getElementById('stageCanvas');
+      const ctx = canvas.getContext('2d');
+      const fileInput = document.getElementById('fileInput');
+      const btnUpload = document.getElementById('btnUpload');
+      const targetTextInput = document.getElementById('targetTextInput');
+      const themeSelect = document.getElementById('themeSelect');
+      const reticleSelect = document.getElementById('reticleSelect');
+      const rainSlider = document.getElementById('rainSlider');
+      const smokeToggle = document.getElementById('smokeToggle');
+      const zoomSlider = document.getElementById('zoomSlider');
+      const btnExportPng = document.getElementById('btnExportPng');
+      const btnExportTrans = document.getElementById('btnExportTrans');
+      const btnExportJpg = document.getElementById('btnExportJpg');
+      const btnRecMp4 = document.getElementById('btnRecMp4');
+      const toastEl = document.getElementById('toast');
+
+      // State
+      let userImage = new Image();
+      let isImageLoaded = false;
+      let targetText = "DELETE";
+      let currentTheme = "crimson";
+      let currentReticle = "milliradian";
+      let rainDensity = 65;
+      let smokeEnabled = true;
+      let imageZoom = 1.0;
+      let panX = 0;
+      let panY = 0;
+      let isDragging = false;
+      let startMouseX = 0;
+      let startMouseY = 0;
+
+      // Color Theme Palettes
+      const THEMES = {
+        crimson: {
+          main: '#ff334b',
+          glow: 'rgba(255, 51, 75, 0.55)',
+          sub: 'rgba(255, 51, 75, 0.25)',
+          badge: '#ff4d6d'
+        },
+        cyan: {
+          main: '#00f0ff',
+          glow: 'rgba(0, 240, 255, 0.55)',
+          sub: 'rgba(0, 240, 255, 0.25)',
+          badge: '#5b93ff'
+        },
+        mint: {
+          main: '#22e5a0',
+          glow: 'rgba(34, 229, 160, 0.55)',
+          sub: 'rgba(34, 229, 160, 0.25)',
+          badge: '#22e5a0'
+        },
+        amber: {
+          main: '#ffb000',
+          glow: 'rgba(255, 176, 0, 0.55)',
+          sub: 'rgba(255, 176, 0, 0.25)',
+          badge: '#ff9e64'
+        },
+        purple: {
+          main: '#d946ef',
+          glow: 'rgba(217, 70, 239, 0.55)',
+          sub: 'rgba(217, 70, 239, 0.25)',
+          badge: '#d946ef'
+        },
+        ice: {
+          main: '#f0f6ff',
+          glow: 'rgba(240, 246, 255, 0.65)',
+          sub: 'rgba(240, 246, 255, 0.3)',
+          badge: '#f0f6ff'
+        }
+      };
+
+      // Rain Particles System
+      const rainParticles = [];
+      const MAX_RAIN = 180;
+      for (let i = 0; i < MAX_RAIN; i++) {
+        rainParticles.push({
+          x: Math.random() * 900,
+          y: Math.random() * 900,
+          length: 18 + Math.random() * 26,
+          speed: 16 + Math.random() * 12,
+          slant: 2.2 + (Math.random() - 0.5) * 0.8,
+          opacity: 0.2 + Math.random() * 0.45
+        });
+      }
+
+      // Smoke Particles System
+      const smokeParticles = [];
+      const MAX_SMOKE = 24;
+      for (let i = 0; i < MAX_SMOKE; i++) {
+        smokeParticles.push({
+          x: 410 + (Math.random() - 0.5) * 40,
+          y: 440 + Math.random() * 100,
+          radius: 4 + Math.random() * 10,
+          vx: 0.3 + (Math.random() - 0.5) * 0.6,
+          vy: -1.2 - Math.random() * 0.8,
+          opacity: 0.15 + Math.random() * 0.35,
+          life: Math.random()
+        });
+      }
+
+      // Load Default Noir Scene
+      userImage.onload = () => {
+        isImageLoaded = true;
+      };
+      userImage.src = './assets/preset-noir.jpg';
+
+      function showToast(msg) {
+        toastEl.innerText = msg;
+        toastEl.style.display = 'block';
+        setTimeout(() => { toastEl.style.display = 'none'; }, 2200);
+      }
+
+      // Main Render Frame
+      function renderFrame(targetCtx, w, h, time, transparentLens = false) {
+        const theme = THEMES[currentTheme] || THEMES.crimson;
+        const cx = w / 2;
+        const cy = h / 2;
+        const lensRadius = w * 0.428; // Scope circular lens
+
+        targetCtx.clearRect(0, 0, w, h);
+
+        // 1. Draw Background Image inside Lens
+        if (!transparentLens) {
+          targetCtx.save();
+          targetCtx.beginPath();
+          targetCtx.arc(cx, cy, lensRadius, 0, Math.PI * 2);
+          targetCtx.clip();
+
+          if (isImageLoaded) {
+            const aspect = userImage.width / userImage.height;
+            let drawW = (lensRadius * 2) * imageZoom;
+            let drawH = (drawW / aspect);
+
+            if (drawH < lensRadius * 2 * imageZoom) {
+              drawH = (lensRadius * 2) * imageZoom;
+              drawW = drawH * aspect;
+            }
+
+            const imgX = cx - drawW / 2 + panX;
+            const imgY = cy - drawH / 2 + panY;
+
+            targetCtx.drawImage(userImage, imgX, imgY, drawW, drawH);
+          } else {
+            targetCtx.fillStyle = '#0a101d';
+            targetCtx.fillRect(0, 0, w, h);
+          }
+
+          // Atmospheric Rain Physics
+          if (rainDensity > 0) {
+            const activeRain = Math.floor((rainDensity / 100) * MAX_RAIN);
+            targetCtx.lineWidth = 1.2;
+            for (let i = 0; i < activeRain; i++) {
+              const r = rainParticles[i];
+              r.y += r.speed;
+              r.x += r.slant;
+              if (r.y > h + 40) {
+                r.y = -30;
+                r.x = Math.random() * w;
+              }
+              if (r.x > w + 40) r.x = -20;
+
+              targetCtx.strokeStyle = `rgba(180, 225, 255, ${r.opacity * 0.6})`;
+              targetCtx.beginPath();
+              targetCtx.moveTo(r.x, r.y);
+              targetCtx.lineTo(r.x + r.slant * 4, r.y + r.length);
+              targetCtx.stroke();
+            }
+          }
+
+          // Atmospheric Smoke Physics
+          if (smokeEnabled) {
+            for (let s of smokeParticles) {
+              s.x += s.vx + Math.sin(time * 0.003 + s.y * 0.02) * 0.4;
+              s.y += s.vy;
+              s.radius += 0.12;
+              s.life += 0.01;
+
+              if (s.y < cy - 140 || s.life >= 1) {
+                s.x = cx - 40 + (Math.random() - 0.5) * 20;
+                s.y = cy - 10 + Math.random() * 20;
+                s.radius = 3 + Math.random() * 6;
+                s.life = 0;
+              }
+
+              const alpha = Math.sin(s.life * Math.PI) * s.opacity * 0.4;
+              targetCtx.fillStyle = `rgba(190, 235, 255, ${alpha})`;
+              targetCtx.beginPath();
+              targetCtx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+              targetCtx.fill();
+            }
+          }
+
+          // Subtle lens inner shadow vignette
+          const lensGrad = targetCtx.createRadialGradient(cx, cy, lensRadius * 0.65, cx, cy, lensRadius);
+          lensGrad.addColorStop(0, 'rgba(0, 0, 0, 0)');
+          lensGrad.addColorStop(1, 'rgba(0, 4, 10, 0.65)');
+          targetCtx.fillStyle = lensGrad;
+          targetCtx.fillRect(0, 0, w, h);
+
+          targetCtx.restore();
+        }
+
+        // 2. Outer Deep Black Scope Barrel Mask
+        targetCtx.save();
+        targetCtx.beginPath();
+        targetCtx.rect(0, 0, w, h);
+        targetCtx.arc(cx, cy, lensRadius, 0, Math.PI * 2, true);
+        targetCtx.fillStyle = '#050709';
+        targetCtx.fill();
+
+        // Scope Outer Bevel Ring
+        targetCtx.lineWidth = 3;
+        targetCtx.strokeStyle = '#121824';
+        targetCtx.beginPath();
+        targetCtx.arc(cx, cy, lensRadius, 0, Math.PI * 2);
+        targetCtx.stroke();
+        targetCtx.restore();
+
+        // 3. Tactical Cyberpunk Reticle & Crosshairs
+        targetCtx.save();
+        targetCtx.shadowColor = theme.glow;
+        targetCtx.shadowBlur = 10;
+        targetCtx.strokeStyle = theme.main;
+        targetCtx.fillStyle = theme.main;
+        targetCtx.lineWidth = 1.5;
+
+        if (currentReticle === 'milliradian' || currentReticle === 'tactical-circle') {
+          // Continuous Milliradian Crosshair
+          targetCtx.beginPath();
+          // Horizontal axis
+          targetCtx.moveTo(cx - lensRadius, cy);
+          targetCtx.lineTo(cx + lensRadius, cy);
+          // Vertical axis
+          targetCtx.moveTo(cx, cy - lensRadius);
+          targetCtx.lineTo(cx, cy + lensRadius);
+          targetCtx.stroke();
+
+          // Milliradian Tick Marks along X & Y
+          const tickSpacing = 26;
+          const numTicks = 9;
+
+          for (let i = 1; i <= numTicks; i++) {
+            const tickLen = i % 2 === 0 ? 10 : 6;
+            // X Ticks
+            targetCtx.beginPath();
+            targetCtx.moveTo(cx + i * tickSpacing, cy - tickLen);
+            targetCtx.lineTo(cx + i * tickSpacing, cy + tickLen);
+            targetCtx.moveTo(cx - i * tickSpacing, cy - tickLen);
+            targetCtx.lineTo(cx - i * tickSpacing, cy + tickLen);
+            targetCtx.stroke();
+
+            // Y Ticks
+            targetCtx.beginPath();
+            targetCtx.moveTo(cx - tickLen, cy + i * tickSpacing);
+            targetCtx.lineTo(cx + tickLen, cy + i * tickSpacing);
+            targetCtx.moveTo(cx - tickLen, cy - i * tickSpacing);
+            targetCtx.lineTo(cx + tickLen, cy - i * tickSpacing);
+            targetCtx.stroke();
+          }
+
+          if (currentReticle === 'tactical-circle') {
+            // Tactical Reticle Rings
+            targetCtx.beginPath();
+            targetCtx.arc(cx, cy, 60, 0, Math.PI * 2);
+            targetCtx.arc(cx, cy, 140, 0, Math.PI * 2);
+            targetCtx.stroke();
+          }
+        } else if (currentReticle === 'cyber-grid') {
+          // Cyber Lock Grid
+          targetCtx.beginPath();
+          targetCtx.strokeRect(cx - 70, cy - 70, 140, 140);
+          targetCtx.arc(cx, cy, 110, 0, Math.PI * 2);
+          targetCtx.stroke();
+
+          // Corner Brackets
+          const bSize = 20;
+          targetCtx.lineWidth = 2.5;
+          targetCtx.beginPath();
+          // TL
+          targetCtx.moveTo(cx - 160, cy - 160 + bSize); targetCtx.lineTo(cx - 160, cy - 160); targetCtx.lineTo(cx - 160 + bSize, cy - 160);
+          // TR
+          targetCtx.moveTo(cx + 160 - bSize, cy - 160); targetCtx.lineTo(cx + 160, cy - 160); targetCtx.lineTo(cx + 160, cy - 160 + bSize);
+          // BL
+          targetCtx.moveTo(cx - 160, cy + 160 - bSize); targetCtx.lineTo(cx - 160, cy + 160); targetCtx.lineTo(cx - 160 + bSize, cy + 160);
+          // BR
+          targetCtx.moveTo(cx + 160 - bSize, cy + 160); targetCtx.lineTo(cx + 160, cy + 160); targetCtx.lineTo(cx + 160, cy + 160 - bSize);
+          targetCtx.stroke();
+          targetCtx.lineWidth = 1.5;
+        }
+
+        // Center Laser Dot
+        targetCtx.beginPath();
+        targetCtx.arc(cx, cy, 2.5, 0, Math.PI * 2);
+        targetCtx.fill();
+        targetCtx.restore();
+
+        // 4. Tactical CRT HUD Telemetry Overlays
+        targetCtx.save();
+        targetCtx.shadowColor = theme.glow;
+        targetCtx.shadowBlur = 12;
+        targetCtx.fillStyle = theme.main;
+        targetCtx.strokeStyle = theme.main;
+        targetCtx.lineWidth = 1.5;
+
+        // TOP MAIN TARGET TEXT (e.g. "DELETE")
+        targetCtx.font = '800 38px "JetBrains Mono", monospace';
+        targetCtx.textAlign = 'center';
+        targetCtx.letterSpacing = '0.22em';
+        targetCtx.fillText(targetText.toUpperCase(), cx, cy - lensRadius * 0.64);
+
+        // TOP-LEFT HUD TELEMETRY
+        targetCtx.font = '700 16px "JetBrains Mono", monospace';
+        targetCtx.textAlign = 'left';
+        targetCtx.fillText('DIIIIIT', 42, 60);
+
+        // Battery / Power Meter Box
+        targetCtx.strokeRect(42, 80, 130, 36);
+        targetCtx.fillRect(48, 86, 75, 24); // Charged bars
+
+        // TOP-RIGHT HUD TELEMETRY
+        const now = new Date();
+        const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        targetCtx.strokeRect(w - 190, 42, 148, 26);
+        targetCtx.font = '700 16px "JetBrains Mono", monospace';
+        targetCtx.textAlign = 'right';
+        targetCtx.fillText(timeStr, w - 50, 61);
+
+        // Warning Triangle Box
+        targetCtx.strokeRect(w - 150, 80, 108, 44);
+        targetCtx.font = '700 20px "JetBrains Mono", monospace';
+        targetCtx.fillText('⚠', w - 108, 110);
+        targetCtx.font = '700 9px "JetBrains Mono", monospace';
+        targetCtx.fillText('ACQ 1195', w - 54, 108);
+
+        // BOTTOM-LEFT HUD TELEMETRY
+        targetCtx.textAlign = 'left';
+        targetCtx.font = '700 18px "JetBrains Mono", monospace';
+        targetCtx.fillText('R I G A', 42, h - 160);
+
+        targetCtx.font = '700 14px "JetBrains Mono", monospace';
+        targetCtx.fillText('0 2  9 9 H', 42, h - 134);
+
+        targetCtx.fillText('9', 42, h - 110);
+        targetCtx.fillRect(115, h - 124, 32, 14);
+
+        targetCtx.font = '700 12px "JetBrains Mono", monospace';
+        targetCtx.fillText('0 7 / 1 6 / 0 1 / 6 / 6', 42, h - 78);
+
+        targetCtx.font = '700 18px "JetBrains Mono", monospace';
+        targetCtx.fillText('998-45X', 42, h - 42);
+
+        // BOTTOM-RIGHT HUD TELEMETRY
+        targetCtx.strokeRect(w - 160, h - 105, 118, 38);
+        targetCtx.font = '800 18px "JetBrains Mono", monospace';
+        targetCtx.textAlign = 'center';
+        targetCtx.fillText('DBE', w - 101, h - 80);
+
+        targetCtx.font = '700 16px "JetBrains Mono", monospace';
+        targetCtx.textAlign = 'right';
+        targetCtx.fillText('PL  69:90', w - 42, h - 42);
+
+        targetCtx.restore();
+
+        // 5. Scanline Overlay
+        targetCtx.fillStyle = 'rgba(255, 255, 255, 0.015)';
+        for (let y = 0; y < h; y += 4) {
+          targetCtx.fillRect(0, y, w, 1);
+        }
+      }
+
+      // Animation Loop
+      let animationId;
+      function loop(time) {
+        renderFrame(ctx, canvas.width, canvas.height, time);
+        animationId = requestAnimationFrame(loop);
+      }
+      animationId = requestAnimationFrame(loop);
+
+      // Event Listeners
+      btnUpload.addEventListener('click', () => {
+        fileInput.click();
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (evt) => {
+            userImage = new Image();
+            userImage.onload = () => {
+              isImageLoaded = true;
+              panX = 0;
+              panY = 0;
+              showToast('✓ NEW PHOTO LOADED INTO RETICLE');
+            };
+            userImage.src = evt.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Drag & Drop onto Canvas
+      window.addEventListener('dragover', (e) => { e.preventDefault(); });
+      window.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (evt) => {
+            userImage = new Image();
+            userImage.onload = () => {
+              isImageLoaded = true;
+              panX = 0;
+              panY = 0;
+              showToast('✓ NEW PHOTO LOADED INTO RETICLE');
+            };
+            userImage.src = evt.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Pan & Drag Image
+      canvas.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startMouseX = e.clientX;
+        startMouseY = e.clientY;
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - startMouseX;
+        const dy = e.clientY - startMouseY;
+        startMouseX = e.clientX;
+        startMouseY = e.clientY;
+        panX += dx * 1.5;
+        panY += dy * 1.5;
+      });
+
+      window.addEventListener('mouseup', () => { isDragging = false; });
+
+      // Controls
+      targetTextInput.addEventListener('input', (e) => {
+        targetText = e.target.value || 'DELETE';
+      });
+
+      themeSelect.addEventListener('change', (e) => {
+        currentTheme = e.target.value;
+      });
+
+      reticleSelect.addEventListener('change', (e) => {
+        currentReticle = e.target.value;
+      });
+
+      rainSlider.addEventListener('input', (e) => {
+        rainDensity = parseInt(e.target.value, 10);
+      });
+
+      smokeToggle.addEventListener('change', (e) => {
+        smokeEnabled = e.target.checked;
+      });
+
+      zoomSlider.addEventListener('input', (e) => {
+        imageZoom = parseInt(e.target.value, 10) / 100;
+      });
+
+      // Export System
+      btnExportPng.addEventListener('click', () => {
+        const offCanvas = document.createElement('canvas');
+        offCanvas.width = 1200;
+        offCanvas.height = 1200;
+        const offCtx = offCanvas.getContext('2d');
+        renderFrame(offCtx, 1200, 1200, performance.now(), false);
+
+        const a = document.createElement('a');
+        a.download = `CPFP-${targetText}-${Date.now()}.png`;
+        a.href = offCanvas.toDataURL('image/png');
+        a.click();
+        showToast('✓ EXPORTED 1200px HIGH-RES PNG PFP');
+      });
+
+      btnExportTrans.addEventListener('click', () => {
+        const offCanvas = document.createElement('canvas');
+        offCanvas.width = 1200;
+        offCanvas.height = 1200;
+        const offCtx = offCanvas.getContext('2d');
+        renderFrame(offCtx, 1200, 1200, performance.now(), true);
+
+        const a = document.createElement('a');
+        a.download = `CPFP-TRANS-RETICLE-${Date.now()}.png`;
+        a.href = offCanvas.toDataURL('image/png');
+        a.click();
+        showToast('✓ EXPORTED TRANSPARENT RETICLE HUD');
+      });
+
+      btnExportJpg.addEventListener('click', () => {
+        const offCanvas = document.createElement('canvas');
+        offCanvas.width = 1200;
+        offCanvas.height = 1200;
+        const offCtx = offCanvas.getContext('2d');
+        renderFrame(offCtx, 1200, 1200, performance.now(), false);
+
+        const a = document.createElement('a');
+        a.download = `CPFP-${targetText}-${Date.now()}.jpg`;
+        a.href = offCanvas.toDataURL('image/jpeg', 0.95);
+        a.click();
+        showToast('✓ EXPORTED JPEG PFP');
+      });
+
+      btnRecMp4.addEventListener('click', async () => {
+        btnRecMp4.disabled = true;
+        btnRecMp4.innerText = '● RECORDING...';
+
+        const stream = canvas.captureStream(60);
+        let mimeType = 'video/mp4';
+        if (!MediaRecorder.isTypeSupported('video/mp4')) {
+          mimeType = 'video/webm;codecs=vp9';
+        }
+
+        const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 8000000 });
+        const chunks = [];
+
+        recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+        recorder.onstop = () => {
+          const blob = new Blob(chunks, { type: mimeType });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.download = `CPFP-ANIMATED-${Date.now()}.${mimeType.includes('mp4') ? 'mp4' : 'webm'}`;
+          a.href = url;
+          a.click();
+          btnRecMp4.disabled = false;
+          btnRecMp4.innerText = '▶ REC MP4';
+          showToast('✓ EXPORTED 60 FPS VIDEO AVATAR');
+        };
+
+        recorder.start();
+        setTimeout(() => {
+          recorder.stop();
+        }, 4000);
+      });
+
+    })();
+  </script>
+</body>
+</html>

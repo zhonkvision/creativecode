@@ -1,0 +1,151 @@
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden}
+body{
+  background:#050510;
+  color:#fff;
+  font-family:'Courier New',monospace;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
+
+/* ── Star field ── */
+.stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.star{
+  position:absolute;
+  width:2px;height:2px;
+  background:#fff;
+  border-radius:50%;
+  opacity:0;
+  animation:twinkle var(--dur) ease-in-out var(--delay) infinite;
+}
+@keyframes twinkle{
+  0%,100%{opacity:0;transform:scale(.5)}
+  50%{opacity:var(--bright);transform:scale(1)}
+}
+.star.layer2{width:1px;height:1px;animation-name:drift}
+@keyframes drift{
+  0%{opacity:0;transform:translate(0,0) scale(.5)}
+  50%{opacity:var(--bright);transform:translate(calc(var(--dx)),calc(var(--dy))) scale(1)}
+  100%{opacity:0;transform:translate(calc(var(--dx) * 2),calc(var(--dy) * 2)) scale(.5)}
+}
+
+/* ── Click overlay ── */
+#overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:radial-gradient(ellipse at center,#0a0a20 0%,#050510 100%);
+  z-index:100;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;
+  transition:opacity .8s;
+}
+#overlay.hidden{opacity:0;pointer-events:none}
+#overlay h1{
+  font-size:1.6rem;color:#8b5cf6;
+  text-shadow:0 0 40px #8b5cf688,0 0 80px #8b5cf644;
+  margin-bottom:8px;letter-spacing:2px;
+}
+#overlay p{font-size:.7rem;color:#555;margin-bottom:30px}
+#overlay .start-ring{
+  width:100px;height:100px;
+  border:2px solid #8b5cf644;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  animation:pulse-ring 2s ease-in-out infinite;
+}
+#overlay .start-ring span{font-size:.7rem;color:#8b5cf6;letter-spacing:1px}
+@keyframes pulse-ring{
+  0%,100%{transform:scale(1);border-color:#8b5cf644}
+  50%{transform:scale(1.08);border-color:#8b5cf688}
+}
+
+/* ── Main UI ── */
+.main{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:16px}
+
+/* ── Note display ── */
+#noteDisplay{
+  font-size:.65rem;color:#555;letter-spacing:2px;
+  height:18px;
+  transition:color .3s;
+}
+
+/* ── Circular visualizer ── */
+#vizCanvas{
+  display:block;
+  filter:drop-shadow(0 0 20px var(--glow-color,#8b5cf633));
+  transition:filter 1s;
+}
+
+/* ── Play button ── */
+#playBtn{
+  width:64px;height:64px;
+  border-radius:50%;
+  border:2px solid #ffffff15;
+  background:#0a0a18;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:.3s;
+  position:relative;
+}
+#playBtn:hover{border-color:#ffffff30;background:#0e0e22}
+#playBtn svg{fill:#fff;width:24px;height:24px;transition:.2s}
+#playBtn.playing svg{fill:var(--accent,#8b5cf6)}
+
+/* ── Mood selector ── */
+.moods{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.mood-btn{
+  padding:10px 22px;
+  border-radius:20px;
+  border:1px solid #ffffff10;
+  background:#0a0a18;
+  color:#555;
+  font-family:inherit;
+  font-size:.6rem;
+  cursor:pointer;
+  letter-spacing:1px;
+  transition:.3s;
+  text-transform:uppercase;
+}
+.mood-btn:hover{border-color:#ffffff25;color:#888}
+.mood-btn.active{
+  border-color:var(--mood-color);
+  color:var(--mood-color);
+  background:var(--mood-bg);
+  box-shadow:0 0 20px var(--mood-glow);
+}
+
+/* ── Sliders ── */
+.sliders{display:flex;gap:24px;align-items:center}
+.slider-group{display:flex;flex-direction:column;align-items:center;gap:4px}
+.slider-group label{font-size:.5rem;color:#444;letter-spacing:1px;text-transform:uppercase}
+.slider-group input[type=range]{
+  -webkit-appearance:none;appearance:none;
+  width:120px;height:4px;
+  background:#1a1a2e;
+  border-radius:2px;
+  outline:none;
+  cursor:pointer;
+}
+.slider-group input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:14px;height:14px;
+  border-radius:50%;
+  background:var(--accent,#8b5cf6);
+  border:2px solid #050510;
+  box-shadow:0 0 8px var(--accent-glow,#8b5cf633);
+}
+.slider-group input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;
+  border-radius:50%;
+  background:var(--accent,#8b5cf6);
+  border:2px solid #050510;
+  box-shadow:0 0 8px var(--accent-glow,#8b5cf633);
+}
+
+.foot{
+  position:fixed;bottom:12px;
+  font-size:.45rem;color:#222;z-index:1;
+}
+.foot a{color:#ffffff22;text-decoration:none}

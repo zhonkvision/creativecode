@@ -1,0 +1,50 @@
+[
+  {
+    "id": "CH-01-CRT-TELEMETRY",
+    "name": "CRT Telemetry & Split Mesh",
+    "description": "Scientific HUD interfaces, dual-tone state wireframes, and medical/neurological telemetry stacks.",
+    "lineage_refs": ["REF-001"],
+    "primary_palette": ["#FF2A42", "#25E86E", "#050709", "#F1F5F9"],
+    "governing_rules": [
+      "Segmentation denotes state (e.g. Red vs Green).",
+      "Telemetry metrics must update synchronously.",
+      "1px crisp wireframes with no soft blur."
+    ]
+  },
+  {
+    "id": "CH-02-NUMERIC-GRID",
+    "name": "Numeric Matrix & Wafer Yield",
+    "description": "Semiconductor yield diagnostics, discrete spatial cell matrix, and defect cluster mapping.",
+    "lineage_refs": ["REF-002"],
+    "primary_palette": ["#00F0FF", "#25E86E", "#FFB000", "#050709"],
+    "governing_rules": [
+      "Circular physical substrate boundary.",
+      "Discrete cell calculations with heat-map color scale.",
+      "Coordinate indices in tabular monospace."
+    ]
+  },
+  {
+    "id": "CH-03-VECTOR-PERSPECTIVE",
+    "name": "Architectural Vector Perspective",
+    "description": "Monochrome phosphor 3D wireframe projections, structural stress calculations, and radar azimuth sweeps.",
+    "lineage_refs": ["REF-003"],
+    "primary_palette": ["#25E86E", "#0C1015", "#050709", "#64748B"],
+    "governing_rules": [
+      "Pure mathematical 3D perspective projection.",
+      "Sweep beam highlights intersecting geometry.",
+      "Strict monochrome phosphor discipline."
+    ]
+  },
+  {
+    "id": "CH-04-STEPPED-RASTER",
+    "name": "Stepped Phosphor Raster",
+    "description": "1980s cathode-ray raster slicing, discrete horizontal color channel bars, and chromatic shift.",
+    "lineage_refs": ["REF-004"],
+    "primary_palette": ["#25E86E", "#FF2A42", "#00F0FF", "#FFB000"],
+    "governing_rules": [
+      "Geometry sliced into horizontal phosphor lines.",
+      "Subtle chromatic RGB offset on high-contrast edges.",
+      "Segmented progress telemetry."
+    ]
+  }
+]

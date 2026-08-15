@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compulsive Cyber-Neurology Telemetry HUD</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background: #080b0e;
+      color: #00f0a0;
+      font-family: 'VT323', 'Share Tech Mono', monospace;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #hud-container {
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      height: 900px;
+      max-height: 100vh;
+      background: #090c10;
+      border: 2px solid #1a2634;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(0, 240, 160, 0.03);
+    }
+    /* Top Header */
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #1a2634;
+      padding-bottom: 12px;
+    }
+    .title-compulsive {
+      font-size: 52px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+      line-height: 1;
+      font-family: 'VT323', monospace;
+    }
+    .badge-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-end;
+    }
+    .badge {
+      border: 1.5px solid;
+      padding: 2px 10px;
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .badge-red { border-color: #ff2a55; color: #ff2a55; box-shadow: 0 0 8px rgba(255, 42, 85, 0.4); }
+    .badge-teal { border-color: #00f0a0; color: #00f0a0; box-shadow: 0 0 8px rgba(0, 240, 160, 0.4); }
+
+    /* Sub-header telemetry strip */
+    .telemetry-strip {
+      display: flex;
+      justify-content: space-between;
+      border: 1px solid #1f2e3d;
+      padding: 6px 14px;
+      font-size: 16px;
+      margin-bottom: 16px;
+      background: rgba(0, 240, 160, 0.02);
+    }
+    .tag-red { color: #ff2a55; }
+    .tag-teal { color: #00f0a0; }
+
+    /* Main Body 2-Column Layout */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.9fr;
+      gap: 20px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* Left: 3D Wireframe Head Canvas */
+    .head-viewport {
+      position: relative;
+      border: 1px solid #1a2634;
+      background: #06080b;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .viewport-overlay-labels {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 15px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    canvas#head-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Right: Diagnostics & Telemetry Panels */
+    .telemetry-panels {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .panel-block {
+      border: 1px solid #1f2e3d;
+      padding: 10px 14px;
+      background: rgba(0, 0, 0, 0.3);
+    }
+    .panel-title {
+      font-size: 14px;
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Oscilloscope */
+    canvas#osc-canvas {
+      width: 100%;
+      height: 70px;
+      background: #05070a;
+      border: 1px solid #16222e;
+      display: block;
+      margin: 6px 0;
+    }
+    .osc-flags {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    /* Toxic Mentality Silhouette Diagram */
+    .silhouette-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 110px;
+      position: relative;
+      border: 1px solid #16222e;
+      background: #040608;
+    }
+    canvas#body-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Bottom Horizon Grid Section */
+    .bottom-horizon {
+      margin-top: 14px;
+      border: 1px solid #1f2e3d;
+      padding: 10px 14px;
+      background: #05070a;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .bottom-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+    .progress-bar-wrap {
+      width: 140px;
+      height: 10px;
+      border: 1px solid #ff2a55;
+      padding: 1px;
+      display: inline-block;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 65%;
+      background: #ff2a55;
+      box-shadow: 0 0 6px #ff2a55;
+      animation: pulseBar 2s infinite ease-in-out;
+    }
+    @keyframes pulseBar {
+      0%, 100% { width: 55%; }
+      50% { width: 85%; }
+    }
+    canvas#horizon-canvas {
+      width: 100%;
+      height: 90px;
+      display: block;
+      border: 1px solid #141c26;
+      background: #030406;
+    }
+    .footer-stamp {
+      font-size: 12px;
+      color: #4a6378;
+      letter-spacing: 0.1em;
+      margin-top: 8px;
+      text-align: left;
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="hud-container">
+    <!-- Header -->
+    <div class="header-row">
+      <div class="title-compulsive">COMPULSIVE</div>
+      <div class="badge-box">
+        <div class="badge badge-red">OBSESSIVE</div>
+        <div class="badge badge-teal">DISORDER</div>
+      </div>
+    </div>
+
+    <!-- Telemetry Strip -->
+    <div class="telemetry-strip">
+      <div>DISP : <span class="tag-teal">FUSION</span></div>
+      <div>END : <span class="tag-red">[UNKNOWN]</span></div>
+      <div>SEG : <span class="tag-teal">-6</span></div>
+      <div>LOCAL : <span id="clock-display">24.12.018 12:34</span></div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+      <!-- 3D Head Lattice Canvas -->
+      <div class="head-viewport">
+        <div class="viewport-overlay-labels">
+          <div>TGT : <span class="tag-teal">HOPE</span><br><strong>21/100</strong></div>
+          <div style="text-align: right;">12/1<br>CURRENT: <span class="tag-red">HATRED</span></div>
+        </div>
+        <canvas id="head-canvas"></canvas>
+      </div>
+
+      <!-- Right Diagnostics -->
+      <div class="telemetry-panels">
+        <!-- Panel 1: Waveform -->
+        <div class="panel-block">
+          <div class="panel-title">
+            <span>RLP VECT</span>
+            <span class="tag-red">525.600 MIN</span>
+          </div>
+          <canvas id="osc-canvas"></canvas>
+          <div class="osc-flags">
+            <span>■ FALSE</span>
+            <span class="tag-teal">■ TRUE</span>
+          </div>
+        </div>
+
+        <!-- Panel 2: Toxic Mentality Body Scan -->
+        <div class="panel-block">
+          <div class="panel-title">
+            <span>TOXIC MENTALITY</span>
+            <span class="tag-teal">PRCSS 34.678--D/C</span>
+          </div>
+          <div class="silhouette-box">
+            <canvas id="body-canvas"></canvas>
+          </div>
+        </div>
+
+        <!-- Panel 3: Reference Telemetry -->
+        <div class="panel-block" style="font-size: 14px; line-height: 1.4;">
+          <div style="display: flex; justify-content: space-between;">
+            <span>SSP</span>
+            <span class="tag-red">*. *A<br>*. *'J</span>
+          </div>
+          <div style="margin-top: 8px; border-top: 1px solid #1a2634; padding-top: 6px;">
+            <div>[RLPS] 12.03-4092</div>
+            <div style="color: #ff2a55;">REF. 24D.3271.87</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Horizon Grid -->
+    <div class="bottom-horizon">
+      <div class="bottom-header">
+        <div>CONS: <span class="tag-red">TERMINATED</span></div>
+        <div>TURN: <span class="progress-bar-wrap"><div class="progress-bar-fill"></div></span></div>
+        <div>TEMP/RESULT : <span class="tag-teal">-2 **</span></div>
+      </div>
+      <canvas id="horizon-canvas"></canvas>
+    </div>
+
+    <div class="footer-stamp">
+      © OTAKEDUA (-8.5907490, 116.1174054) 4-511018.2239-0816 // CC-VISUAL-DNA
+    </div>
+  </div>
+
+  <script>
+    // Live Clock
+    function updateClock() {
+      const now = new Date();
+      const s = "24.12.018 " + String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0') + ":" + String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('clock-display').innerText = s;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // 1. 3D Wireframe Head Canvas Simulation
+    const headCanvas = document.getElementById('head-canvas');
+    const headCtx = headCanvas.getContext('2d');
+
+    let angleY = 0;
+    let headParams = {
+      rotationSpeed: 0.015,
+      meshDensity: 22,
+      splitOffset: 35
+    };
+
+    function resizeHead() {
+      const rect = headCanvas.getBoundingClientRect();
+      headCanvas.width = rect.width * window.devicePixelRatio;
+      headCanvas.height = rect.height * window.devicePixelRatio;
+    }
+    window.addEventListener('resize', resizeHead);
+    resizeHead();
+
+    // Generate 3D head profile vertex model mathematically
+    function draw3DHead() {
+      const w = headCanvas.width;
+      const h = headCanvas.height;
+      headCtx.clearRect(0, 0, w, h);
+      headCtx.save();
+      headCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      const dw = w / window.devicePixelRatio;
+      const dh = h / window.devicePixelRatio;
+
+      angleY += headParams.rotationSpeed;
+
+      const cx = dw / 2;
+      const cy = dh / 2 + 10;
+      const scale = Math.min(dw, dh) * 0.38;
+
+      const latLines = headParams.meshDensity;
+      const lonLines = headParams.meshDensity;
+
+      // Draw Head Wireframe in 2 Halves (Front Face Red, Back Skull Green)
+      for (let i = 0; i <= latLines; i++) {
+        const phi = (i / latLines) * Math.PI - Math.PI / 2;
+        const rFactor = 1.0 - 0.25 * Math.pow(Math.sin(phi), 2); // Oval head deformation
+
+        // Red Half (Front Mask)
+        headCtx.beginPath();
+        headCtx.strokeStyle = 'rgba(255, 42, 85, 0.85)';
+        headCtx.lineWidth = 1.3;
+        headCtx.shadowColor = '#ff2a55';
+        headCtx.shadowBlur = 4;
+
+        for (let j = 0; j <= lonLines / 2; j++) {
+          const theta = (j / (lonLines / 2)) * Math.PI - Math.PI / 2 + angleY;
+          // Jaw/Nose profile modulation
+          let radius = scale * rFactor;
+          if (phi > -0.3 && phi < 0.2 && Math.cos(theta) > 0.4) {
+            radius *= 1.15; // Nose bridge bulge
+          }
+          if (phi < -0.4 && Math.cos(theta) > 0.2) {
+            radius *= 0.85; // Chin taper
+          }
+
+          const x3d = radius * Math.cos(phi) * Math.sin(theta) - headParams.splitOffset;
+          const y3d = -radius * Math.sin(phi);
+          const z3d = radius * Math.cos(phi) * Math.cos(theta);
+
+          const pers = 600 / (600 + z3d);
+          const px = cx + x3d * pers;
+          const py = cy + y3d * pers;
+
+          if (j === 0) headCtx.moveTo(px, py);
+          else headCtx.lineTo(px, py);
+        }
+        headCtx.stroke();
+
+        // Green Half (Back Shell)
+        headCtx.beginPath();
+        headCtx.strokeStyle = 'rgba(0, 240, 160, 0.85)';
+        headCtx.lineWidth = 1.3;
+        headCtx.shadowColor = '#00f0a0';
+        headCtx.shadowBlur = 4;
+
+        for (let j = lonLines / 2; j <= lonLines; j++) {
+          const theta = (j / lonLines) * Math.PI * 2 + angleY;
+          const radius = scale * rFactor * 0.98;
+
+          const x3d = radius * Math.cos(phi) * Math.sin(theta) + headParams.splitOffset;
+          const y3d = -radius * Math.sin(phi);
+          const z3d = radius * Math.cos(phi) * Math.cos(theta);
+
+          const pers = 600 / (600 + z3d);
+          const px = cx + x3d * pers;
+          const py = cy + y3d * pers;
+
+          if (j === lonLines / 2) headCtx.moveTo(px, py);
+          else headCtx.lineTo(px, py);
+        }
+        headCtx.stroke();
+      }
+
+      // Vertical Meridians
+      for (let j = 0; j <= lonLines; j++) {
+        const isFront = j <= lonLines / 2;
+        headCtx.beginPath();
+        headCtx.strokeStyle = isFront ? 'rgba(255, 42, 85, 0.65)' : 'rgba(0, 240, 160, 0.65)';
+        headCtx.lineWidth = 1.0;
+        headCtx.shadowBlur = 0;
+
+        const theta = (j / lonLines) * Math.PI * 2 + angleY;
+        const xOffset = isFront ? -headParams.splitOffset : headParams.splitOffset;
+
+        for (let i = 0; i <= latLines; i++) {
+          const phi = (i / latLines) * Math.PI - Math.PI / 2;
+          const rFactor = 1.0 - 0.25 * Math.pow(Math.sin(phi), 2);
+          let radius = scale * rFactor;
+          if (isFront && phi > -0.3 && phi < 0.2 && Math.cos(theta) > 0.4) radius *= 1.15;
+
+          const x3d = radius * Math.cos(phi) * Math.sin(theta) + xOffset;
+          const y3d = -radius * Math.sin(phi);
+          const z3d = radius * Math.cos(phi) * Math.cos(theta);
+
+          const pers = 600 / (600 + z3d);
+          const px = cx + x3d * pers;
+          const py = cy + y3d * pers;
+
+          if (i === 0) headCtx.moveTo(px, py);
+          else headCtx.lineTo(px, py);
+        }
+        headCtx.stroke();
+      }
+
+      headCtx.restore();
+      requestAnimationFrame(draw3DHead);
+    }
+    draw3DHead();
+
+    // 2. Oscilloscope Waveform Canvas
+    const oscCanvas = document.getElementById('osc-canvas');
+    const oscCtx = oscCanvas.getContext('2d');
+    let oscTime = 0;
+
+    function drawOsc() {
+      const w = oscCanvas.width = oscCanvas.offsetWidth;
+      const h = oscCanvas.height = oscCanvas.offsetHeight;
+      oscCtx.clearRect(0, 0, w, h);
+
+      oscTime += 0.08;
+
+      // Draw Center Baseline
+      oscCtx.strokeStyle = 'rgba(0, 240, 160, 0.2)';
+      oscCtx.beginPath();
+      oscCtx.moveTo(0, h / 2);
+      oscCtx.lineTo(w, h / 2);
+      oscCtx.stroke();
+
+      // Audio waveform fill
+      oscCtx.beginPath();
+      oscCtx.fillStyle = 'rgba(0, 240, 160, 0.4)';
+      oscCtx.strokeStyle = '#00f0a0';
+      oscCtx.lineWidth = 1.5;
+
+      for (let x = 0; x < w; x++) {
+        const progress = x / w;
+        const envelope = Math.sin(progress * Math.PI);
+        const yOffset = (Math.sin(x * 0.08 + oscTime * 2) * 0.5 + Math.cos(x * 0.22 - oscTime * 3) * 0.3 + Math.sin(x * 0.04 + oscTime) * 0.2) * (h * 0.42) * envelope;
+        const y = h / 2 + yOffset;
+
+        if (x === 0) {
+          oscCtx.moveTo(x, y);
+        } else {
+          oscCtx.lineTo(x, y);
+        }
+      }
+      oscCtx.stroke();
+
+      requestAnimationFrame(drawOsc);
+    }
+    drawOsc();
+
+    // 3. Toxic Mentality Silhouette Canvas
+    const bodyCanvas = document.getElementById('body-canvas');
+    const bodyCtx = bodyCanvas.getContext('2d');
+    let scanY = 0;
+
+    function drawBody() {
+      const w = bodyCanvas.width = bodyCanvas.offsetWidth;
+      const h = bodyCanvas.height = bodyCanvas.offsetHeight;
+      bodyCtx.clearRect(0, 0, w, h);
+
+      scanY = (scanY + 1.2) % h;
+
+      // Draw Grid Behind
+      bodyCtx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      for (let gx = 0; gx < w; gx += 16) {
+        bodyCtx.beginPath(); bodyCtx.moveTo(gx, 0); bodyCtx.lineTo(gx, h); bodyCtx.stroke();
+      }
+      for (let gy = 0; gy < h; gy += 16) {
+        bodyCtx.beginPath(); bodyCtx.moveTo(0, gy); bodyCtx.lineTo(w, gy); bodyCtx.stroke();
+      }
+
+      // Draw 3 Silhouette Figures (Green, Half-Red, Full-Red)
+      const figures = [
+        { x: w * 0.22, color: '#00f0a0' },
+        { x: w * 0.5, color: '#ff2a55', split: true },
+        { x: w * 0.78, color: '#ff2a55' }
+      ];
+
+      figures.forEach(fig => {
+        bodyCtx.strokeStyle = fig.color;
+        bodyCtx.lineWidth = 1.5;
+        bodyCtx.beginPath();
+
+        const bx = fig.x;
+        const by = h * 0.5;
+
+        // Head
+        bodyCtx.arc(bx, by - 32, 8, 0, Math.PI * 2);
+        // Torso
+        bodyCtx.moveTo(bx, by - 24);
+        bodyCtx.lineTo(bx, by + 10);
+        // Arms
+        bodyCtx.moveTo(bx - 16, by - 12);
+        bodyCtx.lineTo(bx + 16, by - 12);
+        // Legs
+        bodyCtx.moveTo(bx, by + 10);
+        bodyCtx.lineTo(bx - 10, by + 36);
+        bodyCtx.moveTo(bx, by + 10);
+        bodyCtx.lineTo(bx + 10, by + 36);
+
+        bodyCtx.stroke();
+      });
+
+      // Horizontal Scanline Telemetry Bar
+      bodyCtx.strokeStyle = 'rgba(255, 42, 85, 0.7)';
+      bodyCtx.lineWidth = 1;
+      bodyCtx.beginPath();
+      bodyCtx.moveTo(0, scanY);
+      bodyCtx.lineTo(w, scanY);
+      bodyCtx.stroke();
+
+      requestAnimationFrame(drawBody);
+    }
+    drawBody();
+
+    // 4. Horizon Wireframe Grid Canvas
+    const horizCanvas = document.getElementById('horizon-canvas');
+    const horizCtx = horizCanvas.getContext('2d');
+    let gridOffset = 0;
+
+    function drawHorizon() {
+      const w = horizCanvas.width = horizCanvas.offsetWidth;
+      const h = horizCanvas.height = horizCanvas.offsetHeight;
+      horizCtx.clearRect(0, 0, w, h);
+
+      gridOffset = (gridOffset + 0.8) % 24;
+
+      horizCtx.strokeStyle = '#00f0a0';
+      horizCtx.lineWidth = 1.0;
+      horizCtx.shadowColor = '#00f0a0';
+      horizCtx.shadowBlur = 3;
+
+      const fov = 120;
+      const horizonY = 15;
+
+      // Perspective Radial Lines
+      for (let x = -w; x <= w * 2; x += 32) {
+        horizCtx.beginPath();
+        horizCtx.moveTo(w / 2, horizonY);
+        horizCtx.lineTo(x, h);
+        horizCtx.stroke();
+      }
+
+      // Perspective Transverse Lines
+      for (let z = 1; z < 20; z++) {
+        const lineZ = (z * 24 + gridOffset) % 360;
+        const py = horizonY + Math.pow(lineZ / 360, 2) * (h - horizonY);
+
+        horizCtx.beginPath();
+        horizCtx.moveTo(0, py);
+        horizCtx.lineTo(w, py);
+        horizCtx.stroke();
+      }
+
+      requestAnimationFrame(drawHorizon);
+    }
+    drawHorizon();
+
+    // Hot DNA Mutation listener via postMessage
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.type === 'DNA_MUTATION') {
+        const params = e.data.parameters;
+        if (params.headRotationSpeed !== undefined) headParams.rotationSpeed = params.headRotationSpeed * 0.01;
+        if (params.meshDivision !== undefined) headParams.meshDensity = params.meshDivision;
+        if (params.perspectiveDepth !== undefined) headParams.splitOffset = params.perspectiveDepth * 0.07;
+      }
+    });
+  </script>
+</body>
+</html>

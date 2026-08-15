@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chromarad // Isotope Matrix — 15 Styles Studio Engine</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a;
+      color: #e0e0e0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.4;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: #111;
+      border-bottom: 1px solid #222;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      background: linear-gradient(90deg, #00ff88, #00d4ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .main-app-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr 320px;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+    @media (max-width: 1100px) {
+      .main-app-grid {
+        grid-template-columns: 300px 1fr;
+        overflow-y: auto;
+      }
+      .right-sidebar {
+        border-left: none;
+        border-top: 1px solid #222;
+        grid-column: 1 / -1;
+      }
+    }
+    @media (max-width: 768px) {
+      .main-app-grid {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+      }
+      .center-stage {
+        order: -1;
+        min-height: 300px;
+        max-height: 52vh;
+        flex: none;
+      }
+      .left-sidebar, .right-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #222;
+      }
+      header {
+        padding: 10px 14px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .brand-title {
+        font-size: 15px;
+      }
+    }
+    /* Sidebars */
+    .left-sidebar, .right-sidebar {
+      background: #0f0f0f;
+      border-right: 1px solid #222;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .right-sidebar {
+      border-right: none;
+      border-left: 1px solid #222;
+    }
+    .section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    /* Anti-Generic Visual DNA Button System */
+    button {
+      background: #080C10;
+      border: 1px solid #1E293B;
+      color: #94A3B8;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 0px !important;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      line-height: 1;
+    }
+    button:hover {
+      background: #0F172A;
+      color: #F1F5F9;
+      border-color: #25E86E;
+      box-shadow: 0 0 8px rgba(37, 232, 110, 0.25);
+    }
+    button.active {
+      background: rgba(37, 232, 110, 0.12);
+      border-color: #25E86E;
+      color: #25E86E;
+      font-weight: 700;
+      box-shadow: inset 0 0 6px rgba(37, 232, 110, 0.2);
+    }
+
+    /* Terminal Action Buttons */
+    .btn-frame-png {
+      background: #25E86E;
+      color: #050709;
+      border: 1px solid #25E86E;
+      font-weight: 700;
+    }
+    .btn-frame-png:hover {
+      background: #F1F5F9;
+      color: #050709;
+      border-color: #F1F5F9;
+      box-shadow: 0 0 12px rgba(37, 232, 110, 0.5);
+    }
+
+    .btn-frame-jpg {
+      background: rgba(37, 232, 110, 0.08);
+      color: #25E86E;
+      border: 1px solid rgba(37, 232, 110, 0.5);
+      font-weight: 700;
+    }
+    .btn-frame-jpg:hover {
+      background: #25E86E;
+      color: #050709;
+      border-color: #25E86E;
+      box-shadow: 0 0 12px rgba(37, 232, 110, 0.5);
+    }
+
+    .btn-export-mp4 {
+      background: rgba(0, 240, 255, 0.08);
+      color: #00F0FF;
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      font-weight: 700;
+    }
+    .btn-export-mp4:hover {
+      background: #00F0FF;
+      color: #050709;
+      border-color: #00F0FF;
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
+    }
+
+    .btn-export-gif {
+      background: rgba(255, 176, 0, 0.08);
+      color: #FFB000;
+      border: 1px solid rgba(255, 176, 0, 0.4);
+      font-weight: 700;
+    }
+    .btn-export-gif:hover {
+      background: #FFB000;
+      color: #050709;
+      border-color: #FFB000;
+      box-shadow: 0 0 12px rgba(255, 176, 0, 0.5);
+    }
+
+    .btn-batch-all {
+      background: rgba(255, 42, 66, 0.08);
+      color: #FF2A42;
+      border: 1px solid rgba(255, 42, 66, 0.4);
+      font-weight: 700;
+    }
+    .btn-batch-all:hover {
+      background: #FF2A42;
+      color: #050709;
+      border-color: #FF2A42;
+      box-shadow: 0 0 12px rgba(255, 42, 66, 0.5);
+    }
+
+    /* Drop Zone */
+    .drop-zone {
+      border: 1px dashed #1E293B;
+      border-radius: 0px !important;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      background: #080C10;
+      transition: all 0.2s;
+    }
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: #25E86E;
+      background: rgba(37, 232, 110, 0.05);
+    }
+    .drop-zone input { display: none; }
+    /* Parameter sliders */
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin-bottom: 8px;
+    }
+    .slider-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #aaa;
+    }
+    input[type="range"] {
+      width: 100%;
+      height: 4px;
+      accent-color: #00ff88;
+      background: #222;
+      outline: none;
+      border-radius: 2px;
+    }
+    select, input[type="color"], input[type="text"] {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: #eee;
+      padding: 5px 8px;
+      font-size: 11px;
+      border-radius: 4px;
+      outline: none;
+      font-family: inherit;
+    }
+    /* Effect Grid */
+    .effects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    /* Color Mode Tabs */
+    .color-mode-tabs {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+    }
+    /* Palette Swatches */
+    .palette-chips {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .palette-chip {
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+      border: 1px solid #444;
+      cursor: pointer;
+    }
+    /* Center Stage Viewport */
+    .center-stage {
+      background: #050505;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    .stage-toolbar {
+      background: #111;
+      border-bottom: 1px solid #222;
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .canvas-viewport-wrap {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      overflow: auto;
+    }
+    canvas#mainCanvas {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      box-shadow: 0 0 30px rgba(0,0,0,0.8);
+      background: #000;
+    }
+    .file-pill {
+      background: #161616;
+      border: 1px solid #282828;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand-title">Chromarad // Isotope Matrix</div>
+    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+      <div style="display: inline-flex; align-items: center; gap: 6px; background: #0a0e14; border: 1px solid #2a3b4c; padding: 4px 10px; font-size: 11px; font-family: monospace; letter-spacing: 0.05em;">
+        <span style="color: #6a8ea8;">EXPORT FPS:</span>
+        <select id="exportFpsSelect" style="background: transparent; border: none; color: #25e86e; font-family: monospace; font-size: 11px; font-weight: 700; outline: none; cursor: pointer;">
+          <option value="60" selected style="background:#111; color:#25e86e;">60 FPS (TURBO HIGH FLUIDITY)</option>
+          <option value="30" style="background:#111; color:#00f0ff;">30 FPS (STANDARD SMOOTH)</option>
+          <option value="24" style="background:#111; color:#ffb000;">24 FPS (CINEMATIC NATIVE)</option>
+          <option value="auto" style="background:#111; color:#fff;">AUTO (DETECT SOURCE)</option>
+        </select>
+      </div>
+      <button class="btn-frame-png" id="exportMainBtn">⚡ FRAME (PNG)</button>
+      <button class="btn-frame-jpg" id="exportJpgBtn">📷 FRAME (JPG)</button>
+      <button class="btn-export-mp4" id="exportMp4Btn">▶ EXPORT FULL MP4</button>
+      <button class="btn-export-gif" id="exportGifBtn">🎞 EXPORT FULL GIF</button>
+      <button class="btn-batch-all" id="batchExportBtn">✦ BATCH ALL (15)</button>
+    </div>
+  </header>
+
+  <div class="main-app-grid">
+    <!-- LEFT SIDEBAR: INGESTION & 15 GRAINRAD EFFECTS -->
+    <aside class="left-sidebar">
+      <div>
+        <div class="section-title">01. Media Upload & Queue (Images, GIFs, MP4)</div>
+        <div class="drop-zone" id="dropZone">
+          <div style="font-size: 20px; margin-bottom: 4px;">📂</div>
+          <strong style="color:#00ff88; font-size:12px;">Drop Images, GIFs, or MP4 Videos</strong>
+          <div style="color:#777; font-size:10px; margin-top:2px;">or click to browse media files (JPG, PNG, GIF, MP4, WebM)</div>
+          <input type="file" id="fileInput" multiple accept="image/*,video/*,.gif,.mp4,.webm,.mov">
+        </div>
+        <div id="fileListContainer" style="display:flex; flex-direction:column; gap:4px; margin-top:8px; max-height:110px; overflow-y:auto;"></div>
+      </div>
+
+      <div>
+        <div class="section-title">02. Grainrad Effects (15 Styles)</div>
+        <div class="effects-grid" id="effectsGrid">
+          <button data-effect="ASCII">ASCII</button>
+          <button data-effect="Dithering">Dithering</button>
+          <button class="active" data-effect="Halftone">Halftone</button>
+          <button data-effect="Matrix Rain">Matrix Rain</button>
+          <button data-effect="Dots">Dots</button>
+          <button data-effect="Contour">Contour</button>
+          <button data-effect="Pixel Sort">Pixel Sort</button>
+          <button data-effect="Blockify">Blockify</button>
+          <button data-effect="Threshold">Threshold</button>
+          <button data-effect="Edge Detection">Edge Detect</button>
+          <button data-effect="Crosshatch">Crosshatch</button>
+          <button data-effect="Wave Lines">Wave Lines</button>
+          <button data-effect="Noise Field">Noise Field</button>
+          <button data-effect="Voronoi">Voronoi</button>
+          <button data-effect="VHS">VHS</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">03. Effect Parameters</div>
+        <div id="dynamicEffectSliders">
+          <!-- Dynamically populated per effect -->
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER VIEWPORT -->
+    <main class="center-stage">
+      <div class="stage-toolbar">
+        <div>ACTIVE: <strong id="activeEffectTag" style="color: #00ff88;">HALFTONE</strong> &bull; MODE: <span id="activeColorModeTag" style="color: #00d4ff;">ORIGINAL COLOR</span></div>
+        <div>RESOLUTION: <span id="resTag">720 x 720 PX</span> &bull; 60 FPS</div>
+      </div>
+
+      <!-- VIDEO PLAYBACK CONTROLS (Only shown when a video/GIF is playing) -->
+      <div id="videoControlBar" style="display: none; align-items: center; gap: 10px; background: #12161c; border: 1px solid #24303d; padding: 6px 14px; margin-bottom: 8px; border-radius: 4px;">
+        <button id="btnVideoPlayPause" style="background: #1e2836; border: 1px solid #334455; color: #00ff88; font-family: monospace; font-size: 10px; padding: 4px 10px; cursor: pointer; border-radius: 3px;">⏸ PAUSE</button>
+        <input type="range" id="videoTimeline" min="0" max="100" value="0" step="0.1" style="flex: 1; height: 4px; accent-color: #00ff88; cursor: pointer;">
+        <span id="videoTimeDisplay" style="font-family: monospace; font-size: 10px; color: #00ff88; min-width: 80px; text-align: right;">00:00 / 00:00</span>
+        <button id="btnVideoMute" style="background: #1e2836; border: 1px solid #334455; color: #88a0b8; font-family: monospace; font-size: 10px; padding: 4px 8px; cursor: pointer; border-radius: 3px;">MUTED</button>
+      </div>
+
+      <div class="canvas-viewport-wrap">
+        <canvas id="mainCanvas"></canvas>
+      </div>
+    </main>
+
+    <!-- RIGHT SIDEBAR: GRAINRAD COLOUR SYSTEM & PRE-ADJUSTMENTS -->
+    <aside class="right-sidebar">
+      <!-- Colour Modes -->
+      <div>
+        <div class="section-title">
+          <span>04. Colour Mode</span>
+          <span style="color:#00ff88; font-size:10px;">GRAINRAD CORE</span>
+        </div>
+        <div class="color-mode-tabs" id="colorModeTabs">
+          <button class="active" data-mode="original" title="Preserve 24-bit original color">Original</button>
+          <button data-mode="mono" title="1-Bit Foreground/Background">Mono</button>
+          <button data-mode="tonal" title="Luminance Tonal Gradient">Tonal</button>
+          <button data-mode="indexed" title="Retro Palette Quantization">Indexed</button>
+          <button data-mode="rgb" title="Channel Quantization">RGB</button>
+        </div>
+      </div>
+
+      <!-- Colour Editor Controls -->
+      <div id="colorEditorPanel">
+        <div class="section-title">Colour Editor & Palette</div>
+        
+        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+          <div style="flex: 1;">
+            <label style="font-size: 10px; color: #888;">Foreground</label>
+            <input type="color" id="fgColorInput" value="#00ff88" style="width: 100%; height: 28px; cursor: pointer;">
+          </div>
+          <div style="flex: 1;">
+            <label style="font-size: 10px; color: #888;">Background</label>
+            <input type="color" id="bgColorInput" value="#0a0a0a" style="width: 100%; height: 28px; cursor: pointer;">
+          </div>
+        </div>
+
+        <div style="margin-bottom: 8px;">
+          <label style="font-size: 10px; color: #888;">Palette Presets</label>
+          <select id="palettePresetSelect" style="width: 100%; margin-top: 2px;">
+            <option value="phosphor_green">Phosphor Green 84</option>
+            <option value="amber_crt">Amber CRT</option>
+            <option value="cyber_neon">Cyber Neon</option>
+            <option value="gameboy">Game Boy Classic</option>
+            <option value="cga">CGA Mode 1</option>
+            <option value="vaporwave">Vaporwave 80s</option>
+            <option value="solarized">Solarized Dark</option>
+            <option value="bw">Monochrome B&W</option>
+          </select>
+        </div>
+
+        <div class="palette-chips" id="paletteChipsContainer"></div>
+      </div>
+
+      <!-- Pre-Adjustments -->
+      <div>
+        <div class="section-title">05. Image Pre-Adjustments</div>
+        
+        <div class="slider-row">
+          <div class="slider-meta"><span>Brightness</span><span id="bVal">0</span></div>
+          <input type="range" id="brightnessSlider" min="-100" max="100" value="0">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-meta"><span>Contrast</span><span id="cVal">0</span></div>
+          <input type="range" id="contrastSlider" min="-100" max="100" value="0">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-meta"><span>Saturation</span><span id="sVal">0</span></div>
+          <input type="range" id="saturationSlider" min="-100" max="100" value="0">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-meta"><span>Gamma</span><span id="gVal">1.0</span></div>
+          <input type="range" id="gammaSlider" min="0.2" max="3.0" step="0.1" value="1.0">
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+          <span style="font-size: 11px; color: #aaa;">Invert Ingestion</span>
+          <input type="checkbox" id="invertCheckbox" style="accent-color: #00ff88; width: 16px; height: 16px;">
+        </div>
+      </div>
+
+      <!-- Post Processing Optics -->
+      <div>
+        <div class="section-title">06. Post-Processing Optics</div>
+        
+        <div class="slider-row">
+          <div class="slider-meta"><span>Bloom / Glow</span><span id="bloomVal">0.0</span></div>
+          <input type="range" id="bloomSlider" min="0" max="2.0" step="0.1" value="0.0">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-meta"><span>Chromatic Shift</span><span id="chromaVal">0.0px</span></div>
+          <input type="range" id="chromaSlider" min="0" max="10.0" step="0.5" value="0.0">
+        </div>
+
+        <div class="slider-row">
+          <div class="slider-meta"><span>Scanlines</span><span id="scanVal">0.0</span></div>
+          <input type="range" id="scanSlider" min="0" max="1.0" step="0.05" value="0.0">
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script type="module">
+    import { CanvasGifEncoder } from './gif-encoder.js';
+    import { encodeCanvasSequence } from './video-encoder.js';
+
+    // =========================================================================
+    // GRAINRAD PALETTE PRESETS (SOURCE OF TRUTH)
+    // =========================================================================
+    const PALETTES = {
+      phosphor_green: ['#050709', '#122c18', '#1e6e33', '#25e86e', '#84ffb5'],
+      amber_crt: ['#0d0900', '#402400', '#804800', '#cc7400', '#ffb000'],
+      cyber_neon: ['#050709', '#00f0ff', '#ff2a42', '#ffe600', '#25e86e'],
+      gameboy: ['#0f380f', '#306230', '#8bac0f', '#9bbc0f'],
+      cga: ['#000000', '#00aaaa', '#aa00aa', '#aaaaaa'],
+      vaporwave: ['#2d1b4e', '#1c3144', '#00f0ff', '#ff007f', '#fcee09'],
+      solarized: ['#002b36', '#073642', '#586e75', '#859900', '#b58900', '#268bd2'],
+      bw: ['#000000', '#ffffff']
+    };
+
+    // =========================================================================
+    // APPLICATION STATE
+    // =========================================================================
+    const state = {
+      images: [],
+      currentImageIdx: 0,
+      activeEffect: 'Halftone',
+      colorMode: 'original', // 'original' | 'mono' | 'tonal' | 'indexed' | 'rgb'
+      fgColor: '#00ff88',
+      bgColor: '#0a0a0a',
+      activePalette: 'phosphor_green',
+      customPalette: [...PALETTES.phosphor_green],
+      // Pre-adjustments
+      brightness: 0,
+      contrast: 0,
+      saturation: 0,
+      gamma: 1.0,
+      invert: false,
+      // Optics
+      bloom: 0.0,
+      chroma: 0.0,
+      scanlines: 0.0,
+      // Effect-specific parameters
+      params: {
+        scale: 6,
+        spacing: 1.0,
+        intensity: 1.2,
+        dotScale: 0.8,
+        angle: 45,
+        streakLength: 80,
+        threshold: 0.35,
+        levels: 8,
+        lineWidth: 1.2,
+        density: 60,
+        speed: 1.0
+      }
+    };
+
+    // Elements
+    const canvas = document.getElementById('mainCanvas');
+    const ctx = canvas.getContext('2d');
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const fileListContainer = document.getElementById('fileListContainer');
+    const dynamicSliders = document.getElementById('dynamicEffectSliders');
+    const paletteChips = document.getElementById('paletteChipsContainer');
+
+    // =========================================================================
+    // 1. DEFAULT MP4 VIDEO PLACEHOLDER LOADER (ISOTOPE MATRIX)
+    // =========================================================================
+    function detectVideoFps(video) {
+      return new Promise((resolve) => {
+        if (!('requestVideoFrameCallback' in HTMLVideoElement.prototype)) {
+          resolve(24);
+          return;
+        }
+        let frameCount = 0;
+        let firstTime = null;
+        let lastTime = null;
+        let resolved = false;
+
+        const onFrame = (now, metadata) => {
+          if (resolved) return;
+          if (firstTime === null) {
+            firstTime = metadata.mediaTime;
+          } else {
+            lastTime = metadata.mediaTime;
+            frameCount++;
+          }
+
+          if (frameCount >= 10 && lastTime > firstTime) {
+            resolved = true;
+            const measuredFps = Math.round(frameCount / (lastTime - firstTime));
+            const standard = [24, 25, 30, 48, 50, 60].find(f => Math.abs(f - measuredFps) <= 2) || measuredFps;
+            resolve(standard);
+            return;
+          }
+          try {
+            video.requestVideoFrameCallback(onFrame);
+          } catch(e) {
+            if (!resolved) { resolved = true; resolve(24); }
+          }
+        };
+
+        try {
+          video.requestVideoFrameCallback(onFrame);
+        } catch(e) {
+          resolve(24);
+          return;
+        }
+
+        setTimeout(() => {
+          if (!resolved) {
+            resolved = true;
+            if (frameCount > 2 && lastTime > firstTime) {
+              const raw = Math.round(frameCount / (lastTime - firstTime));
+              resolve([24, 25, 30, 50, 60].find(f => Math.abs(f - raw) <= 2) || raw);
+            } else {
+              resolve(24);
+            }
+          }
+        }, 500);
+      });
+    }
+
+    function createDefaultSample() {
+      const video = document.createElement('video');
+      video.src = './assets/tcozVqT9HvYsu.mp4';
+      video.autoplay = true;
+      video.loop = true;
+      video.muted = true;
+      video.playsInline = true;
+      video.crossOrigin = 'anonymous';
+
+      let loaded = false;
+      const onLoaded = () => {
+        if (loaded) return;
+        loaded = true;
+        state.images = [{
+          name: 'tcozVqT9HvYsu.mp4',
+          type: 'video',
+          video: video,
+          fps: 24, // Native 23.98/24 FPS of tcozVqT9HvYsu.mp4
+          width: video.videoWidth || 736,
+          height: video.videoHeight || 414,
+          duration: video.duration || 14
+        }];
+        state.currentImageIdx = 0;
+        video.play().catch(() => {});
+        updateFileList();
+        checkVideoState();
+        render();
+
+        detectVideoFps(video).then(fps => {
+          if (state.images[0]) {
+            state.images[0].fps = fps;
+            updateFileList();
+            render();
+          }
+        });
+      };
+
+      video.addEventListener('loadedmetadata', onLoaded, { once: true });
+      video.addEventListener('canplay', onLoaded, { once: true });
+      video.load();
+
+      // Fallback if video is blocked or takes too long
+      setTimeout(() => {
+        if (!state.images.length) {
+          createProceduralFallback();
+        }
+      }, 1500);
+    }
+
+    function createProceduralFallback() {
+      const off = document.createElement('canvas');
+      off.width = 512;
+      off.height = 512;
+      const c = off.getContext('2d');
+      c.fillStyle = '#050709';
+      c.fillRect(0, 0, 512, 512);
+      c.beginPath();
+      c.arc(256, 256, 220, 0, Math.PI * 2);
+      c.fillStyle = '#0C1015';
+      c.fill();
+      c.strokeStyle = '#25E86E';
+      c.lineWidth = 2;
+      c.stroke();
+      const img = new Image();
+      img.onload = () => {
+        state.images = [{ name: 'chromarad-sample.png', type: 'image', fps: 60, img: img }];
+        state.currentImageIdx = 0;
+        updateFileList();
+        render();
+      };
+      img.src = off.toDataURL();
+    }
+
+    // =========================================================================
+    // 2. INGESTION & BATCH HANDLING (IMAGES, GIFS, MP4/WEBM VIDEOS)
+    // =========================================================================
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
+    });
+
+    let videoLoopId = null;
+
+    function handleFiles(files) {
+      Array.from(files).forEach(file => {
+        const isVideo = file.type.startsWith('video/') || file.name.match(/\.(mp4|webm|mov|ogg|m4v)$/i);
+        const isGif = file.type === 'image/gif' || file.name.match(/\.gif$/i);
+        const isImage = file.type.startsWith('image/') || file.name.match(/\.(jpg|jpeg|png|webp|svg|bmp)$/i);
+
+        // A. Video Import (MP4, WebM, MOV) with Native FPS Detection
+        if (isVideo) {
+          const video = document.createElement('video');
+          video.src = URL.createObjectURL(file);
+          video.autoplay = true;
+          video.loop = true;
+          video.muted = true;
+          video.playsInline = true;
+          video.crossOrigin = 'anonymous';
+
+          video.addEventListener('loadedmetadata', () => {
+            const mediaItem = {
+              name: file.name,
+              type: 'video',
+              video: video,
+              fps: 24, // Baseline, updated via detector
+              width: video.videoWidth || 512,
+              height: video.videoHeight || 512,
+              duration: video.duration || 0
+            };
+            state.images.push(mediaItem);
+            state.currentImageIdx = state.images.length - 1;
+            video.play().catch(() => {});
+            updateFileList();
+            checkVideoState();
+            render();
+
+            detectVideoFps(video).then(detectedFps => {
+              mediaItem.fps = detectedFps;
+              updateFileList();
+              render();
+            });
+          });
+          return;
+        }
+
+        // B. GIF or Static Image Import
+        if (isGif || isImage) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              state.images.push({
+                name: file.name,
+                type: isGif ? 'gif' : 'image',
+                fps: isGif ? 20 : 60,
+                img: img,
+                width: img.width,
+                height: img.height
+              });
+              state.currentImageIdx = state.images.length - 1;
+              updateFileList();
+              checkVideoState();
+              render();
+            };
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    function checkVideoState() {
+      const current = state.images[state.currentImageIdx];
+      const videoBar = document.getElementById('videoControlBar');
+
+      // Pause non-active videos
+      state.images.forEach((item, idx) => {
+        if (item.type === 'video' && item.video) {
+          if (idx === state.currentImageIdx) {
+            item.video.play().catch(() => {});
+          } else {
+            item.video.pause();
+          }
+        }
+      });
+
+      if (current && current.type === 'video') {
+        if (videoBar) videoBar.style.display = 'flex';
+        initVideoControls(current.video);
+
+        // Start live continuous render loop for video frames
+        if (!videoLoopId) {
+          function loop() {
+            const active = state.images[state.currentImageIdx];
+            if (active && active.type === 'video' && active.video && !active.video.paused) {
+              render();
+              updateVideoTimeline(active.video);
+            }
+            videoLoopId = requestAnimationFrame(loop);
+          }
+          videoLoopId = requestAnimationFrame(loop);
+        }
+      } else {
+        if (videoBar) videoBar.style.display = 'none';
+        if (videoLoopId) {
+          cancelAnimationFrame(videoLoopId);
+          videoLoopId = null;
+        }
+      }
+    }
+
+    function initVideoControls(video) {
+      const playPauseBtn = document.getElementById('btnVideoPlayPause');
+      const timeline = document.getElementById('videoTimeline');
+      const muteBtn = document.getElementById('btnVideoMute');
+
+      if (playPauseBtn) {
+        playPauseBtn.onclick = () => {
+          if (video.paused) {
+            video.play().catch(() => {});
+            playPauseBtn.innerText = '⏸ PAUSE';
+          } else {
+            video.pause();
+            playPauseBtn.innerText = '▶ PLAY';
+          }
+        };
+      }
+
+      if (timeline) {
+        timeline.oninput = (e) => {
+          if (video.duration) {
+            video.currentTime = (e.target.value / 100) * video.duration;
+            render();
+          }
+        };
+      }
+
+      if (muteBtn) {
+        muteBtn.onclick = () => {
+          video.muted = !video.muted;
+          muteBtn.innerText = video.muted ? 'MUTED' : 'UNMUTED';
+          muteBtn.style.color = video.muted ? '#88a0b8' : '#00ff88';
+        };
+      }
+    }
+
+    function updateVideoTimeline(video) {
+      const timeline = document.getElementById('videoTimeline');
+      const timeDisplay = document.getElementById('videoTimeDisplay');
+      if (timeline && video.duration) {
+        timeline.value = (video.currentTime / video.duration) * 100;
+      }
+      if (timeDisplay) {
+        const curM = Math.floor(video.currentTime / 60);
+        const curS = Math.floor(video.currentTime % 60);
+        const durM = Math.floor((video.duration || 0) / 60);
+        const durS = Math.floor((video.duration || 0) % 60);
+        timeDisplay.innerText = `${String(curM).padStart(2,'0')}:${String(curS).padStart(2,'0')} / ${String(durM).padStart(2,'0')}:${String(durS).padStart(2,'0')}`;
+      }
+    }
+
+    function updateFileList() {
+      fileListContainer.innerHTML = state.images.map((item, idx) => {
+        const icon = item.type === 'video' ? '🎬' : (item.type === 'gif' ? '🎞️' : '📷');
+        const badge = item.type === 'video' ? 'MP4' : (item.type === 'gif' ? 'GIF' : 'IMG');
+        const dim = item.type === 'video' ? `${item.video.videoWidth}x${item.video.videoHeight}` : `${item.img.width}x${item.img.height}`;
+        const fpsLabel = item.fps ? `${item.fps} FPS` : (item.type === 'video' ? '24 FPS' : '60 FPS');
+
+        return `
+          <div class="file-pill ${idx === state.currentImageIdx ? 'active' : ''}" style="cursor:pointer; display:flex; align-items:center; justify-content:space-between; background:${idx === state.currentImageIdx ? '#1c2838' : '#141820'}; border:1px solid ${idx === state.currentImageIdx ? '#00ff88' : '#222'}; padding:5px 8px; border-radius:4px;" onclick="selectImage(${idx})">
+            <div style="display:flex; align-items:center; gap:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:180px;">
+              <span>${icon}</span>
+              <span style="font-size:11px; color:#ddd; overflow:hidden; text-overflow:ellipsis;">${item.name}</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span style="font-size:9px; background:#223040; color:#00d4ff; padding:2px 4px; border-radius:2px;">${badge}</span>
+              <span style="font-size:9px; background:#122b20; color:#00ff88; padding:2px 4px; border-radius:2px; font-family:monospace;">${fpsLabel}</span>
+              <span style="color:#88a0b8; font-size:10px; font-family:monospace;">${dim}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.selectImage = (idx) => {
+      state.currentImageIdx = idx;
+      updateFileList();
+      checkVideoState();
+      render();
+    };
+
+    // =========================================================================
+    // 3. COLOR SYSTEM & PALETTE CALCULATIONS
+    // =========================================================================
+    function hexToRgb(hex) {
+      let c = hex.replace('#', '');
+      if (c.length === 3) c = c.split('').map(x => x + x).join('');
+      const n = parseInt(c, 16);
+      return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+    }
+
+    function updatePaletteChips() {
+      const palette = PALETTES[state.activePalette] || PALETTES.phosphor_green;
+      state.customPalette = [...palette];
+      paletteChips.innerHTML = palette.map((color) => `
+        <div class="palette-chip" style="background:${color}" title="${color}"></div>
+      `).join('');
+    }
+
+    document.getElementById('palettePresetSelect').addEventListener('change', (e) => {
+      state.activePalette = e.target.value;
+      updatePaletteChips();
+      render();
+    });
+
+    document.querySelectorAll('#colorModeTabs button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#colorModeTabs button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.colorMode = btn.dataset.mode;
+        document.getElementById('activeColorModeTag').innerText = btn.innerText.toUpperCase() + ' COLOR';
+        render();
+      });
+    });
+
+    document.getElementById('fgColorInput').addEventListener('input', (e) => { state.fgColor = e.target.value; render(); });
+    document.getElementById('bgColorInput').addEventListener('input', (e) => { state.bgColor = e.target.value; render(); });
+
+    // =========================================================================
+    // 4. PRE-ADJUSTMENT BINDINGS
+    // =========================================================================
+    const bindSlider = (id, valId, prop, isFloat = false) => {
+      document.getElementById(id).addEventListener('input', (e) => {
+        const val = isFloat ? parseFloat(e.target.value) : parseInt(e.target.value);
+        state[prop] = val;
+        document.getElementById(valId).innerText = val;
+        render();
+      });
+    };
+    bindSlider('brightnessSlider', 'bVal', 'brightness');
+    bindSlider('contrastSlider', 'cVal', 'contrast');
+    bindSlider('saturationSlider', 'sVal', 'saturation');
+    bindSlider('gammaSlider', 'gVal', 'gamma', true);
+    bindSlider('bloomSlider', 'bloomVal', 'bloom', true);
+    bindSlider('chromaSlider', 'chromaVal', 'chroma', true);
+    bindSlider('scanSlider', 'scanVal', 'scanlines', true);
+
+    document.getElementById('invertCheckbox').addEventListener('change', (e) => {
+      state.invert = e.target.checked;
+      render();
+    });
+
+    // =========================================================================
+    // 5. EFFECT DEFINITIONS & SLIDERS FOR ALL 15 DISTINCT STYLES
+    // =========================================================================
+    const EFFECT_DEFINITIONS = {
+      'ASCII': [
+        { key: 'scale', label: 'Cell Size (px)', min: 3, max: 24, step: 1, default: 6 },
+        { key: 'spacing', label: 'Font Spacing', min: 0.5, max: 2.0, step: 0.1, default: 1.0 }
+      ],
+      'Dithering': [
+        { key: 'intensity', label: 'Dither Intensity', min: 0.2, max: 3.0, step: 0.1, default: 1.2 }
+      ],
+      'Halftone': [
+        { key: 'dotScale', label: 'Dot Scale', min: 0.2, max: 2.0, step: 0.1, default: 0.8 },
+        { key: 'angle', label: 'Screen Angle (°)', min: 0, max: 180, step: 5, default: 30 }
+      ],
+      'Matrix Rain': [
+        { key: 'scale', label: 'Matrix Cell Size', min: 6, max: 24, step: 2, default: 10 },
+        { key: 'intensity', label: 'Phosphor Glow', min: 0.5, max: 3.0, step: 0.1, default: 1.5 },
+        { key: 'speed', label: 'Rain Density', min: 0.5, max: 3.0, step: 0.2, default: 1.0 }
+      ],
+      'Dots': [
+        { key: 'dotScale', label: 'Dot Radius', min: 0.2, max: 2.0, step: 0.1, default: 0.8 },
+        { key: 'scale', label: 'Grid Spacing', min: 4, max: 24, step: 1, default: 8 }
+      ],
+      'Contour': [
+        { key: 'levels', label: 'Contour Levels', min: 3, max: 24, step: 1, default: 12 },
+        { key: 'lineWidth', label: 'Line Thickness', min: 0.5, max: 3.0, step: 0.1, default: 1.2 }
+      ],
+      'Pixel Sort': [
+        { key: 'threshold', label: 'Sort Threshold', min: 0.05, max: 0.95, step: 0.05, default: 0.35 },
+        { key: 'streakLength', label: 'Max Streak Length', min: 10, max: 240, step: 10, default: 80 }
+      ],
+      'Blockify': [
+        { key: 'scale', label: 'Block Size (px)', min: 2, max: 36, step: 2, default: 8 },
+        { key: 'lineWidth', label: 'Border Gap', min: 0, max: 4, step: 0.5, default: 1.0 }
+      ],
+      'Threshold': [
+        { key: 'levels', label: 'Quantize Bands', min: 2, max: 16, step: 1, default: 4 },
+        { key: 'intensity', label: 'Threshold Bias', min: 0.2, max: 2.0, step: 0.1, default: 1.0 }
+      ],
+      'Edge Detection': [
+        { key: 'threshold', label: 'Edge Sensitivity', min: 0.05, max: 0.8, step: 0.05, default: 0.25 },
+        { key: 'lineWidth', label: 'Edge Thickness', min: 1.0, max: 4.0, step: 0.5, default: 1.5 }
+      ],
+      'Crosshatch': [
+        { key: 'levels', label: 'Hatch Density', min: 1, max: 6, step: 1, default: 4 },
+        { key: 'scale', label: 'Stroke Spacing', min: 3, max: 16, step: 1, default: 6 }
+      ],
+      'Wave Lines': [
+        { key: 'density', label: 'Line Density', min: 10, max: 120, step: 5, default: 60 },
+        { key: 'intensity', label: 'Wave Amplitude', min: 5, max: 40, step: 2, default: 20 }
+      ],
+      'Noise Field': [
+        { key: 'scale', label: 'Noise Scale', min: 5, max: 80, step: 5, default: 35 },
+        { key: 'intensity', label: 'Turbulence', min: 0.2, max: 3.0, step: 0.1, default: 1.5 }
+      ],
+      'Voronoi': [
+        { key: 'scale', label: 'Cell Size (px)', min: 8, max: 60, step: 4, default: 24 },
+        { key: 'intensity', label: 'Random Jitter', min: 0.1, max: 1.0, step: 0.1, default: 0.8 }
+      ],
+      'VHS': [
+        { key: 'intensity', label: 'Tracking Jitter', min: 0.1, max: 2.0, step: 0.1, default: 0.6 },
+        { key: 'scale', label: 'Scanline Frequency', min: 1, max: 6, step: 1, default: 2 }
+      ]
+    };
+
+    function updateEffectSliders() {
+      const defs = EFFECT_DEFINITIONS[state.activeEffect] || [];
+      dynamicSliders.innerHTML = defs.map(d => `
+        <div class="slider-row">
+          <div class="slider-meta"><span>${d.label}</span><span id="eff_${d.key}_val">${state.params[d.key] !== undefined ? state.params[d.key] : d.default}</span></div>
+          <input type="range" class="eff-slider" data-key="${d.key}" min="${d.min}" max="${d.max}" step="${d.step}" value="${state.params[d.key] !== undefined ? state.params[d.key] : d.default}">
+        </div>
+      `).join('');
+
+      dynamicSliders.querySelectorAll('.eff-slider').forEach(slider => {
+        slider.addEventListener('input', (e) => {
+          const k = slider.dataset.key;
+          const v = parseFloat(e.target.value);
+          state.params[k] = v;
+          document.getElementById(`eff_${k}_val`).innerText = v;
+          render();
+        });
+      });
+    }
+
+    document.querySelectorAll('#effectsGrid button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#effectsGrid button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.activeEffect = btn.dataset.effect;
+        document.getElementById('activeEffectTag').innerText = state.activeEffect.toUpperCase();
+        updateEffectSliders();
+        render();
+      });
+    });
+
+    // =========================================================================
+    // 6. PRE-ADJUSTMENTS FUNCTION
+    // =========================================================================
+    function applyPreAdjustments(r, g, b) {
+      if (state.invert) { r = 255 - r; g = 255 - g; b = 255 - b; }
+      r += state.brightness; g += state.brightness; b += state.brightness;
+
+      const factor = (259 * (state.contrast + 255)) / (255 * (259 - state.contrast));
+      r = factor * (r - 128) + 128;
+      g = factor * (g - 128) + 128;
+      b = factor * (b - 128) + 128;
+
+      const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+      const satFactor = (state.saturation + 100) / 100;
+      r = gray + satFactor * (r - gray);
+      g = gray + satFactor * (g - gray);
+      b = gray + satFactor * (b - gray);
+
+      if (state.gamma !== 1.0) {
+        const invGamma = 1 / state.gamma;
+        r = 255 * Math.pow(Math.max(0, Math.min(255, r)) / 255, invGamma);
+        g = 255 * Math.pow(Math.max(0, Math.min(255, g)) / 255, invGamma);
+        b = 255 * Math.pow(Math.max(0, Math.min(255, b)) / 255, invGamma);
+      }
+
+      return {
+        r: Math.max(0, Math.min(255, Math.round(r))),
+        g: Math.max(0, Math.min(255, Math.round(g))),
+        b: Math.max(0, Math.min(255, Math.round(b)))
+      };
+    }
+
+    function getColorForLuminance(adj, lum, isFg, fgRgb, bgRgb, paletteRgb) {
+      if (state.colorMode === 'original') {
+        return isFg ? `rgb(${adj.r}, ${adj.g}, ${adj.b})` : `rgb(${bgRgb.r}, ${bgRgb.g}, ${bgRgb.b})`;
+      } else if (state.colorMode === 'mono') {
+        return isFg ? state.fgColor : state.bgColor;
+      } else if (state.colorMode === 'tonal') {
+        const blend = isFg ? lum : 0;
+        return `rgb(${Math.round(bgRgb.r + (fgRgb.r - bgRgb.r) * blend)}, ${Math.round(bgRgb.g + (fgRgb.g - bgRgb.g) * blend)}, ${Math.round(bgRgb.b + (fgRgb.b - bgRgb.b) * blend)})`;
+      } else if (state.colorMode === 'indexed') {
+        const palIdx = Math.max(0, Math.min(paletteRgb.length - 1, Math.floor(lum * paletteRgb.length)));
+        const c = paletteRgb[palIdx];
+        return `rgb(${c.r}, ${c.g}, ${c.b})`;
+      } else {
+        return `rgb(${adj.r}, ${adj.g}, ${adj.b})`;
+      }
+    }
+
+    // =========================================================================
+    // 7. COMPREHENSIVE ENGINE FOR ALL 15 DISTINCT GRAINRAD EFFECTS
+    // =========================================================================
+    function render() {
+      if (!state.images.length) return;
+      const current = state.images[state.currentImageIdx];
+      if (!current) return;
+
+      const isVideo = current.type === 'video';
+      const source = isVideo ? current.video : current.img;
+      if (!source) return;
+
+      const w = isVideo ? (source.videoWidth || 512) : (source.width || 512);
+      const h = isVideo ? (source.videoHeight || 512) : (source.height || 512);
+      if (w <= 0 || h <= 0) return;
+
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+      }
+      
+      const resTag = document.getElementById('resTag');
+      if (resTag) {
+        const fpsVal = current.fps || (isVideo ? 24 : 60);
+        resTag.innerText = `${w} x ${h} PX • ${fpsVal} FPS [NATIVE SOURCE]`;
+      }
+
+      ctx.drawImage(source, 0, 0, w, h);
+      const imgData = ctx.getImageData(0, 0, w, h);
+      const raw = imgData.data;
+
+      const fgRgb = hexToRgb(state.fgColor);
+      const bgRgb = hexToRgb(state.bgColor);
+      const paletteRgb = state.customPalette.map(hexToRgb);
+
+      const effect = state.activeEffect;
+
+      // -----------------------------------------------------------------------
+      // 1. ASCII
+      // -----------------------------------------------------------------------
+      if (effect === 'ASCII') {
+        ctx.fillStyle = state.bgColor;
+        ctx.fillRect(0, 0, w, h);
+        const cellSize = Math.max(3, state.params.scale || 6);
+        const chars = '@%#*+=-:. ';
+        ctx.font = `${cellSize}px monospace`;
+        ctx.textBaseline = 'top';
+
+        for (let y = 0; y < h; y += cellSize) {
+          for (let x = 0; x < w; x += cellSize) {
+            const idx = (y * w + x) * 4;
+            const adj = applyPreAdjustments(raw[idx], raw[idx + 1], raw[idx + 2]);
+            const lum = (0.299 * adj.r + 0.587 * adj.g + 0.114 * adj.b) / 255;
+            const char = chars[Math.floor((1.0 - lum) * (chars.length - 1))];
+            ctx.fillStyle = getColorForLuminance(adj, lum, true, fgRgb, bgRgb, paletteRgb);
+            ctx.fillText(char, x, y);
+          }
+        }
+      }
+      // -----------------------------------------------------------------------
+      // 2. DITHERING (Bayer 4x4 & Blue Noise thresholding)
+      // -----------------------------------------------------------------------
+      else if (effect === 'Dithering') {
+        const out = ctx.createImageData(w, h);
+        const d = out.data;
+        const bayer4 = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
+
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) {
+            const idx = (y * w + x) * 4;
+            const adj = applyPreAdjustments(raw[idx], raw[idx + 1], raw[idx + 2]);
+            const lum = (0.299 * adj.r + 0.587 * adj.g + 0.114 * adj.b) / 255;
+            const threshold = (bayer4[y % 4][x % 4] / 16) * (state.params.intensity || 1.2);
+            const isFg = lum > threshold;
+
+            if (state.colorMode === 'original') {
+              if (isFg) { d[idx] = adj.r; d[idx + 1] = adj.g; d[idx + 2] = adj.b; }
+              else { d[idx] = bgRgb.r; d[idx + 1] = bgRgb.g; d[idx + 2] = bgRgb.b; }
+            } else if (state.colorMode === 'mono') {
+              const c = isFg ? fgRgb : bgRgb;
+              d[idx] = c.r; d[idx + 1] = c.g; d[idx + 2] = c.b;
+            } else if (state.colorMode === 'tonal') {
+              const blend = isFg ? lum : 0;
+              d[idx] = bgRgb.r + (fgRgb.r - bgRgb.r) * blend;
+              d[idx + 1] = bgRgb.g + (fgRgb.g - bgRgb.g) * blend;
+              d[idx + 2] = bgRgb.b + (fgRgb.b - bgRgb.b) * blend;
+            } else if (state.colorMode === 'indexed') {
+              const palIdx = Math.max(0, Math.min(paletteRgb.length - 1, Math.floor((lum + (threshold - 0.5) * 0.4) * paletteRgb.length)));
+              const c = paletteRgb[palIdx];
+              d[idx] = c.r; d[idx + 1] = c.g; d[idx + 2] = c.b;
+            } else {
+              d[idx] = isFg ? adj.r : bgRgb.r;
+              d[idx + 1] = isFg ? adj.g : bgRgb.g;
+              d[idx + 2] = isFg ? adj.b : bgRgb.b;
+            }
+            d[idx + 3] = 255;
+          }
+        }
+        ctx.putImageData(out, 0, 0);
+      }
+      // -----------------------------------------------------------------------
+      // 3. HALFTONE
+      // -----------------------------------------------------------------------
+      else if (effect === 'Halftone') {
+        ctx.fillStyle = state.bgColor;
+        ctx.fillRect(0, 0, w, h);
+        const step = 8;
+        const scale = state.params.dotScale || 0.8;
+        const rad = (state.params.angle || 30) * Math.PI / 180;
+        const cosA = Math.cos(rad); const sinA = Math.sin(rad);
+
+        for (let y = 0; y < h; y += step) {
+          for (let x = 0; x < w; x += step) {
+            const idx = (y * w + x) * 4;
+            const adj = applyPreAdjustments(raw[idx], raw[idx + 1], raw[idx + 2]);
+            const lum = (0.299 * adj.r + 0.587 * adj.g + 0.114 * adj.b) / 255;
+            const radius = (lum * (step / 2)) * scale;
+
+            ctx.fillStyle = getColorForLuminance(adj, lum, true, fgRgb, bgRgb, paletteRgb);
+            ctx.beginPath();
+            ctx.arc(x + step / 2, y + step / 2, Math.max(0, radius), 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+      // -----------------------------------------------------------------------
+      // 4. MATRIX RAIN
+      // -----------------------------------------------------------------------
+      else if (effect === 'Matrix Rain') {
+        ctx.fillStyle = state.bgColor;
+        ctx.fillRect(0, 0, w, h);
+        const cellSize = Math.max(6, state.params.scale || 10);
+        const katakana = '0123456789ABCDEFｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾂﾃﾅﾆﾇﾈﾊﾋﾎﾏﾐﾑﾒﾓﾔﾕﾗﾘﾜ';
+        ctx.font = `bold ${cellSize - 1}px monospace`;
+        ctx.textBaseline = 'top';
+
+        for (let y = 0; y < h; y += cellSize) {
+          for (let x = 0; x < w; x += cellSize) {
+            const idx = (y * w + x) * 4;
+            const adj = applyPreAdjustments(raw[idx], raw[idx + 1], raw[idx + 2]);
+            const lum = (0.299 * adj.r + 0.587 * adj.g + 0.114 * adj.b) / 255;
+
+            if (lum > 0.15) {
+              const char = katakana[Math.floor(Math.random() * katakana.length)];
+              ctx.fillStyle = state.colorMode === 'original' 
+                ? `rgb(${adj.r}, ${adj.g}, ${adj.b})` 
+                : getColorForLuminance(adj, lum, true, fgRgb, bgRgb, paletteRgb);
+              ctx.fillText(char, x, y);
+            }
+          }
+        }
+      }
+      // -----------------------------------------------------------------------
+      // 5. DOTS
+      // -----------------------------------------------------------------------
+      else if (effect === 'Dots') {
+        ctx.fillStyle = state.bgColor;
+        ctx.fillRect(0, 0, w, h);
+        const step = Math.max(4, state.params.scale || 8);
+        const scale = state.params.dotScale || 0.8;
+
+        for (let y = 0; y < h; y += step) {
+          for (let x = 0; x < w; x += step) {
+            const idx = (y * w + x) * 4;
+            const adj = applyPreAdjustments(raw[idx], raw[idx + 1], raw[idx + 2]);
+            const lum = (0.299 * adj.r + 0.587 * adj.g + 0.114 * adj.b) / 255;
+            const r = (lum * (step / 2.2)) * scale;
+
+            ctx.fillStyle = getColorForLuminance(adj, lum, true, fgRgb, bgRgb, paletteRgb);
+            ctx.beginPath();
+            ctx.arc(x + step / 2, y + step / 2, Math.max(0.5, r), 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+      // -----------------------------------------------------------------------
+      // 6. CONTOUR (Isophote Banding)
+      // -----------------------------------------------------------------------
+      else if (effect === 'Contour') {
+        const out = ctx.createImageData(w, h);
+        const d = out.data;
+        const bands = Math.max(3, state.params.levels || 12);
+
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) {
+            const idx = (y * w + x) * 4;
+            const adj = applyPreAdjustments(raw[idx], raw[idx + 1], raw[idx + 2]);
+            const lum = (0.299 * adj.r + 0.587 * adj.g + 0.114 * adj.b) / 255;
+            const bandVal = Math.floor(lum * bands) / bands;
+            const isLine = Math.abs((lum * bands) - Math.round(lum * bands)) < (state.params.lineWidth || 1.2) * 0.1;
+
+            if (isLine) {
+              d[idx] = fgRgb.r; d[idx + 1] = fgRgb.g; d[idx + 2] = fgRgb.b;
+            } else {
+              if (state.colorMode === 'original') {
+                d[idx] = adj.r * bandVal; d[idx + 1] = adj.g * bandVal; d[idx + 2] = adj.b * bandVal;
+              } else {
+                const c = hexToRgb(getColorForLuminance(adj, bandVal, true, fgRgb, bgRgb, paletteRgb));
+                d[idx] = c.r; d[idx + 1] = c.g; d[idx + 2] = c.b;
+              }
+            }
+            d[idx + 3] = 255;
+          }
+        }
+        ctx.putImageData(out, 0, 0);
+      }
+      // -----------------------------------------------------------------------
+      // 7. PIXEL SORT (Directional Luminance Threshold Sorting)
+      // -----------------------------------------------------------------------
+      else if (effect === 'Pixel Sort') {
+        const out = ctx.createImageData(w, h);
+        out.data.set(raw);
+        const d = out.data;
+        const thresh = state.params.threshold || 0.35;
+        const maxLen = state.params.streakLength || 80;
+
+        for (let y = 0; y < h; y++) {
+          let spanStart = -1;
+          for (let x = 0; x < w; x++) {
+            const idx = (y * w + x) * 4;
+            const adj = applyPreAdjustments(d[idx], d[idx + 1], d[idx + 2]);
+            const lum = (0.299 * adj.r + 0.587 * adj.g + 0.114 * adj.b) / 255;
+
+            if (lum > thresh && spanStart === -1) {
+              spanStart = x;
+            } else if ((lum <= thresh || x - spanStart >= maxLen || x === w - 1) && spanStart !== -1) {
+              const spanEnd = x;
+              const slice = [];
+              for (let k = spanStart; k < spanEnd; k++) {
+                const sIdx = (y * w + k) * 4;
+                slice.push({ r: d[sIdx], g: d[sIdx + 1], b: d[sIdx + 2], lum: (d[sIdx] + d[sIdx + 1] + d[sIdx + 2]) / 3 });
+              }
+              slice.sort((a, b) => a.lum - b.lum);
+              for (let k = 0; k < slice.length; k++) {
+                const sIdx = (y * w + (spanStart + k)) * 4;
+                const c = slice[k];
+                d[sIdx] = c.r; d[sIdx + 1] = c.g; d[sIdx + 2] = c.b; d[sIdx + 3] = 255;
+              }
+              spanStart = -1;
+            }
+          }
+        }
+        ctx.putImageData(out, 0, 0);
+      }
+      // -----------------------------------------------------------------------
+      // 8. BLOCKIFY (Mosaic Voxelation)
+      // -----------------------------------------------------------------------
+      else if (effect === 'Blockify') {
+        ctx.fillStyle = state.bgColor;
+        ctx.fillRect(0, 0, w, h);
+        const bSize = Math.max(2, state.params.scale || 8);
+        const gap = state.params.lineWidth || 1.0;
+
+        for (let y = 0; y < h; y += bSize) {
+          for (let x = 0; x < w; x += bSize) {
+            const idx = (y * w + x) * 4;
+            const adj = applyPreAdjustments(raw[idx], raw[idx + 1], raw[idx + 2]);
+            const lum = (0.299 * adj.r + 0.587 * adj.g + 0.114 * adj.b) / 255;
+
+            ctx.fillStyle = getColorForLuminance(adj, lum, true, fgRgb, bgRgb, paletteRgb);
+            ctx.fillRect(x, y, Math.max(1, bSize - gap), Math.max(1, bSize - gap));
+          }
+        }
+      }
+      // -----------------------------------------------------------------------
+      // 9. THRESHOLD (Multi-Level Hard Bands)
+      // -----------------------------------------------------------------------
+      else if (effect === 'Threshold') {
+        const out = ctx.createImageData(w, h);
+        const d = out.data;
+        const levels = Math.max(2, state.params.levels || 4);
+
+        for (let i = 0; i < raw.length; i += 4) {
+          const adj = applyPreAdjustments(raw[i], raw[i + 1], raw[i + 2]);
+          const lum = (0.299 * adj.r + 0.587 * adj.g + 0.114 * adj.b) / 255;
+          const quantized = Math.floor(lum * levels) / (levels - 1);
+
+          if (state.colorMode === 'original') {
+            d[i] = adj.r * quantized; d[i + 1] = adj.g * quantized; d[i + 2] = adj.b * quantized;
+          } else {
+            const c = hexToRgb(getColorForLuminance(adj, quantized, quantized > 0.3, fgRgb, bgRgb, paletteRgb));
+            d[i] = c.r; d[i + 1] = c.g; d[i + 2] = c.b;
+          }
+          d[i + 3] = 255;
+        }
+        ctx.putImageData(out, 0, 0);
+      }
+      // -----------------------------------------------------------------------
+      // 10. EDGE DETECTION (Sobel 3x3 Convolution)
+      // -----------------------------------------------------------------------
+      else if (effect === 'Edge Detection') {
+        const out = ctx.createImageData(w, h);
+        const d = out.data;
+        const thresh = state.params.threshold || 0.25;
+
+        for (let y = 1; y < h - 1; y++) {
+          for (let x = 1; x < w - 1; x++) {
+            // Sobel X & Y
+            const l00 = (raw[((y - 1) * w + (x - 1)) * 4] + raw[((y - 1) * w + (x - 1)) * 4 + 1]) / 2;
+            const l02 = (raw[((y - 1) * w + (x + 1)) * 4] + raw[((y - 1) * w + (x + 1)) * 4 + 1]) / 2;
+            const l10 = (raw[(y * w + (x - 1)) * 4] + raw[(y * w + (x - 1)) * 4 + 1]) / 2;
+            const l12 = (raw[(y * w + (x + 1)) * 4] + raw[(y * w + (x + 1)) * 4 + 1]) / 2;
+            const l20 = (raw[((y + 1) * w + (x - 1)) * 4] + raw[((y + 1) * w + (x - 1)) * 4 + 1]) / 2;
+            const l22 = (raw[((y + 1) * w + (x + 1)) * 4] + raw[((y + 1) * w + (x + 1)) * 4 + 1]) / 2;
+
+            const gx = (-1 * l00 + 1 * l02 + -2 * l10 + 2 * l12 + -1 * l20 + 1 * l22);
+            const gy = (-1 * l00 - 2 * (raw[((y - 1) * w + x) * 4]) - 1 * l02 + 1 * l20 + 2 * (raw[((y + 1) * w + x) * 4]) + 1 * l22);
+            const g = Math.sqrt(gx * gx + gy * gy) / 255;
+            const idx = (y * w + x) * 4;
+
+            if (g > thresh) {
+              d[idx] = fgRgb.r; d[idx + 1] = fgRgb.g; d[idx + 2] = fgRgb.b;
+            } else {
+              d[idx] = bgRgb.r; d[idx + 1] = bgRgb.g; d[idx + 2] = bgRgb.b;
+            }
+            d[idx + 3] = 255;
+          }
+        }
+        ctx.putImageData(out, 0, 0);
+      }
+      // -----------------------------------------------------------------------
+      // 11. CROSSHATCH
+      // -----------------------------------------------------------------------
+      else if (effect === 'Crosshatch') {
+        ctx.fillStyle = state.bgColor;
+        ctx.fillRect(0, 0, w, h);
+        const step = Math.max(3, state.params.scale || 6);
+        ctx.strokeStyle = state.fgColor;
+        ctx.lineWidth = 1.0;
+
+        for (let y = 0; y < h; y += step) {
+          for (let x = 0; x < w; x += step) {
+            const idx = (y * w + x) * 4;
+            const adj = applyPreAdjustments(raw[idx], raw[idx + 1], raw[idx + 2]);
+            const lum = (0.299 * adj.r + 0.587 * adj.g + 0.114 * adj.b) / 255;
+
+            ctx.strokeStyle = getColorForLuminance(adj, lum, true, fgRgb, bgRgb, paletteRgb);
+
+            if (lum < 0.8) {
+              ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + step, y + step); ctx.stroke();
+            }
+            if (lum < 0.55) {
+              ctx.beginPath(); ctx.moveTo(x + step, y); ctx.lineTo(x, y + step); ctx.stroke();
+            }
+            if (lum < 0.3) {
+              ctx.beginPath(); ctx.moveTo(x + step / 2, y); ctx.lineTo(x + step / 2, y + step); ctx.stroke();
+            }
+            if (lum < 0.15) {
+              ctx.beginPath(); ctx.moveTo(x, y + step / 2); ctx.lineTo(x + step, y + step / 2); ctx.stroke();
+            }
+          }
+        }
+      }
+      // -----------------------------------------------------------------------
+      // 12. WAVE LINES
+      // -----------------------------------------------------------------------
+      else if (effect === 'Wave Lines') {
+        ctx.fillStyle = state.bgColor;
+        ctx.fillRect(0, 0, w, h);
+        const lineCount = Math.max(10, state.params.density || 60);
+        const stepY = h / lineCount;
+        const amp = state.params.intensity || 20;
+
+        for (let i = 0; i < lineCount; i++) {
+          const baseY = i * stepY;
+          ctx.beginPath();
+          for (let x = 0; x < w; x += 4) {
+            const idx = (Math.floor(baseY) * w + x) * 4;
+            const adj = applyPreAdjustments(raw[idx], raw[idx + 1], raw[idx + 2]);
+            const lum = (0.299 * adj.r + 0.587 * adj.g + 0.114 * adj.b) / 255;
+            const waveY = baseY + Math.sin(x * 0.08) * (lum * amp);
+            if (x === 0) ctx.moveTo(x, waveY);
+            else ctx.lineTo(x, waveY);
+          }
+          ctx.strokeStyle = state.fgColor;
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+        }
+      }
+      // -----------------------------------------------------------------------
+      // 13. NOISE FIELD
+      // -----------------------------------------------------------------------
+      else if (effect === 'Noise Field') {
+        const out = ctx.createImageData(w, h);
+        const d = out.data;
+        const scale = (state.params.scale || 35) * 0.01;
+        const turb = state.params.intensity || 1.5;
+
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) {
+            const idx = (y * w + x) * 4;
+            const adj = applyPreAdjustments(raw[idx], raw[idx + 1], raw[idx + 2]);
+            const n = Math.sin(x * scale) * Math.cos(y * scale) * Math.sin((x + y) * scale * 0.5);
+            const lum = ((0.299 * adj.r + 0.587 * adj.g + 0.114 * adj.b) / 255 + n * turb * 0.3);
+            const clamped = Math.max(0, Math.min(1, lum));
+
+            if (state.colorMode === 'original') {
+              d[idx] = adj.r * clamped; d[idx + 1] = adj.g * clamped; d[idx + 2] = adj.b * clamped;
+            } else {
+              const c = hexToRgb(getColorForLuminance(adj, clamped, clamped > 0.4, fgRgb, bgRgb, paletteRgb));
+              d[idx] = c.r; d[idx + 1] = c.g; d[idx + 2] = c.b;
+            }
+            d[idx + 3] = 255;
+          }
+        }
+        ctx.putImageData(out, 0, 0);
+      }
+      // -----------------------------------------------------------------------
+      // 14. VORONOI
+      // -----------------------------------------------------------------------
+      else if (effect === 'Voronoi') {
+        ctx.fillStyle = state.bgColor;
+        ctx.fillRect(0, 0, w, h);
+        const cSize = Math.max(8, state.params.scale || 24);
+
+        for (let y = 0; y < h; y += cSize) {
+          for (let x = 0; x < w; x += cSize) {
+            const rx = x + Math.floor((Math.random() - 0.5) * cSize * 0.6);
+            const ry = y + Math.floor((Math.random() - 0.5) * cSize * 0.6);
+            const idx = (Math.min(h - 1, Math.max(0, ry)) * w + Math.min(w - 1, Math.max(0, rx))) * 4;
+            const adj = applyPreAdjustments(raw[idx], raw[idx + 1], raw[idx + 2]);
+            const lum = (0.299 * adj.r + 0.587 * adj.g + 0.114 * adj.b) / 255;
+
+            ctx.fillStyle = getColorForLuminance(adj, lum, true, fgRgb, bgRgb, paletteRgb);
+            ctx.beginPath();
+            ctx.arc(rx, ry, cSize * 0.6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = state.bgColor;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+      }
+      // -----------------------------------------------------------------------
+      // 15. VHS SCANLINES & CHROMATIC RGB BLEED
+      // -----------------------------------------------------------------------
+      else if (effect === 'VHS') {
+        const out = ctx.createImageData(w, h);
+        const d = out.data;
+        const shift = Math.round((state.params.intensity || 0.6) * 8);
+
+        for (let y = 0; y < h; y++) {
+          const isScanline = (y % (state.params.scale || 2) === 0);
+          for (let x = 0; x < w; x++) {
+            const idx = (y * w + x) * 4;
+            const redIdx = (y * w + Math.min(w - 1, x + shift)) * 4;
+            const blueIdx = (y * w + Math.max(0, x - shift)) * 4;
+
+            const adjR = applyPreAdjustments(raw[redIdx], raw[redIdx + 1], raw[redIdx + 2]);
+            const adjG = applyPreAdjustments(raw[idx], raw[idx + 1], raw[idx + 2]);
+            const adjB = applyPreAdjustments(raw[blueIdx], raw[blueIdx + 1], raw[blueIdx + 2]);
+
+            if (isScanline) {
+              d[idx] = adjR.r * 0.4; d[idx + 1] = adjG.g * 0.4; d[idx + 2] = adjB.b * 0.4;
+            } else {
+              d[idx] = adjR.r; d[idx + 1] = adjG.g; d[idx + 2] = adjB.b;
+            }
+            d[idx + 3] = 255;
+          }
+        }
+        ctx.putImageData(out, 0, 0);
+      }
+
+      // Post-Processing Optics Overlay (Scanlines & Chromatic)
+      if (state.scanlines > 0) {
+        ctx.fillStyle = `rgba(0, 0, 0, ${state.scanlines * 0.5})`;
+        for (let y = 0; y < h; y += 3) {
+          ctx.fillRect(0, y, w, 1);
+        }
+      }
+    }
+
+    // 1. Export Current PNG / JPG Frame
+    document.getElementById('exportMainBtn').addEventListener('click', () => {
+      const a = document.createElement('a');
+      a.download = `chromarad-${state.activeEffect.toLowerCase()}-${state.colorMode}-${Date.now()}.png`;
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    });
+
+    document.getElementById('exportJpgBtn').addEventListener('click', () => {
+      const a = document.createElement('a');
+      a.download = `chromarad-${state.activeEffect.toLowerCase()}-${state.colorMode}-${Date.now()}.jpg`;
+      a.href = canvas.toDataURL('image/jpeg', 0.95);
+      a.click();
+    });
+
+    // 2. High-Fidelity MP4/WebM Video Export (User-Configurable FPS Boost)
+    document.getElementById('exportMp4Btn').addEventListener('click', async () => {
+      const btn = document.getElementById('exportMp4Btn');
+      const originalText = btn.innerText;
+      btn.disabled = true;
+
+      const current = state.images[state.currentImageIdx];
+      const isVideo = current && current.type === 'video' && current.video;
+      const duration = isVideo ? (current.video.duration || 14) : 5.0;
+      
+      const fpsVal = document.getElementById('exportFpsSelect')?.value || '60';
+      let targetFps;
+      if (fpsVal === 'auto') {
+        targetFps = Math.max(24, current && current.fps ? current.fps : (isVideo ? 24 : 60));
+      } else {
+        targetFps = parseInt(fpsVal, 10) || 60;
+      }
+
+      try {
+        const stream = canvas.captureStream(targetFps);
+
+        // Find standard browser-supported video codec
+        const mimeTypes = [
+          'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
+          'video/mp4;codecs=avc1',
+          'video/mp4',
+          'video/webm;codecs=vp9',
+          'video/webm;codecs=vp8',
+          'video/webm'
+        ];
+        const selectedMime = mimeTypes.find(m => MediaRecorder.isTypeSupported(m)) || 'video/webm';
+        const isMp4 = selectedMime.includes('mp4');
+        const ext = isMp4 ? 'mp4' : 'webm';
+
+        const recorder = new MediaRecorder(stream, {
+          mimeType: selectedMime,
+          videoBitsPerSecond: 16000000 // 16 Mbps crystal clear
+        });
+
+        const chunks = [];
+        recorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) chunks.push(e.data);
+        };
+
+        recorder.onstop = () => {
+          const blob = new Blob(chunks, { type: selectedMime });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `chromarad-${state.activeEffect.toLowerCase()}-${targetFps}fps-${Date.now()}.${ext}`;
+          a.click();
+          btn.innerText = '✓ EXPORT COMPLETE';
+          setTimeout(() => {
+            btn.innerText = originalText;
+            btn.disabled = false;
+            URL.revokeObjectURL(url);
+          }, 3000);
+        };
+
+        if (isVideo) {
+          const vid = current.video;
+          vid.pause();
+          vid.currentTime = 0;
+          await new Promise(r => {
+            const onSeek = () => { vid.removeEventListener('seeked', onSeek); r(); };
+            vid.addEventListener('seeked', onSeek);
+            setTimeout(r, 200);
+          });
+
+          render();
+          recorder.start(100);
+          await vid.play().catch(() => {});
+
+          let isRecording = true;
+          const renderLoop = () => {
+            if (!isRecording) return;
+            render();
+            const curTime = vid.currentTime;
+            const pct = Math.min(100, Math.round((curTime / duration) * 100));
+            btn.innerText = `🔴 REC ${curTime.toFixed(1)}s / ${duration.toFixed(1)}s (${pct}%) @ ${targetFps}fps...`;
+            requestAnimationFrame(renderLoop);
+          };
+          requestAnimationFrame(renderLoop);
+
+          const onEnd = () => {
+            if (vid.currentTime >= duration - 0.08 || vid.ended) {
+              isRecording = false;
+              vid.removeEventListener('timeupdate', onEnd);
+              setTimeout(() => {
+                if (recorder.state !== 'inactive') recorder.stop();
+              }, 150);
+            }
+          };
+          vid.addEventListener('timeupdate', onEnd);
+
+          // Safety timeout
+          setTimeout(() => {
+            isRecording = false;
+            vid.removeEventListener('timeupdate', onEnd);
+            if (recorder.state !== 'inactive') recorder.stop();
+          }, (duration + 1.2) * 1000);
+        } else {
+          // Static image animation loop
+          recorder.start(100);
+          let elapsed = 0;
+          let isRecording = true;
+
+          const renderLoop = () => {
+            if (!isRecording) return;
+            render();
+            requestAnimationFrame(renderLoop);
+          };
+          requestAnimationFrame(renderLoop);
+
+          const animInterval = setInterval(() => {
+            elapsed += 0.2;
+            btn.innerText = `🔴 REC ${elapsed.toFixed(1)}s / ${duration.toFixed(1)}s @ ${targetFps}fps...`;
+            if (elapsed >= duration) {
+              isRecording = false;
+              clearInterval(animInterval);
+              if (recorder.state !== 'inactive') recorder.stop();
+            }
+          }, 200);
+        }
+      } catch (err) {
+        alert('Video export error: ' + err.message);
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }
+    });
+
+    // 3. Studio-Grade Adaptive GIF Export (Adaptive Palette + Floyd-Steinberg Dithering)
+    document.getElementById('exportGifBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('exportGifBtn');
+      const originalText = btn.innerText;
+      btn.disabled = true;
+
+      const current = state.images[state.currentImageIdx];
+      const isVideo = current && current.type === 'video' && current.video;
+      const duration = isVideo ? (current.video.duration || 14) : 4.0;
+      
+      const fpsVal = document.getElementById('exportFpsSelect')?.value || '30';
+      let targetFps;
+      if (fpsVal === 'auto') {
+        targetFps = Math.max(20, Math.min(30, current && current.fps ? current.fps : (isVideo ? 24 : 24)));
+      } else {
+        targetFps = Math.min(30, parseInt(fpsVal, 10) || 30);
+      }
+
+      try {
+        const totalFrames = Math.max(12, Math.round(duration * targetFps));
+        const captured = [];
+
+        if (isVideo) {
+          const vid = current.video;
+          vid.pause();
+
+          for (let f = 0; f < totalFrames; f++) {
+            const targetTime = (f / totalFrames) * duration;
+            vid.currentTime = targetTime;
+
+            await new Promise(r => {
+              const onSeek = () => { vid.removeEventListener('seeked', onSeek); r(); };
+              vid.addEventListener('seeked', onSeek);
+              setTimeout(r, 120);
+            });
+
+            render();
+
+            const frameCanvas = document.createElement('canvas');
+            frameCanvas.width = Math.min(512, canvas.width);
+            frameCanvas.height = Math.round((frameCanvas.width / canvas.width) * canvas.height);
+            const fCtx = frameCanvas.getContext('2d');
+            fCtx.drawImage(canvas, 0, 0, frameCanvas.width, frameCanvas.height);
+            captured.push(frameCanvas);
+
+            const pct = Math.round(((f + 1) / totalFrames) * 100);
+            btn.innerText = `🎞️ ${f + 1}/${totalFrames} (${pct}%) @ ${sourceFps}fps...`;
+          }
+          vid.play().catch(() => {});
+        } else {
+          for (let f = 0; f < 30; f++) {
+            render();
+            const frameCanvas = document.createElement('canvas');
+            frameCanvas.width = Math.min(512, canvas.width);
+            frameCanvas.height = Math.round((frameCanvas.width / canvas.width) * canvas.height);
+            const fCtx = frameCanvas.getContext('2d');
+            fCtx.drawImage(canvas, 0, 0, frameCanvas.width, frameCanvas.height);
+            captured.push(frameCanvas);
+            btn.innerText = `🎞️ FRAME ${f + 1}/30...`;
+            await new Promise(r => setTimeout(r, 80));
+          }
+        }
+
+        btn.innerText = `⚙️ ENCODING ADAPTIVE GIF @ ${sourceFps} FPS...`;
+        await new Promise(r => setTimeout(r, 80));
+
+        const encoder = new CanvasGifEncoder(captured[0].width, captured[0].height, Math.round(1000 / sourceFps));
+        for (const fc of captured) {
+          encoder.addFrame(fc);
+        }
+
+        const gifBlob = encoder.encode();
+        const url = URL.createObjectURL(gifBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `chromarad-${state.activeEffect.toLowerCase()}-${sourceFps}fps-${Date.now()}.gif`;
+        a.click();
+        btn.innerText = '✓ GIF READY';
+        setTimeout(() => {
+          btn.innerText = originalText;
+          btn.disabled = false;
+          URL.revokeObjectURL(url);
+        }, 3000);
+      } catch (err) {
+        alert('Full GIF export error: ' + err.message);
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }
+    });
+
+    // Batch Export All 15 Styles
+    document.getElementById('batchExportBtn').addEventListener('click', () => {
+      const originalEffect = state.activeEffect;
+      const allEffects = Object.keys(EFFECT_DEFINITIONS);
+      let i = 0;
+
+      const next = () => {
+        if (i >= allEffects.length) {
+          state.activeEffect = originalEffect;
+          document.querySelectorAll('#effectsGrid button').forEach(b => b.classList.toggle('active', b.dataset.effect === originalEffect));
+          updateEffectSliders();
+          render();
+          alert(`✓ Successfully batch exported all 15 Grainrad styles!`);
+          return;
+        }
+        state.activeEffect = allEffects[i];
+        document.querySelectorAll('#effectsGrid button').forEach(b => b.classList.toggle('active', b.dataset.effect === allEffects[i]));
+        updateEffectSliders();
+        render();
+
+        const a = document.createElement('a');
+        a.download = `grainrad-${allEffects[i].toLowerCase()}-${Date.now()}.png`;
+        a.href = canvas.toDataURL('image/png');
+        a.click();
+        i++;
+        setTimeout(next, 300);
+      };
+      next();
+    });
+
+    // Initialize
+    updatePaletteChips();
+    updateEffectSliders();
+    createDefaultSample();
+  </script>
+</body>
+</html>

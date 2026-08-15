@@ -1,0 +1,50 @@
+{
+  "id": "EXP-001",
+  "slug": "ic-wafer-matrix",
+  "title": "IC Wafer Yield Matrix",
+  "year": 2026,
+  "category": "generative-matrix",
+  "technology": "Canvas 2D / Procedural",
+  "visualDNA_channel": "CH-02-NUMERIC-GRID",
+  "parameters": {
+    "gridSize": {
+      "type": "range",
+      "min": 8,
+      "max": 32,
+      "step": 1,
+      "default": 20
+    },
+    "defectRate": {
+      "type": "range",
+      "min": 0.01,
+      "max": 0.5,
+      "step": 0.01,
+      "default": 0.12
+    },
+    "scanSpeed": {
+      "type": "range",
+      "min": 0.1,
+      "max": 4,
+      "step": 0.1,
+      "default": 1.5
+    },
+    "colorMode": {
+      "type": "select",
+      "options": [
+        "HEAT_MAP",
+        "PHOSPHOR_GREEN",
+        "RAW_AMBER"
+      ],
+      "default": "HEAT_MAP"
+    }
+  },
+  "metadata": {
+    "author": "Adib Zahran",
+    "seed": "0x4A2F8B",
+    "status": "OPERATIONAL",
+    "lineage": "REF-002",
+    "description": "Procedural silicon wafer yield matrix with circular substrate clipping, stochastic defect clustering, heat-map calculations, and laser inspection sweep."
+  },
+  "entryType": "module",
+  "entryPoint": "./projects/ic-wafer-matrix/experiment.js"
+}

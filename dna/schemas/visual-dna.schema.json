@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "VisualDNASchema",
+  "type": "object",
+  "required": ["id", "name", "archetype", "colorway", "typography", "telemetry", "optics", "parameters"],
+  "properties": {
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "archetype": {
+      "type": "string",
+      "enum": ["crt_telemetry", "vector_wireframe", "spectral_dispersion", "phosphor_raster", "cellular_automata", "topological_manifold", "fluid_dynamics", "audio_reactive"]
+    },
+    "colorway": {
+      "type": "object",
+      "required": ["primary", "secondary", "background", "accent", "glow"],
+      "properties": {
+        "primary": { "type": "string" },
+        "secondary": { "type": "string" },
+        "background": { "type": "string" },
+        "accent": { "type": "string" },
+        "glow": { "type": "string" },
+        "spectrum": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "typography": {
+      "type": "object",
+      "required": ["displayFont", "monoFont", "tracking", "textTransform"],
+      "properties": {
+        "displayFont": { "type": "string" },
+        "monoFont": { "type": "string" },
+        "tracking": { "type": "string" },
+        "textTransform": { "type": "string", "enum": ["uppercase", "lowercase", "none"] }
+      }
+    },
+    "telemetry": {
+      "type": "object",
+      "required": ["gridResolution", "hasOscilloscope", "hasWireframeGrid", "hasHexDump"],
+      "properties": {
+        "gridResolution": { "type": "string" },
+        "hasOscilloscope": { "type": "boolean" },
+        "hasWireframeGrid": { "type": "boolean" },
+        "hasHexDump": { "type": "boolean" },
+        "labels": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "optics": {
+      "type": "object",
+      "required": ["scanlines", "bloom", "chromaticAberration", "curvature", "flicker"],
+      "properties": {
+        "scanlines": { "type": "number", "minimum": 0, "maximum": 1 },
+        "bloom": { "type": "number", "minimum": 0, "maximum": 1 },
+        "chromaticAberration": { "type": "number", "minimum": 0, "maximum": 1 },
+        "curvature": { "type": "number", "minimum": 0, "maximum": 1 },
+        "flicker": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "parameters": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["value", "min", "max", "step", "label"],
+        "properties": {
+          "value": { "type": "number" },
+          "min": { "type": "number" },
+          "max": { "type": "number" },
+          "step": { "type": "number" },
+          "label": { "type": "string" }
+        }
+      }
+    }
+  }
+}

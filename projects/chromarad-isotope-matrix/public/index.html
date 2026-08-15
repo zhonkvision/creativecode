@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grainrad Bulk Exporter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            background: linear-gradient(90deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.3rem;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 800px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+
+        .panel-title {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Drop Zone */
+        .drop-zone {
+            border: 2px dashed #333;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.02);
+            margin-bottom: 1rem;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .drop-zone-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.5;
+        }
+
+        .drop-zone-text {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .drop-zone input {
+            display: none;
+        }
+
+        /* File List */
+        .file-list {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 0.75rem;
+            max-height: 100px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+        }
+
+        .file-list:empty::before {
+            content: 'No files uploaded';
+            color: #444;
+            font-style: italic;
+        }
+
+        .file-item {
+            padding: 0.3rem 0;
+            border-bottom: 1px solid #1a1a1a;
+            color: #888;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Effect Buttons Grid */
+        .effects-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+
+        .effect-btn {
+            padding: 0.75rem 0.5rem;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            color: #aaa;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .effect-btn:hover {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+            color: #fff;
+        }
+
+        .effect-btn.selected {
+            border-color: #00ff88;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.2) 0%, rgba(0, 212, 255, 0.2) 100%);
+            color: #00ff88;
+        }
+
+        .effect-btn .icon {
+            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        /* Presets Row */
+        .presets-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .preset-btn {
+            flex: 1;
+            padding: 0.6rem;
+            border: 1px solid #333;
+            border-radius: 6px;
+            background: transparent;
+            color: #888;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            border-color: #555;
+            color: #fff;
+        }
+
+        .preset-btn.selected {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.15);
+            color: #00d4ff;
+        }
+
+        /* Depth Selector */
+        .depth-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .depth-btn {
+            flex: 1;
+            padding: 0.6rem;
+            border: 1px solid #333;
+            border-radius: 6px;
+            background: transparent;
+            color: #888;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .depth-btn:hover {
+            border-color: #555;
+            color: #fff;
+        }
+
+        .depth-btn.selected {
+            border-color: #ff8800;
+            background: rgba(255, 136, 0, 0.15);
+            color: #ff8800;
+        }
+
+        /* Format Buttons */
+        .format-btn {
+            padding: 0.5rem 0.3rem;
+            border: 1px solid #333;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.03);
+            color: #aaa;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .format-btn:hover {
+            border-color: #a855f7;
+            background: rgba(168, 85, 247, 0.1);
+            color: #fff;
+        }
+
+        .format-btn.selected {
+            border-color: #a855f7;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%);
+            color: #a855f7;
+        }
+
+        .format-btn .icon {
+            font-size: 1rem;
+            display: block;
+            margin-bottom: 0.15rem;
+        }
+
+        /* Action Buttons */
+        .action-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.9rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%);
+            color: #000;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #222;
+            color: #888;
+        }
+
+        .btn-secondary:hover {
+            background: #333;
+            color: #fff;
+        }
+
+        .btn-batch {
+            background: linear-gradient(135deg, #ff8800 0%, #ff4444 100%);
+            color: #fff;
+        }
+
+        .btn-batch:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(255, 136, 0, 0.3);
+        }
+
+        /* Console */
+        .console {
+            background: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-family: 'Consolas', monospace;
+            font-size: 0.75rem;
+            height: 180px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+
+        .log-line {
+            padding: 0.15rem 0;
+            color: #666;
+        }
+
+        .log-line.success {
+            color: #00ff88;
+        }
+
+        .log-line.error {
+            color: #ff4444;
+        }
+
+        .log-line.info {
+            color: #00d4ff;
+        }
+
+        /* Outputs */
+        .output-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem;
+            background: rgba(0, 255, 136, 0.05);
+            border-radius: 6px;
+            margin-bottom: 0.4rem;
+            font-size: 0.8rem;
+        }
+
+        .output-item a {
+            color: #00ff88;
+            text-decoration: none;
+        }
+
+        .output-item a:hover {
+            text-decoration: underline;
+        }
+
+        .output-size {
+            color: #555;
+            font-size: 0.7rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-idle {
+            background: #222;
+            color: #666;
+        }
+
+        .status-running {
+            background: #0066ff33;
+            color: #00d4ff;
+        }
+
+        .status-done {
+            background: #00ff8833;
+            color: #00ff88;
+        }
+
+        .status-error {
+            background: #ff444433;
+            color: #ff4444;
+        }
+
+        .selected-info {
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.75rem;
+            color: #00ff88;
+            margin-bottom: 0.75rem;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Chromarad // Isotope Matrix</h1>
+            <p class="subtitle">Upload → Pick Effect → Export Three.js 3D Scenes</p>
+        </header>
+
+        <div class="main-grid">
+            <!-- Left Panel -->
+            <div>
+                <div class="panel">
+                    <div class="panel-title">📁 Upload Images</div>
+
+                    <div class="drop-zone" id="dropZone">
+                        <div class="drop-zone-icon">📷</div>
+                        <div class="drop-zone-text">
+                            Drop images or click to browse
+                        </div>
+                        <input type="file" id="fileInput" multiple accept="image/*,video/*,.gif,.mp4,.webm,.mov">
+                    </div>
+
+                    <div class="file-list" id="fileList"></div>
+                </div>
+
+                <div class="panel" style="margin-top: 1rem;">
+                    <div class="panel-title">
+                        <span>📟 Console</span>
+                        <span class="status-badge status-idle" id="statusBadge">IDLE</span>
+                    </div>
+                    <div class="console" id="console">
+                        <div class="log-line">Ready. Upload images and pick an effect.</div>
+                    </div>
+                </div>
+
+                <div class="panel" style="margin-top: 1rem;">
+                    <div class="panel-title">📦 Exported Files</div>
+                    <div id="outputList">
+                        <div style="color: #444; font-style: italic; font-size: 0.8rem;">No exports yet</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div>
+                <div class="panel">
+                    <div class="panel-title">⚙️ Preset Quality</div>
+                    <div class="presets-row">
+                        <button class="preset-btn" data-preset="Low Detail">Low</button>
+                        <button class="preset-btn" data-preset="Medium Detail">Medium</button>
+                        <button class="preset-btn selected" data-preset="High Detail">High</button>
+                    </div>
+
+                    <div class="panel-title">🌈 Color Optimization</div>
+                    <label class="vibrant-toggle"
+                        style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.5rem; background: rgba(255,255,255,0.03); border-radius: 6px; border: 1px solid #333;">
+                        <input type="checkbox" id="vibrantMode" checked
+                            style="width: 18px; height: 18px; accent-color: #a855f7;">
+                        <span style="color: #aaa; font-size: 0.75rem;">
+                            <strong
+                                style="background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #a855f7); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Vibrant
+                                Mode</strong>
+                            — auto-optimizes colors for max pop
+                        </span>
+                    </label>
+
+                    <div class="panel-title">📐 3D Depth <span style="color:#555; font-size:0.6rem;">(for Three.js
+                            only)</span></div>
+                    <div class="depth-row">
+                        <button class="depth-btn" data-depth="Flat">Flat (2D)</button>
+                        <button class="depth-btn" data-depth="Layered">Layered</button>
+                        <button class="depth-btn selected" data-depth="Extreme">Extreme</button>
+                    </div>
+
+                    <div class="panel-title">📦 Export Format</div>
+                    <div class="effects-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 1rem;">
+                        <button class="format-btn" data-format="PNG">
+                            <span class="icon">🖼️</span>PNG
+                        </button>
+                        <button class="format-btn" data-format="JPEG">
+                            <span class="icon">📷</span>JPG
+                        </button>
+                        <button class="format-btn" data-format="GIF">
+                            <span class="icon">🎞️</span>GIF
+                        </button>
+                        <button class="format-btn" data-format="VIDEO">
+                            <span class="icon">🎬</span>MP4
+                        </button>
+                        <button class="format-btn" data-format="SVG">
+                            <span class="icon">📐</span>SVG
+                        </button>
+                        <button class="format-btn" data-format="TEXT">
+                            <span class="icon">📝</span>TXT
+                        </button>
+                        <button class="format-btn selected" data-format="Three.js" style="grid-column: span 2;">
+                            <span class="icon">🌐</span>Three.js (3D)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel" style="margin-top: 1rem;">
+                    <div class="panel-title">🎨 Effects (Click to Export)</div>
+
+                    <div class="effects-grid">
+                        <button class="effect-btn selected" data-effect="ASCII">
+                            <span class="icon">A</span>ASCII
+                        </button>
+                        <button class="effect-btn" data-effect="Dithering">
+                            <span class="icon">░</span>Dithering
+                        </button>
+                        <button class="effect-btn" data-effect="Halftone">
+                            <span class="icon">●</span>Halftone
+                        </button>
+                        <button class="effect-btn" data-effect="Matrix Rain">
+                            <span class="icon">⌘</span>Matrix
+                        </button>
+                        <button class="effect-btn" data-effect="Dots">
+                            <span class="icon">⋯</span>Dots
+                        </button>
+                        <button class="effect-btn" data-effect="Contour">
+                            <span class="icon">◎</span>Contour
+                        </button>
+                        <button class="effect-btn" data-effect="Pixel Sort">
+                            <span class="icon">▥</span>Pixel Sort
+                        </button>
+                        <button class="effect-btn" data-effect="Blockify">
+                            <span class="icon">▦</span>Blockify
+                        </button>
+                        <button class="effect-btn" data-effect="Threshold">
+                            <span class="icon">◐</span>Threshold
+                        </button>
+                        <button class="effect-btn" data-effect="Edge Detection">
+                            <span class="icon">⬡</span>Edge
+                        </button>
+                        <button class="effect-btn" data-effect="Crosshatch">
+                            <span class="icon">#</span>Crosshatch
+                        </button>
+                        <button class="effect-btn" data-effect="Wave Lines">
+                            <span class="icon">〰</span>Waves
+                        </button>
+                        <button class="effect-btn" data-effect="Noise Field">
+                            <span class="icon">◌</span>Noise
+                        </button>
+                        <button class="effect-btn" data-effect="Voronoi">
+                            <span class="icon">⎔</span>Voronoi
+                        </button>
+                        <button class="effect-btn" data-effect="VHS">
+                            <span class="icon">📼</span>VHS
+                        </button>
+                    </div>
+
+                    <div class="selected-info" id="selectedInfo">
+                        High Detail + Extreme + ASCII
+                    </div>
+
+                    <div class="action-row">
+                        <button class="btn btn-primary" id="exportBtn" disabled>
+                            🚀 Export Selected
+                        </button>
+                        <button class="btn btn-secondary" id="clearBtn">
+                            🗑️ Clear
+                        </button>
+                    </div>
+
+                    <div class="action-row">
+                        <button class="btn btn-batch" id="exportAllBtn" disabled>
+                            ⚡ Export ALL Effects (15 styles per image!)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="margin-top: 2rem; text-align: center; padding: 1rem;">
+            <a href="/about.html" style="color: #555; font-size: 0.75rem; text-decoration: none;">
+                About this tool
+            </a>
+        </footer>
+    </div>
+
+    <script>
+        // Elements
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        const exportBtn = document.getElementById('exportBtn');
+        const exportAllBtn = document.getElementById('exportAllBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const consoleEl = document.getElementById('console');
+        const statusBadge = document.getElementById('statusBadge');
+        const outputList = document.getElementById('outputList');
+        const selectedInfo = document.getElementById('selectedInfo');
+
+        // State
+        let uploadedFiles = [];
+        let selectedPreset = 'High Detail';
+        let selectedDepth = 'Extreme';
+        let selectedEffect = 'ASCII';
+        let selectedFormat = 'Three.js';
+        let logIndex = 0;
+        let pollInterval = null;
+
+        // All effects for batch export
+        const ALL_EFFECTS = [
+            'ASCII', 'Dithering', 'Halftone', 'Matrix Rain', 'Dots',
+            'Contour', 'Pixel Sort', 'Blockify', 'Threshold',
+            'Edge Detection', 'Crosshatch', 'Wave Lines', 'Noise Field', 'Voronoi', 'VHS'
+        ];
+
+        // Update selection display
+        function updateSelectedInfo() {
+            const depthPart = selectedFormat === 'Three.js' ? ` + ${selectedDepth}` : '';
+            selectedInfo.textContent = `${selectedPreset}${depthPart} + ${selectedEffect} → ${selectedFormat}`;
+        }
+
+        // Handle preset buttons
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedPreset = btn.dataset.preset;
+                updateSelectedInfo();
+            });
+        });
+
+        // Handle depth buttons
+        document.querySelectorAll('.depth-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.depth-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedDepth = btn.dataset.depth;
+                updateSelectedInfo();
+            });
+        });
+
+        // Handle effect buttons
+        document.querySelectorAll('.effect-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.effect-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedEffect = btn.dataset.effect;
+                updateSelectedInfo();
+            });
+        });
+
+        // Handle format buttons
+        document.querySelectorAll('.format-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.format-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedFormat = btn.dataset.format;
+                updateSelectedInfo();
+            });
+        });
+
+        // Drop zone events
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        async function handleFiles(files) {
+            const formData = new FormData();
+            for (const file of files) formData.append('images', file);
+
+            log('Uploading ' + files.length + ' files...', 'info');
+
+            const res = await fetch('/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.success) {
+                log('✓ Uploaded ' + data.count + ' images', 'success');
+                refreshFileList();
+            }
+        }
+
+        async function refreshFileList() {
+            const res = await fetch('/input-files');
+            const data = await res.json();
+            uploadedFiles = data.files;
+
+            fileList.innerHTML = data.files.map(f => `<div class="file-item">📷 ${f}</div>`).join('');
+
+            const hasFiles = data.files.length > 0;
+            exportBtn.disabled = !hasFiles;
+            exportAllBtn.disabled = !hasFiles;
+        }
+
+        async function refreshOutputs() {
+            const res = await fetch('/output-files');
+            const data = await res.json();
+
+            if (data.files.length === 0) {
+                outputList.innerHTML = '<div style="color: #444; font-style: italic; font-size: 0.8rem;">No exports yet</div>';
+            } else {
+                outputList.innerHTML = data.files.slice(-10).map(f => `
+                    <div class="output-item">
+                        <a href="${f.url}" target="_blank">🎨 ${f.name}</a>
+                        <span class="output-size">${f.size}</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function log(message, type = '') {
+            const line = document.createElement('div');
+            line.className = 'log-line ' + type;
+            line.textContent = message;
+            consoleEl.appendChild(line);
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        function setStatus(status) {
+            statusBadge.className = 'status-badge status-' + status;
+            statusBadge.textContent = status.toUpperCase();
+        }
+
+        async function startExport(effect, preset, depth, format, vibrant) {
+            const modeStr = vibrant ? ' 🌈' : '';
+            log(`Starting: ${preset} + ${effect} → ${format}${modeStr}`, 'info');
+            setStatus('running');
+            exportBtn.disabled = true;
+            exportAllBtn.disabled = true;
+            logIndex = 0;
+
+            const params = new URLSearchParams({ effect, preset, depth, format, vibrant: vibrant ? '1' : '0' });
+            await fetch('/start-export?' + params.toString());
+
+            pollInterval = setInterval(async () => {
+                const res = await fetch('/export-status?since=' + logIndex);
+                const data = await res.json();
+
+                data.logs.forEach(l => {
+                    const type = l.includes('✓') || l.includes('✅') ? 'success' :
+                        l.includes('❌') || l.includes('ERROR') ? 'error' : '';
+                    log(l, type);
+                });
+
+                logIndex = data.totalLogs;
+
+                if (data.status === 'done' || data.status === 'error') {
+                    clearInterval(pollInterval);
+                    setStatus(data.status);
+                    exportBtn.disabled = false;
+                    exportAllBtn.disabled = false;
+                    refreshOutputs();
+                }
+            }, 500);
+        }
+
+        async function exportAllEffects() {
+            const vibrant = document.getElementById('vibrantMode').checked;
+            log(`🔥 BATCH MODE: Exporting all 15 effects to ${selectedFormat}${vibrant ? ' 🌈' : ''}!`, 'info');
+            setStatus('running');
+            exportBtn.disabled = true;
+            exportAllBtn.disabled = true;
+
+            for (const effect of ALL_EFFECTS) {
+                log(`\n═══ ${effect} ═══`, 'info');
+
+                const params = new URLSearchParams({
+                    effect,
+                    preset: selectedPreset,
+                    depth: selectedDepth,
+                    format: selectedFormat,
+                    vibrant: vibrant ? '1' : '0'
+                });
+
+                await fetch('/start-export?' + params.toString());
+
+
+                // Wait for this export to complete
+                await new Promise(resolve => {
+                    const checkInterval = setInterval(async () => {
+                        const res = await fetch('/export-status?since=' + logIndex);
+                        const data = await res.json();
+
+                        data.logs.forEach(l => {
+                            const type = l.includes('✓') || l.includes('✅') ? 'success' :
+                                l.includes('❌') || l.includes('ERROR') ? 'error' : '';
+                            log(l, type);
+                        });
+                        logIndex = data.totalLogs;
+
+                        if (data.status === 'done' || data.status === 'error') {
+                            clearInterval(checkInterval);
+                            resolve();
+                        }
+                    }, 500);
+                });
+
+                refreshOutputs();
+            }
+
+            log('🎉 ALL EFFECTS EXPORTED!', 'success');
+            setStatus('done');
+            exportBtn.disabled = false;
+            exportAllBtn.disabled = false;
+        }
+
+        async function clearAll() {
+            await fetch('/clear-input', { method: 'POST' });
+            log('Cleared input folder', 'info');
+            refreshFileList();
+        }
+
+        exportBtn.addEventListener('click', () => {
+            const vibrant = document.getElementById('vibrantMode').checked;
+            startExport(selectedEffect, selectedPreset, selectedDepth, selectedFormat, vibrant);
+        });
+        exportAllBtn.addEventListener('click', exportAllEffects);
+        clearBtn.addEventListener('click', clearAll);
+
+        // Initial load
+        refreshFileList();
+        refreshOutputs();
+    </script>
+</body>
+
+</html>

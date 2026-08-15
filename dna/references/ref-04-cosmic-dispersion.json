@@ -1,0 +1,40 @@
+{
+  "id": "ref-04-cosmic-dispersion",
+  "name": "Deep Cosmic Quantum Spectral Dispersion",
+  "archetype": "spectral_dispersion",
+  "source": "Image Reference 03 (Cosmic Control HUD)",
+  "colorway": {
+    "primary": "#00F0FF",
+    "secondary": "#FF007F",
+    "background": "#030206",
+    "accent": "#FFD700",
+    "glow": "rgba(0, 240, 255, 0.4)",
+    "spectrum": ["#FF0055", "#FF7700", "#FFFF00", "#00FF66", "#00FFFF", "#0055FF", "#AA00FF"]
+  },
+  "typography": {
+    "displayFont": "'Share Tech Mono', monospace",
+    "monoFont": "'Fira Code', monospace",
+    "tracking": "0.15em",
+    "textTransform": "uppercase"
+  },
+  "telemetry": {
+    "gridResolution": "64x64",
+    "hasOscilloscope": true,
+    "hasWireframeGrid": true,
+    "hasHexDump": true,
+    "labels": ["SPECTRAL FLUX: 9.842 THz", "ASTRO-RADAR: LOCKED", "EVENT HORIZON: T-0.44s", "PHOTON BEAM: PRISMATIC", "SPECTROGRAM 04", "PLANETARY MATRIX: OK"]
+  },
+  "optics": {
+    "scanlines": 0.6,
+    "bloom": 0.9,
+    "chromaticAberration": 0.8,
+    "curvature": 0.15,
+    "flicker": 0.08
+  },
+  "parameters": {
+    "dispersionAngle": { "value": 42.5, "min": 0, "max": 90.0, "step": 0.5, "label": "Prism Refraction Theta" },
+    "particleRayCount": { "value": 128, "min": 32, "max": 512, "step": 8, "label": "Spectral Ray Count" },
+    "quantumDrift": { "value": 0.035, "min": 0.001, "max": 0.2, "step": 0.005, "label": "Spacetime Warp Entropy" },
+    "horizonElevation": { "value": 0.45, "min": 0.1, "max": 0.9, "step": 0.01, "label": "Solar Zenith Axis" }
+  }
+}

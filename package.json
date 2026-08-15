@@ -1,0 +1,24 @@
+{
+  "name": "cc-visual-dna",
+  "version": "2.4.0",
+  "description": "CreativeCode.my — Living Visual DNA Engine & Experimental Generative Gallery",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "serve": "python3 -m http.server 8080"
+  },
+  "keywords": [
+    "generative-art",
+    "creative-coding",
+    "visual-dna",
+    "webgl",
+    "threejs",
+    "p5js",
+    "crt-optics",
+    "telemetry-hud",
+    "retro-futurism"
+  ],
+  "author": "CreativeCode.my",
+  "license": "MIT"
+}

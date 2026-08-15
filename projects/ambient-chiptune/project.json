@@ -1,0 +1,34 @@
+{
+  "id": "EXP-001",
+  "slug": "ambient-chiptune",
+  "title": "Ambient Chiptune",
+  "year": 2026,
+  "category": "stepped-raster",
+  "technology": "WebGL / Canvas / Interactive",
+  "visualDNA_channel": "CH-04-STEPPED-RASTER",
+  "entryType": "iframe",
+  "entryPoint": "./projects/ambient-chiptune/index.html",
+  "parameters": {
+    "speed": {
+      "type": "range",
+      "min": 0.1,
+      "max": 3,
+      "step": 0.1,
+      "default": 1
+    },
+    "intensity": {
+      "type": "range",
+      "min": 0.1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1
+    }
+  },
+  "metadata": {
+    "author": "Adib Zahran",
+    "seed": "0x539400",
+    "status": "OPERATIONAL",
+    "lineage": "REF-001",
+    "description": "Experimental generative visualization: Ambient Chiptune."
+  }
+}

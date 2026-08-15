@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#03040a">
+  <title>Lumen Lattice — Interactive Geometric Morph</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --glass-edge: rgba(196, 220, 255, .22);
+      --glass-fill: rgba(12, 15, 28, .58);
+      --focus: #8eeaff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #03040a;
+    }
+
+    body {
+      color: #f7f9ff;
+      isolation: isolate;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(ellipse at 50% 46%, rgba(58, 39, 119, .18) 0%, rgba(16, 25, 57, .08) 31%, transparent 61%),
+        radial-gradient(ellipse at 50% 110%, rgba(0, 111, 145, .09), transparent 48%),
+        linear-gradient(155deg, #070713 0%, #02040b 48%, #05030c 100%);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 46%, rgba(0, 0, 0, .24) 76%, rgba(0, 0, 0, .62) 120%);
+    }
+
+    #main-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      outline: none;
+      touch-action: none;
+      cursor: grab;
+    }
+
+    #main-canvas:active { cursor: grabbing; }
+    #main-canvas.is-over-form { cursor: crosshair; }
+    #main-canvas:focus-visible { box-shadow: inset 0 0 0 2px rgba(142, 234, 255, .72); }
+
+    .glass {
+      position: relative;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .11), transparent 34%),
+        var(--glass-fill);
+      border: 1px solid var(--glass-edge);
+      box-shadow:
+        0 20px 55px rgba(0, 0, 0, .42),
+        inset 0 1px 0 rgba(255, 255, 255, .17),
+        inset 0 -1px 0 rgba(76, 106, 159, .11);
+      -webkit-backdrop-filter: blur(22px) saturate(145%);
+      backdrop-filter: blur(22px) saturate(145%);
+    }
+
+    .glass::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: inherit;
+      pointer-events: none;
+      opacity: .38;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+    }
+
+    .glass::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background:
+        radial-gradient(130px circle at var(--glass-x, 50%) var(--glass-y, 0%), rgba(179, 227, 255, .20), transparent 66%),
+        linear-gradient(110deg, transparent 24%, rgba(255, 255, 255, .08) 43%, transparent 61%);
+      background-size: auto, 220% 100%;
+      background-position: center, 110% 0;
+      animation: glass-streak 9s ease-in-out infinite;
+    }
+
+    @keyframes glass-streak {
+      0%, 18%, 100% { background-position: center, 118% 0; }
+      48%, 62% { background-position: center, -85% 0; }
+    }
+
+    #interface {
+      position: fixed;
+      z-index: 10;
+      top: max(14px, env(safe-area-inset-top));
+      left: 50%;
+      width: min(358px, calc(100vw - 24px));
+      transform: translateX(-50%);
+      border-radius: 22px;
+      transition: border-radius .45s cubic-bezier(.2, .85, .2, 1), box-shadow .45s ease;
+    }
+
+    #interface.expanded {
+      border-radius: 26px;
+      box-shadow: 0 28px 75px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .18);
+    }
+
+    .toolbar {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px;
+    }
+
+    .morph-segments {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      flex: 1;
+      min-width: 0;
+      padding: 3px;
+      border: 1px solid rgba(188, 214, 255, .12);
+      border-radius: 16px;
+      background: rgba(1, 3, 10, .32);
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, .25);
+    }
+
+    .segment-highlight {
+      position: absolute;
+      top: 3px;
+      bottom: 3px;
+      left: 3px;
+      width: calc(50% - 3px);
+      border: 1px solid rgba(192, 229, 255, .24);
+      border-radius: 12px;
+      background:
+        radial-gradient(circle at 28% 0%, rgba(207, 236, 255, .2), transparent 58%),
+        linear-gradient(135deg, rgba(118, 110, 255, .22), rgba(32, 202, 229, .10));
+      box-shadow: inset 0 1px rgba(255,255,255,.16), 0 4px 14px rgba(16, 9, 58, .26);
+      transform: translateX(var(--segment, 0%));
+      transition: transform .65s cubic-bezier(.2, 1.25, .25, 1);
+      pointer-events: none;
+    }
+
+    button, input { font: inherit; }
+
+    button {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .segment-button {
+      position: relative;
+      z-index: 1;
+      min-width: 0;
+      height: 38px;
+      padding: 0 10px;
+      border: 0;
+      border-radius: 12px;
+      background: transparent;
+      color: rgba(229, 235, 251, .62);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .075em;
+      text-transform: uppercase;
+      transition: color .3s ease, text-shadow .3s ease;
+    }
+
+    .segment-button[aria-pressed="true"] {
+      color: #fff;
+      text-shadow: 0 0 14px rgba(153, 216, 255, .65);
+    }
+
+    .icon-button {
+      display: grid;
+      place-items: center;
+      flex: 0 0 44px;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border: 1px solid rgba(188, 218, 255, .16);
+      border-radius: 15px;
+      background: rgba(2, 5, 13, .28);
+      color: rgba(240, 246, 255, .78);
+      cursor: pointer;
+      box-shadow: inset 0 1px rgba(255,255,255,.08);
+      transition: transform .25s cubic-bezier(.2, 1.4, .3, 1), color .25s ease, background .25s ease;
+    }
+
+    .icon-button:hover { color: #fff; background: rgba(88, 106, 164, .18); transform: translateY(-1px); }
+    .icon-button:active { transform: scale(.94); }
+    .icon-button svg { width: 19px; height: 19px; transition: transform .55s cubic-bezier(.2, 1.2, .3, 1); }
+    #settings-toggle[aria-expanded="true"] svg { transform: rotate(135deg); }
+
+    button:focus-visible, input:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    #settings-panel {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px) scale(.985);
+      transform-origin: top center;
+      transition:
+        grid-template-rows .52s cubic-bezier(.2, .9, .2, 1),
+        opacity .28s ease,
+        visibility 0s linear .52s,
+        transform .52s cubic-bezier(.2, .9, .2, 1);
+    }
+
+    #interface.expanded #settings-panel {
+      grid-template-rows: 1fr;
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+      transition-delay: 0s;
+    }
+
+    .settings-inner {
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .settings-content {
+      padding: 4px 14px 15px;
+      border-top: 1px solid rgba(182, 212, 255, .09);
+    }
+
+    .setting-label {
+      display: block;
+      margin: 12px 2px 9px;
+      color: rgba(230, 237, 252, .58);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .palette-button {
+      position: relative;
+      height: 42px;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.17);
+      border-radius: 13px;
+      background: var(--swatch);
+      cursor: pointer;
+      box-shadow: inset 0 1px rgba(255,255,255,.18), 0 5px 14px rgba(0,0,0,.16);
+      transition: transform .28s cubic-bezier(.2, 1.4, .3, 1), border-color .28s, box-shadow .28s;
+    }
+
+    .palette-button::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg, transparent 27%, rgba(255,255,255,.28) 48%, transparent 68%);
+      transform: translateX(-130%);
+      transition: transform .6s ease;
+    }
+
+    .palette-button:hover::after, .palette-button[aria-pressed="true"]::after { transform: translateX(130%); }
+    .palette-button:hover { transform: translateY(-2px); }
+    .palette-button[aria-pressed="true"] {
+      border-color: rgba(255,255,255,.78);
+      box-shadow: inset 0 1px rgba(255,255,255,.28), 0 0 0 2px rgba(99, 222, 255, .2), 0 7px 18px rgba(0,0,0,.24);
+    }
+
+    .slider-row {
+      display: grid;
+      grid-template-columns: 68px 1fr 34px;
+      align-items: center;
+      gap: 10px;
+      min-height: 42px;
+      color: rgba(241, 245, 255, .82);
+      font-size: 12px;
+    }
+
+    .slider-row > span {
+      font-weight: 650;
+      letter-spacing: .015em;
+      transition: color .2s ease, text-shadow .2s ease;
+    }
+
+    .slider-row:focus-within > span {
+      color: #fff;
+      text-shadow: 0 0 14px var(--slider-halo, rgba(116, 207, 255, .52));
+    }
+
+    .slider-row output {
+      min-width: 34px;
+      padding: 4px 5px;
+      border: 1px solid rgba(196, 219, 255, .14);
+      border-radius: 8px;
+      background: linear-gradient(145deg, rgba(162, 192, 255, .1), rgba(4, 8, 20, .24));
+      box-shadow: inset 0 1px rgba(255,255,255,.08), 0 3px 10px rgba(0,0,0,.16);
+      color: rgba(226, 239, 255, .78);
+      font-size: 10px;
+      font-variant-numeric: tabular-nums;
+      text-align: center;
+      transition: border-color .2s ease, color .2s ease, box-shadow .2s ease;
+    }
+
+    .slider-row:focus-within output {
+      border-color: color-mix(in srgb, var(--slider-thumb, #8edcf3) 42%, transparent);
+      color: #fff;
+      box-shadow: inset 0 1px rgba(255,255,255,.12), 0 0 12px var(--slider-halo, rgba(94, 198, 238, .2));
+    }
+
+    input[type="range"] {
+      --fill: 50%;
+      --slider-a: #7956f6;
+      --slider-b: #42d9ed;
+      --slider-thumb: #9becfa;
+      --slider-halo: rgba(79, 210, 241, .32);
+      width: 100%;
+      height: 8px;
+      appearance: none;
+      border: 1px solid rgba(204, 225, 255, .13);
+      border-radius: 99px;
+      background:
+        linear-gradient(90deg,
+          var(--slider-a) 0%,
+          var(--slider-b) var(--fill),
+          rgba(94, 112, 154, .18) var(--fill),
+          rgba(26, 34, 58, .28) 100%);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,.72), 0 0 10px color-mix(in srgb, var(--slider-halo) 58%, transparent);
+      outline: none;
+      cursor: pointer;
+      transition: filter .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+
+    #motion-range {
+      --slider-a: #7654f5;
+      --slider-b: #40d9ef;
+      --slider-thumb: #9cecff;
+      --slider-halo: rgba(66, 213, 242, .34);
+    }
+
+    #glow-range {
+      --slider-a: #ff493c;
+      --slider-b: #ffd45c;
+      --slider-thumb: #ffdc7b;
+      --slider-halo: rgba(255, 135, 53, .4);
+    }
+
+    #ripple-range {
+      --slider-a: #e737bc;
+      --slider-b: #63dbff;
+      --slider-thumb: #ff9bdf;
+      --slider-halo: rgba(236, 76, 200, .34);
+    }
+
+    input[type="range"]:hover {
+      filter: saturate(1.16) brightness(1.08);
+      border-color: color-mix(in srgb, var(--slider-thumb) 40%, transparent);
+    }
+
+    input[type="range"]:focus-visible {
+      border-color: rgba(255,255,255,.7);
+      box-shadow:
+        inset 0 1px 3px rgba(0,0,0,.68),
+        0 0 0 3px color-mix(in srgb, var(--slider-thumb) 18%, transparent),
+        0 0 18px var(--slider-halo);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 20px;
+      height: 20px;
+      appearance: none;
+      border: 2px solid rgba(255,255,255,.9);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 34% 27%, #fff 0 13%, rgba(255,255,255,.78) 14%, transparent 28%),
+        linear-gradient(145deg, var(--slider-thumb), var(--slider-a));
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--slider-thumb) 13%, transparent), 0 0 15px var(--slider-halo), 0 4px 9px rgba(0,0,0,.48);
+      cursor: grab;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 17px;
+      height: 17px;
+      border: 2px solid rgba(255,255,255,.9);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 34% 27%, #fff 0 13%, rgba(255,255,255,.78) 14%, transparent 28%),
+        linear-gradient(145deg, var(--slider-thumb), var(--slider-a));
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--slider-thumb) 13%, transparent), 0 0 15px var(--slider-halo), 0 4px 9px rgba(0,0,0,.48);
+      cursor: grab;
+    }
+
+    input[type="range"]:active::-webkit-slider-thumb { cursor: grabbing; transform: scale(1.06); }
+    input[type="range"]:active::-moz-range-thumb { cursor: grabbing; transform: scale(1.06); }
+
+    .panel-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 9px;
+    }
+
+    .text-button {
+      min-height: 42px;
+      flex: 1;
+      border: 1px solid rgba(189, 217, 255, .14);
+      border-radius: 13px;
+      background: rgba(3, 7, 17, .3);
+      color: rgba(239, 244, 255, .78);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: .06em;
+      transition: background .25s, color .25s, transform .25s;
+    }
+
+    .text-button:hover { background: rgba(90, 116, 177, .16); color: #fff; transform: translateY(-1px); }
+    .text-button:active { transform: scale(.97); }
+
+    #hint {
+      position: fixed;
+      z-index: 5;
+      left: max(18px, env(safe-area-inset-left));
+      bottom: max(17px, env(safe-area-inset-bottom));
+      margin: 0;
+      color: rgba(219, 229, 250, .42);
+      font-size: 11px;
+      letter-spacing: .055em;
+      pointer-events: none;
+      transition: opacity .6s ease;
+    }
+
+    #error-panel {
+      position: fixed;
+      z-index: 30;
+      top: 50%;
+      left: 50%;
+      width: min(420px, calc(100vw - 32px));
+      padding: 25px;
+      border-radius: 24px;
+      text-align: center;
+      transform: translate(-50%, -50%);
+    }
+
+    #error-panel[hidden] { display: none; }
+    #error-panel h1 { margin: 0 0 8px; font-size: 18px; }
+    #error-panel p { margin: 0; color: rgba(230,237,252,.67); font-size: 13px; line-height: 1.55; }
+
+    @media (max-width: 480px) {
+      #interface { top: max(9px, env(safe-area-inset-top)); width: calc(100vw - 18px); }
+      .toolbar { padding: 6px; gap: 6px; }
+      .segment-button { height: 44px; padding-inline: 6px; font-size: 11px; }
+      .settings-content { padding-inline: 11px; padding-bottom: 12px; }
+      .palette-grid { gap: 6px; }
+      .palette-button { height: 44px; }
+      .slider-row, .text-button { min-height: 44px; }
+      #hint { left: 50%; bottom: max(12px, env(safe-area-inset-bottom)); transform: translateX(-50%); white-space: nowrap; }
+    }
+
+    @media (max-height: 540px) and (orientation: landscape) {
+      #interface { left: max(10px, env(safe-area-inset-left)); transform: none; width: min(344px, calc(100vw - 20px)); }
+      #interface.expanded { max-height: calc(100vh - 18px - env(safe-area-inset-top)); overflow-y: auto; overscroll-behavior: contain; }
+      .setting-label { margin-top: 8px; margin-bottom: 6px; }
+      .segment-button, .palette-button { height: 44px; }
+      .slider-row { min-height: 42px; }
+      .text-button { min-height: 44px; }
+      .panel-actions { margin-top: 5px; }
+      #hint { right: max(14px, env(safe-area-inset-right)); left: auto; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="main-canvas" tabindex="0" aria-label="Interactive morphing wireframe artwork. Drag to orbit, scroll or pinch to zoom, and activate the form to send a ripple."></canvas>
+
+  <section id="interface" class="glass" aria-label="Artwork controls">
+    <div class="toolbar">
+      <div class="morph-segments" role="group" aria-label="Choose geometric form">
+        <span class="segment-highlight" aria-hidden="true"></span>
+        <button class="segment-button" type="button" data-shape="0" aria-pressed="true" title="Twisted Bloom Lattice">Bloom</button>
+        <button class="segment-button" type="button" data-shape="1" aria-pressed="false" title="Spirohedral Nexus">Nexus</button>
+      </div>
+      <button id="settings-toggle" class="icon-button" type="button" aria-expanded="false" aria-controls="settings-panel" aria-label="Expand settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+          <path d="M12 8.1a3.9 3.9 0 1 0 0 7.8 3.9 3.9 0 0 0 0-7.8Z"/>
+          <path d="M19.2 13.1a7.9 7.9 0 0 0 0-2.2l2-1.5-2-3.4-2.4 1a8.8 8.8 0 0 0-1.9-1.1L14.6 3h-5.2L9 5.9A8.8 8.8 0 0 0 7.1 7L4.7 6l-2 3.4 2 1.5a7.9 7.9 0 0 0 0 2.2l-2 1.5 2 3.4 2.4-1A8.8 8.8 0 0 0 9 18.1l.4 2.9h5.2l.4-2.9a8.8 8.8 0 0 0 1.9-1.1l2.4 1 2-3.4-2.1-1.5Z"/>
+        </svg>
+      </button>
+    </div>
+
+    <div id="settings-panel" aria-hidden="true" inert>
+      <div class="settings-inner">
+        <div class="settings-content">
+          <span class="setting-label">Chromatic atmosphere</span>
+          <div class="palette-grid" role="group" aria-label="Colour palette">
+            <button class="palette-button" type="button" data-palette="0" aria-pressed="false" aria-label="Ultraviolet current" title="Ultraviolet Current" style="--swatch:linear-gradient(135deg,#17104d,#7047ff,#ef3bd4,#28d8f2)"></button>
+            <button class="palette-button" type="button" data-palette="1" aria-pressed="true" aria-label="Molten pulse" title="Molten Pulse" style="--swatch:linear-gradient(135deg,#3b0719,#db214f,#ff7048,#ffbf3f)"></button>
+            <button class="palette-button" type="button" data-palette="2" aria-pressed="false" aria-label="Verdant voltage" title="Verdant Voltage" style="--swatch:linear-gradient(135deg,#003b46,#00a989,#8ce541,#ffd75b)"></button>
+            <button class="palette-button" type="button" data-palette="3" aria-pressed="false" aria-label="Arctic prism" title="Arctic Prism" style="--swatch:linear-gradient(135deg,#071b54,#278bea,#4be1df,#e4e7ff)"></button>
+          </div>
+
+          <span class="setting-label">Response</span>
+          <label class="slider-row">
+            <span>Motion</span>
+            <input id="motion-range" type="range" min="0" max="100" value="62" aria-label="Idle motion">
+            <output for="motion-range">62</output>
+          </label>
+          <label class="slider-row">
+            <span>Glow</span>
+            <input id="glow-range" type="range" min="0" max="100" value="50" aria-label="Bloom glow">
+            <output for="glow-range">50</output>
+          </label>
+          <label class="slider-row">
+            <span>Ripple</span>
+            <input id="ripple-range" type="range" min="0" max="100" value="82" aria-label="Interaction strength">
+            <output for="ripple-range">82</output>
+          </label>
+
+          <div class="panel-actions">
+            <button id="reset-view" class="text-button" type="button">Reset view</button>
+            <button id="collapse-panel" class="text-button" type="button">Close panel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <p id="hint" aria-hidden="true">Drag to orbit · Tap the lattice to ripple</p>
+  <section id="error-panel" class="glass" role="alert" hidden>
+    <h1>WebGL is unavailable</h1>
+    <p>This artwork needs a modern browser with hardware-accelerated WebGL. Enable graphics acceleration or try another current browser.</p>
+  </section>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.185.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+    import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+    const canvas = document.getElementById('main-canvas');
+    const errorPanel = document.getElementById('error-panel');
+
+    try {
+      startArtwork();
+    } catch (error) {
+      errorPanel.hidden = false;
+      canvas.hidden = true;
+      console.error('Unable to initialize Lumen Lattice:', error);
+    }
+
+    function startArtwork() {
+      const TAU = Math.PI * 2;
+      const LOBE_COUNT = 7;
+      const LENGTH_COUNT = 13;
+      const WIDTH_COUNT = 5;
+      const NODE_COUNT = LOBE_COUNT * LENGTH_COUNT * WIDTH_COUNT;
+      const PULSE_COUNT = 6;
+      const reducedMotionQuery = matchMedia('(prefers-reduced-motion: reduce)');
+
+      const state = {
+        targetShape: 0,
+        morph: 0,
+        morphVelocity: 0,
+        motion: reducedMotionQuery.matches ? 0 : 0.62,
+        glow: 0.9,
+        interaction: 0.82,
+        hidden: document.hidden,
+        disposed: false,
+        lastTime: performance.now() * 0.001,
+        pointerDirty: false,
+        pointerX: innerWidth * 0.5,
+        pointerY: innerHeight * 0.5,
+        pointerType: 'mouse',
+        hoveredIndex: -1,
+        activePointer: -1,
+        downX: 0,
+        downY: 0,
+        downAt: 0,
+        dragged: false,
+        frameScale: innerHeight > innerWidth ? 0.62 : 1.24,
+        frameScaleTarget: innerHeight > innerWidth ? 0.62 : 1.24,
+        cameraTween: null
+      };
+
+      const palettes = [
+        ['#321189', '#5a23dc', '#7f42ff', '#c33aff', '#ff2fb9', '#ff5687', '#1bdcff', '#1681f0'],
+        ['#7a0d2a', '#b81738', '#e42a48', '#ff4653', '#ff7442', '#ffa43d', '#ffd553', '#d62768'],
+        ['#007a70', '#00a981', '#00d49c', '#2be49b', '#8dec38', '#d9f244', '#ffdc55', '#10b8c4'],
+        ['#164ca5', '#176fd4', '#2698f4', '#2bd1e8', '#49ecdf', '#a7eaff', '#e7e8ff', '#9677f4']
+      ].map(palette => palette.map(hex => new THREE.Color(hex)));
+
+      const paletteState = {
+        active: 1,
+        progress: 1,
+        from: palettes[1].map(color => color.clone()),
+        to: palettes[1].map(color => color.clone())
+      };
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(43, innerWidth / innerHeight, 0.1, 100);
+      camera.position.copy(defaultCameraPosition());
+
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: 'high-performance'
+      });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, innerWidth < 700 ? 1.65 : 1.85));
+      renderer.setSize(innerWidth, innerHeight, false);
+      renderer.setClearColor(0x000000, 0);
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.0;
+
+      const controls = new OrbitControls(camera, canvas);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.065;
+      controls.rotateSpeed = 0.48;
+      controls.zoomSpeed = 0.72;
+      controls.enablePan = false;
+      controls.enableZoom = true;
+      controls.autoRotate = false;
+      controls.minDistance = 14;
+      controls.maxDistance = 38;
+      controls.target.set(0, 0.25, 0);
+
+      const composer = new EffectComposer(renderer);
+      composer.addPass(new RenderPass(scene, camera));
+      const bloomPass = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.78, 0.45, 0.22);
+      composer.addPass(bloomPass);
+      composer.addPass(new OutputPass());
+
+      const artwork = new THREE.Group();
+      artwork.rotation.set(0.1, 0.28, -0.08);
+      artwork.scale.setScalar(state.frameScale);
+      scene.add(artwork);
+
+      const data = createParametricData();
+      const pulseIndices = new Int32Array(PULSE_COUNT);
+      pulseIndices.fill(-1);
+      let pulseCursor = -1;
+
+      const uniforms = {
+        uTime: { value: 0 },
+        uMorph: { value: 0 },
+        uMotion: { value: state.motion },
+        uInteraction: { value: state.interaction },
+        uPixelRatio: { value: renderer.getPixelRatio() },
+        uPaletteMix: { value: 1 },
+        uPaletteFrom: { value: paletteState.from },
+        uPaletteTo: { value: paletteState.to },
+        uPaletteOffset: { value: 0 },
+        uHoverPos: { value: new THREE.Vector3(1e3, 1e3, 1e3) },
+        uHoverStrength: { value: 0 },
+        uPulsePos: { value: Array.from({ length: PULSE_COUNT }, () => new THREE.Vector3(1e3, 1e3, 1e3)) },
+        uPulseParam: { value: Array.from({ length: PULSE_COUNT }, () => new THREE.Vector3(-10, -10, -10)) },
+        uPulseStart: { value: new Float32Array(PULSE_COUNT).fill(-1000) },
+        uPulseChromatic: { value: new Float32Array(PULSE_COUNT) }
+      };
+
+      const shaders = createShaders();
+      const nodeGeometry = new THREE.BufferGeometry();
+      nodeGeometry.setAttribute('position', new THREE.BufferAttribute(data.positionsA, 3));
+      nodeGeometry.setAttribute('aPositionB', new THREE.BufferAttribute(data.positionsB, 3));
+      nodeGeometry.setAttribute('aNormalA', new THREE.BufferAttribute(data.normalsA, 3));
+      nodeGeometry.setAttribute('aNormalB', new THREE.BufferAttribute(data.normalsB, 3));
+      nodeGeometry.setAttribute('aParam', new THREE.BufferAttribute(data.params, 3));
+      nodeGeometry.setAttribute('aCurvature', new THREE.BufferAttribute(data.curvature, 1));
+      nodeGeometry.computeBoundingSphere();
+
+      const nodeMaterial = new THREE.ShaderMaterial({
+        uniforms,
+        vertexShader: shaders.nodeVertex,
+        fragmentShader: shaders.nodeFragment,
+        transparent: true,
+        depthWrite: false,
+        depthTest: true,
+        blending: THREE.AdditiveBlending,
+        toneMapped: true
+      });
+
+      const nodes = new THREE.Points(nodeGeometry, nodeMaterial);
+      nodes.frustumCulled = false;
+      nodes.renderOrder = 2;
+      artwork.add(nodes);
+
+      const lineGeometry = createConnectionGeometry(data);
+      const lineMaterial = new THREE.ShaderMaterial({
+        uniforms,
+        vertexShader: shaders.lineVertex,
+        fragmentShader: shaders.lineFragment,
+        transparent: true,
+        depthWrite: false,
+        depthTest: true,
+        blending: THREE.AdditiveBlending,
+        toneMapped: true
+      });
+
+      const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+      lines.frustumCulled = false;
+      lines.renderOrder = 1;
+      artwork.add(lines);
+
+      const tempLocal = new THREE.Vector3();
+      const tempWorld = new THREE.Vector3();
+      const tempProjected = new THREE.Vector3();
+      const tempDirection = new THREE.Vector3();
+      const origin = new THREE.Vector3(0, 0.25, 0);
+      const raycaster = new THREE.Raycaster();
+      const pointerNdc = new THREE.Vector2();
+      let telemetryAt = 0;
+
+      canvas.dataset.threeRevision = THREE.REVISION;
+      canvas.dataset.backend = renderer.getContext().getParameter(renderer.getContext().VERSION);
+      canvas.dataset.nodeCount = String(NODE_COUNT);
+      canvas.dataset.lineSegmentCount = String(lineGeometry.attributes.position.count / 2);
+      canvas.dataset.topology = `${LOBE_COUNT} ribbons · ${LENGTH_COUNT}×${WIDTH_COUNT}`;
+      canvas.dataset.morphProgress = '0.000';
+      canvas.dataset.paletteIndex = '1';
+      canvas.dataset.activePulses = '0';
+      canvas.dataset.pulseGlow = '0.000';
+
+      bindInterface();
+      bindPointerInteraction();
+      bindLifecycle();
+      updateResponsiveFrame();
+      renderer.setAnimationLoop(renderFrame);
+
+      function ribbonIndex(lobe, along, across) {
+        const wrappedLobe = (lobe + LOBE_COUNT) % LOBE_COUNT;
+        return (wrappedLobe * LENGTH_COUNT + along) * WIDTH_COUNT + across;
+      }
+
+      function createParametricData() {
+        const positionsA = new Float32Array(NODE_COUNT * 3);
+        const positionsB = new Float32Array(NODE_COUNT * 3);
+        const normalsA = new Float32Array(NODE_COUNT * 3);
+        const normalsB = new Float32Array(NODE_COUNT * 3);
+        const params = new Float32Array(NODE_COUNT * 3);
+        const curvature = new Float32Array(NODE_COUNT);
+        const pA = new THREE.Vector3();
+        const pB = new THREE.Vector3();
+
+        for (let lobe = 0; lobe < LOBE_COUNT; lobe++) {
+          const lobeNorm = lobe / LOBE_COUNT;
+          for (let along = 0; along < LENGTH_COUNT; along++) {
+            const alongNorm = along / (LENGTH_COUNT - 1);
+            for (let across = 0; across < WIDTH_COUNT; across++) {
+              const acrossNorm = across / (WIDTH_COUNT - 1);
+              const index = ribbonIndex(lobe, along, across);
+              bloomFormula(lobeNorm, alongNorm, acrossNorm, pA);
+              nexusFormula(lobeNorm, alongNorm, acrossNorm, pB);
+              pA.toArray(positionsA, index * 3);
+              pB.toArray(positionsB, index * 3);
+              params[index * 3] = lobeNorm;
+              params[index * 3 + 1] = alongNorm;
+              params[index * 3 + 2] = acrossNorm;
+            }
+          }
+        }
+
+        calculateNormalsAndCurvature(positionsA, normalsA, curvature, 0.54);
+        calculateNormalsAndCurvature(positionsB, normalsB, curvature, 0.46);
+        return { positionsA, positionsB, normalsA, normalsB, params, curvature };
+      }
+
+      function bloomFormula(lobeNorm, along, acrossNorm, out) {
+        const baseAngle = lobeNorm * TAU;
+        const side = acrossNorm * 2 - 1;
+        const open = Math.sin(Math.PI * along);
+        const asymmetry = 1 + 0.055 * Math.sin(baseAngle * 2 + 0.7);
+        const centerRadius = (1.55 + 8.15 * along - 2.25 * along * along + 0.42 * open) * asymmetry;
+        const sweep = 0.48 * open + 0.1 * Math.sin(TAU * along + baseAngle * 2);
+        const angle = baseAngle + sweep;
+        const ribbonWidth = (0.3 + 1.28 * Math.pow(open, 0.78)) * (0.96 + 0.08 * Math.sin(baseAngle * 3));
+        const twist = -0.62 + along * 2.45 + 0.34 * Math.sin(baseAngle * 2);
+        const angularOffset = side * ribbonWidth * Math.cos(twist);
+        const radialOffset = side * ribbonWidth * 0.24 * Math.sin(twist);
+        const height = 2.75 * open + 0.82 * Math.sin(TAU * along + baseAngle * 2) * open + 0.24 * Math.cos(baseAngle * 3) * (along - 0.5);
+        out.set(
+          (centerRadius + radialOffset) * Math.cos(angle) - angularOffset * Math.sin(angle),
+          height - 1.42 + side * ribbonWidth * 0.78 * Math.sin(twist),
+          (centerRadius + radialOffset) * Math.sin(angle) + angularOffset * Math.cos(angle)
+        );
+      }
+
+      function nexusFormula(lobeNorm, along, acrossNorm, out) {
+        const baseAngle = lobeNorm * TAU;
+        const side = acrossNorm * 2 - 1;
+        const open = Math.sin(Math.PI * along);
+        const waist = Math.exp(-Math.pow((along - 0.48) / 0.17, 2));
+        const angularFold = 0.2 * Math.sin(Math.PI * along * 3 + baseAngle * 2) * open;
+        const angle = baseAngle + 1.18 * along + angularFold;
+        const centerRadius = 1.85 + 4.35 * Math.pow(open, 0.72) + 2.05 * along - 1.05 * waist + 0.72 * Math.pow(along, 5) * (1 + 0.18 * Math.cos(baseAngle * 3));
+        const centerHeight = (-5.0 + 8.9 * along + 1.08 * Math.sin(TAU * along + baseAngle * 2) * open + 1.25 * Math.pow(along, 5)) * 0.8;
+        const ribbonWidth = 0.32 + 1.08 * Math.pow(open, 0.82);
+        const twist = 1.05 + along * 4.15 + 0.42 * Math.sin(baseAngle);
+        const angularOffset = side * ribbonWidth * Math.cos(twist);
+        const radialOffset = side * ribbonWidth * 0.68 * Math.sin(twist);
+        out.set(
+          (centerRadius + radialOffset) * Math.cos(angle) - angularOffset * Math.sin(angle),
+          centerHeight + side * ribbonWidth * 0.66 * Math.sin(twist),
+          (centerRadius + radialOffset) * Math.sin(angle) + angularOffset * Math.cos(angle)
+        );
+      }
+
+      function calculateNormalsAndCurvature(positions, normals, curvature, weight) {
+        const alongTangent = new THREE.Vector3();
+        const acrossTangent = new THREE.Vector3();
+        const normal = new THREE.Vector3();
+        const center = new THREE.Vector3();
+        const laplace = new THREE.Vector3();
+        const p = new THREE.Vector3();
+
+        for (let lobe = 0; lobe < LOBE_COUNT; lobe++) {
+          for (let along = 0; along < LENGTH_COUNT; along++) {
+            for (let across = 0; across < WIDTH_COUNT; across++) {
+              const index = ribbonIndex(lobe, along, across);
+              readRibbonPosition(positions, lobe, Math.min(along + 1, LENGTH_COUNT - 1), across, alongTangent);
+              readRibbonPosition(positions, lobe, Math.max(along - 1, 0), across, p);
+              alongTangent.sub(p);
+              readRibbonPosition(positions, lobe, along, Math.min(across + 1, WIDTH_COUNT - 1), acrossTangent);
+              readRibbonPosition(positions, lobe, along, Math.max(across - 1, 0), p);
+              acrossTangent.sub(p);
+              normal.crossVectors(alongTangent, acrossTangent).normalize();
+              normal.toArray(normals, index * 3);
+
+              center.fromArray(positions, index * 3);
+              laplace.set(0, 0, 0);
+              readRibbonPosition(positions, lobe, Math.min(along + 1, LENGTH_COUNT - 1), across, p); laplace.add(p);
+              readRibbonPosition(positions, lobe, Math.max(along - 1, 0), across, p); laplace.add(p);
+              readRibbonPosition(positions, lobe, along, Math.min(across + 1, WIDTH_COUNT - 1), p); laplace.add(p);
+              readRibbonPosition(positions, lobe, along, Math.max(across - 1, 0), p); laplace.add(p);
+              laplace.addScaledVector(center, -4);
+              curvature[index] += THREE.MathUtils.clamp(laplace.length() * 0.28, 0, 1) * weight;
+            }
+          }
+        }
+      }
+
+      function readRibbonPosition(array, lobe, along, across, out) {
+        return out.fromArray(array, ribbonIndex(lobe, along, across) * 3);
+      }
+
+      function createConnectionGeometry(geometryData) {
+        const pairs = [];
+        const add = (a, b, family) => pairs.push(a, b, family);
+
+        for (let lobe = 0; lobe < LOBE_COUNT; lobe++) {
+          for (let along = 0; along < LENGTH_COUNT; along++) {
+            for (let across = 0; across < WIDTH_COUNT; across++) {
+              const here = ribbonIndex(lobe, along, across);
+              if (along < LENGTH_COUNT - 1) add(here, ribbonIndex(lobe, along + 1, across), 0);
+              if (across < WIDTH_COUNT - 1) add(here, ribbonIndex(lobe, along, across + 1), 1);
+              if (along < LENGTH_COUNT - 1 && across < WIDTH_COUNT - 1 && (across === 1 || across === 3) && (along + lobe) % 2 === 0) {
+                add(here, ribbonIndex(lobe, along + 1, across + 1), 2);
+              }
+            }
+            if (along === 0 || along === 6) {
+              add(ribbonIndex(lobe, along, 2), ribbonIndex(lobe + 1, along, 2), 3);
+            }
+            if (along < LENGTH_COUNT - 2 && along % 3 === 0) {
+              add(ribbonIndex(lobe, along, 2), ribbonIndex(lobe, along + 2, 2), 4);
+            }
+          }
+        }
+
+        const segmentCount = pairs.length / 3;
+        const count = segmentCount * 2;
+        const position = new Float32Array(count * 3);
+        const positionB = new Float32Array(count * 3);
+        const normalA = new Float32Array(count * 3);
+        const normalB = new Float32Array(count * 3);
+        const param = new Float32Array(count * 3);
+        const curve = new Float32Array(count);
+        const family = new Float32Array(count);
+
+        for (let segment = 0; segment < segmentCount; segment++) {
+          const a = pairs[segment * 3];
+          const b = pairs[segment * 3 + 1];
+          const kind = pairs[segment * 3 + 2];
+          writeLineEndpoint(segment * 2, a, kind);
+          writeLineEndpoint(segment * 2 + 1, b, kind);
+        }
+
+        function writeLineEndpoint(target, source, kind) {
+          position.set(geometryData.positionsA.subarray(source * 3, source * 3 + 3), target * 3);
+          positionB.set(geometryData.positionsB.subarray(source * 3, source * 3 + 3), target * 3);
+          normalA.set(geometryData.normalsA.subarray(source * 3, source * 3 + 3), target * 3);
+          normalB.set(geometryData.normalsB.subarray(source * 3, source * 3 + 3), target * 3);
+          param.set(geometryData.params.subarray(source * 3, source * 3 + 3), target * 3);
+          curve[target] = geometryData.curvature[source];
+          family[target] = kind;
+        }
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(position, 3));
+        geometry.setAttribute('aPositionB', new THREE.BufferAttribute(positionB, 3));
+        geometry.setAttribute('aNormalA', new THREE.BufferAttribute(normalA, 3));
+        geometry.setAttribute('aNormalB', new THREE.BufferAttribute(normalB, 3));
+        geometry.setAttribute('aParam', new THREE.BufferAttribute(param, 3));
+        geometry.setAttribute('aCurvature', new THREE.BufferAttribute(curve, 1));
+        geometry.setAttribute('aFamily', new THREE.BufferAttribute(family, 1));
+        geometry.computeBoundingSphere();
+        return geometry;
+      }
+
+      function createShaders() {
+        const common = `
+          #define PULSE_COUNT ${PULSE_COUNT}
+          uniform float uTime;
+          uniform float uMorph;
+          uniform float uMotion;
+          uniform float uInteraction;
+          uniform float uPaletteMix;
+          uniform float uPaletteOffset;
+          uniform vec3 uPaletteFrom[8];
+          uniform vec3 uPaletteTo[8];
+          uniform vec3 uHoverPos;
+          uniform float uHoverStrength;
+          uniform vec3 uPulsePos[PULSE_COUNT];
+          uniform vec3 uPulseParam[PULSE_COUNT];
+          uniform float uPulseStart[PULSE_COUNT];
+          uniform float uPulseChromatic[PULSE_COUNT];
+          attribute vec3 aPositionB;
+          attribute vec3 aNormalA;
+          attribute vec3 aNormalB;
+          attribute vec3 aParam;
+          attribute float aCurvature;
+          varying vec3 vColor;
+          varying float vEnergy;
+          varying float vMorphEnergy;
+          varying float vCurvature;
+
+          vec3 paletteStop(int index) {
+            if (index == 0) return mix(uPaletteFrom[0], uPaletteTo[0], uPaletteMix);
+            if (index == 1) return mix(uPaletteFrom[1], uPaletteTo[1], uPaletteMix);
+            if (index == 2) return mix(uPaletteFrom[2], uPaletteTo[2], uPaletteMix);
+            if (index == 3) return mix(uPaletteFrom[3], uPaletteTo[3], uPaletteMix);
+            if (index == 4) return mix(uPaletteFrom[4], uPaletteTo[4], uPaletteMix);
+            if (index == 5) return mix(uPaletteFrom[5], uPaletteTo[5], uPaletteMix);
+            if (index == 6) return mix(uPaletteFrom[6], uPaletteTo[6], uPaletteMix);
+            return mix(uPaletteFrom[7], uPaletteTo[7], uPaletteMix);
+          }
+
+          vec3 samplePalette(float coordinate) {
+            float x = fract(coordinate) * 7.0;
+            if (x < 1.0) return mix(paletteStop(0), paletteStop(1), x);
+            if (x < 2.0) return mix(paletteStop(1), paletteStop(2), x - 1.0);
+            if (x < 3.0) return mix(paletteStop(2), paletteStop(3), x - 2.0);
+            if (x < 4.0) return mix(paletteStop(3), paletteStop(4), x - 3.0);
+            if (x < 5.0) return mix(paletteStop(4), paletteStop(5), x - 4.0);
+            if (x < 6.0) return mix(paletteStop(5), paletteStop(6), x - 5.0);
+            return mix(paletteStop(6), paletteStop(7), x - 6.0);
+          }
+
+          float morphAmount() {
+            float eased = uMorph * uMorph * (3.0 - 2.0 * uMorph);
+            float phase = 0.5 + 0.28 * sin(aParam.x * 6.283185 + aParam.y * 5.2 - aParam.z * 1.7);
+            return smoothstep(0.0, 1.0, eased + (phase - 0.5) * 0.38 * sin(eased * 3.141593));
+          }
+
+          vec3 deformPosition(out vec3 localNormal, out float energy, out float chroma) {
+            float morph = morphAmount();
+            vec3 local = mix(position, aPositionB, morph);
+            localNormal = normalize(mix(aNormalA, aNormalB, morph));
+            float morphEnergy = sin(uMorph * 3.141593);
+
+            float breath = sin(uTime * 0.74 + aParam.y * 9.42478 + aParam.x * 6.283185);
+            float fineWave = sin(uTime * 0.46 + aParam.y * 18.84956 - aParam.z * 4.2);
+            local += localNormal * (0.13 * breath + 0.055 * fineWave) * uMotion;
+            float torsion = 0.026 * uMotion * sin(uTime * 0.33 + aParam.y * 6.283185);
+            mat2 turn = mat2(cos(torsion), -sin(torsion), sin(torsion), cos(torsion));
+            local.xz = turn * local.xz;
+
+            float hover = smoothstep(2.0, 0.0, distance(local, uHoverPos)) * uHoverStrength;
+            vec3 hoverDirection = normalize(uHoverPos - local + vec3(0.0001));
+            local += hoverDirection * hover * 0.22;
+
+            energy = hover * 0.4;
+            chroma = hover * 0.055;
+            float displacement = 0.0;
+            for (int i = 0; i < PULSE_COUNT; i++) {
+              float age = uTime - uPulseStart[i];
+              if (age >= 0.0 && age < 2.9) {
+                vec3 paramDelta = abs(aParam - uPulseParam[i]);
+                paramDelta.x = min(paramDelta.x, 1.0 - paramDelta.x);
+                float topologyDistance = length(paramDelta * vec3(28.0, 11.5, 3.2));
+                float spatialDistance = distance(local, uPulsePos[i]);
+                float distanceFromPulse = mix(spatialDistance, topologyDistance, 0.76);
+                float mainRadius = age * 8.2;
+                float mainWave = smoothstep(0.72, 0.0, abs(distanceFromPulse - mainRadius));
+                mainWave *= smoothstep(2.9, 1.75, age);
+                float trailStart = max(0.0, mainRadius - 3.0);
+                float trail = smoothstep(trailStart, max(trailStart + 0.1, mainRadius - 0.5), distanceFromPulse) * (1.0 - smoothstep(mainRadius - 0.5, mainRadius + 0.05, distanceFromPulse)) * 0.2;
+                float echoAge = age - 0.38;
+                float echoWave = 0.0;
+                if (echoAge > 0.0) {
+                  echoWave = smoothstep(0.5, 0.0, abs(distanceFromPulse - echoAge * 6.6));
+                  echoWave *= smoothstep(2.45, 1.45, echoAge) * 0.62;
+                }
+                float impact = smoothstep(2.2, 0.0, distanceFromPulse) * smoothstep(0.62, 0.0, age);
+                float wave = (mainWave + echoWave + trail + impact * 1.2) * uInteraction;
+                energy += wave;
+                chroma += wave * (0.17 + uPulseChromatic[i] * 0.16);
+                displacement += (impact * 1.48 + mainWave * 1.18 - echoWave * 0.36) * uInteraction;
+              }
+            }
+            local += localNormal * displacement;
+            energy = min(energy, 1.4);
+            vMorphEnergy = morphEnergy;
+            return local;
+          }
+
+          void assignVaryings(vec3 local, float energy, float chroma) {
+            float radial = length(local.xz) * 0.045;
+            float coordinate = aParam.x * 0.24 + aParam.y * 0.52 + aParam.z * 0.09 + radial + aCurvature * 0.11 + uPaletteOffset + chroma;
+            vec3 base = samplePalette(coordinate);
+            vec3 accent = samplePalette(coordinate + 0.115 + chroma * 0.7);
+            vColor = mix(base, accent, min(energy * 0.45, 0.72));
+            vEnergy = energy;
+            vCurvature = aCurvature;
+          }
+        `;
+
+        const nodeVertex = `
+          ${common}
+          uniform float uPixelRatio;
+          void main() {
+            vec3 localNormal;
+            float energy;
+            float chroma;
+            vec3 local = deformPosition(localNormal, energy, chroma);
+            assignVaryings(local, energy, chroma);
+            vec4 mvPosition = modelViewMatrix * vec4(local, 1.0);
+            float baseSize = 1.82 + aCurvature * 1.38 + vMorphEnergy * 0.5;
+            float pulseSize = energy * 5.4;
+            gl_PointSize = min((baseSize + pulseSize) * uPixelRatio * (76.0 / max(7.0, -mvPosition.z)), 34.0 * uPixelRatio);
+            gl_Position = projectionMatrix * mvPosition;
+          }
+        `;
+
+        const nodeFragment = `
+          varying vec3 vColor;
+          varying float vEnergy;
+          varying float vMorphEnergy;
+          varying float vCurvature;
+          void main() {
+            vec2 center = gl_PointCoord - 0.5;
+            float radius = length(center);
+            if (radius > 0.5) discard;
+            float core = smoothstep(0.25, 0.0, radius);
+            float halo = smoothstep(0.5, 0.08, radius);
+            float crossFlare = (smoothstep(0.06, 0.0, abs(center.x)) + smoothstep(0.06, 0.0, abs(center.y))) * smoothstep(0.5, 0.06, radius) * vEnergy;
+            float alpha = halo * (0.76 + core * 0.3 + vEnergy * 0.19) + crossFlare * 0.34;
+            vec3 color = vColor * (1.08 + core * 0.38 + vCurvature * 0.14 + vMorphEnergy * 0.12 + vEnergy * 0.9 + crossFlare * 0.44);
+            gl_FragColor = vec4(color, alpha);
+          }
+        `;
+
+        const lineVertex = `
+          ${common}
+          attribute float aFamily;
+          varying float vFamily;
+          void main() {
+            vec3 localNormal;
+            float energy;
+            float chroma;
+            vec3 local = deformPosition(localNormal, energy, chroma);
+            assignVaryings(local, energy, chroma + aFamily * 0.012);
+            vFamily = aFamily;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(local, 1.0);
+          }
+        `;
+
+        const lineFragment = `
+          varying vec3 vColor;
+          varying float vEnergy;
+          varying float vMorphEnergy;
+          varying float vCurvature;
+          varying float vFamily;
+          void main() {
+            float familyOpacity = 0.5;
+            if (vFamily > 0.5) familyOpacity = 0.35;
+            if (vFamily > 1.5) familyOpacity = 0.19;
+            if (vFamily > 2.5) familyOpacity = 0.49;
+            if (vFamily > 3.5) familyOpacity = 0.13;
+            float energyBoost = vEnergy;
+            float alpha = familyOpacity + energyBoost * 0.46 + vMorphEnergy * 0.055;
+            vec3 color = vColor * (0.98 + vCurvature * 0.13 + energyBoost * 1.12 + vMorphEnergy * 0.16);
+            gl_FragColor = vec4(color, min(alpha, 0.98));
+          }
+        `;
+        return { nodeVertex, nodeFragment, lineVertex, lineFragment };
+      }
+
+      function computeMorphedVertex(index, out) {
+        const lobeNorm = data.params[index * 3];
+        const alongNorm = data.params[index * 3 + 1];
+        const acrossNorm = data.params[index * 3 + 2];
+        const eased = state.morph * state.morph * (3 - 2 * state.morph);
+        const phase = 0.5 + 0.28 * Math.sin(lobeNorm * TAU + alongNorm * 5.2 - acrossNorm * 1.7);
+        const localMorph = smoothstep(eased + (phase - 0.5) * 0.38 * Math.sin(eased * Math.PI));
+        const offset = index * 3;
+        out.set(
+          THREE.MathUtils.lerp(data.positionsA[offset], data.positionsB[offset], localMorph),
+          THREE.MathUtils.lerp(data.positionsA[offset + 1], data.positionsB[offset + 1], localMorph),
+          THREE.MathUtils.lerp(data.positionsA[offset + 2], data.positionsB[offset + 2], localMorph)
+        );
+        return out;
+      }
+
+      function findNearestVisibleNode(clientX, clientY, thresholdPixels) {
+        const rect = canvas.getBoundingClientRect();
+        pointerNdc.set(
+          ((clientX - rect.left) / rect.width) * 2 - 1,
+          -((clientY - rect.top) / rect.height) * 2 + 1
+        );
+        raycaster.setFromCamera(pointerNdc, camera);
+        let bestIndex = -1;
+        let bestDistanceSq = thresholdPixels * thresholdPixels;
+
+        artwork.updateWorldMatrix(true, false);
+        for (let index = 0; index < NODE_COUNT; index++) {
+          computeMorphedVertex(index, tempLocal);
+          tempWorld.copy(tempLocal).applyMatrix4(artwork.matrixWorld);
+          tempDirection.subVectors(tempWorld, raycaster.ray.origin);
+          if (tempDirection.dot(raycaster.ray.direction) <= 0) continue;
+          tempProjected.copy(tempWorld).project(camera);
+          if (tempProjected.z < -1 || tempProjected.z > 1) continue;
+          const screenX = rect.left + (tempProjected.x * 0.5 + 0.5) * rect.width;
+          const screenY = rect.top + (-tempProjected.y * 0.5 + 0.5) * rect.height;
+          const dx = screenX - clientX;
+          const dy = screenY - clientY;
+          const distanceSq = dx * dx + dy * dy;
+          if (distanceSq < bestDistanceSq) {
+            bestDistanceSq = distanceSq;
+            bestIndex = index;
+          }
+        }
+        return bestIndex;
+      }
+
+      function smoothstep(value) {
+        const x = THREE.MathUtils.clamp(value, 0, 1);
+        return x * x * (3 - 2 * x);
+      }
+
+      function triggerPulseAt(index) {
+        if (index < 0) return;
+        pulseCursor = (pulseCursor + 1) % PULSE_COUNT;
+        pulseIndices[pulseCursor] = index;
+        computeMorphedVertex(index, uniforms.uPulsePos.value[pulseCursor]);
+        uniforms.uPulseParam.value[pulseCursor].set(data.params[index * 3], data.params[index * 3 + 1], data.params[index * 3 + 2]);
+        uniforms.uPulseStart.value[pulseCursor] = uniforms.uTime.value;
+        uniforms.uPulseChromatic.value[pulseCursor] = (pulseCursor * 0.173 + data.params[index * 3] + data.params[index * 3 + 1] * 0.2) % 1;
+        canvas.dataset.activePulses = String(Math.min(PULSE_COUNT, Number(canvas.dataset.activePulses) + 1));
+        document.getElementById('hint').style.opacity = '0.16';
+      }
+
+      function updatePulseAnchors() {
+        for (let i = 0; i < PULSE_COUNT; i++) {
+          if (pulseIndices[i] >= 0 && uniforms.uTime.value - uniforms.uPulseStart.value[i] < 3.0) {
+            computeMorphedVertex(pulseIndices[i], uniforms.uPulsePos.value[i]);
+          }
+        }
+      }
+
+      function updateHover() {
+        if (!state.pointerDirty || state.pointerType !== 'mouse' || state.dragged) return;
+        state.pointerDirty = false;
+        const index = findNearestVisibleNode(state.pointerX, state.pointerY, 22);
+        state.hoveredIndex = index;
+        if (index >= 0) {
+          computeMorphedVertex(index, uniforms.uHoverPos.value);
+          uniforms.uHoverStrength.value += (1 - uniforms.uHoverStrength.value) * 0.32;
+          canvas.classList.add('is-over-form');
+        } else {
+          canvas.classList.remove('is-over-form');
+        }
+      }
+
+      function bindPointerInteraction() {
+        canvas.addEventListener('pointerdown', event => {
+          if (event.button !== 0 && event.pointerType === 'mouse') return;
+          state.activePointer = event.pointerId;
+          state.downX = event.clientX;
+          state.downY = event.clientY;
+          state.downAt = performance.now();
+          state.dragged = false;
+          state.cameraTween = null;
+        });
+
+        canvas.addEventListener('pointermove', event => {
+          state.pointerX = event.clientX;
+          state.pointerY = event.clientY;
+          state.pointerType = event.pointerType;
+          state.pointerDirty = true;
+          if (state.activePointer === event.pointerId && Math.hypot(event.clientX - state.downX, event.clientY - state.downY) > 7) {
+            state.dragged = true;
+          }
+        }, { passive: true });
+
+        window.addEventListener('pointerup', event => {
+          if (event.pointerId !== state.activePointer) return;
+          const elapsed = performance.now() - state.downAt;
+          const wasTap = !state.dragged && elapsed < 720;
+          state.activePointer = -1;
+          if (!wasTap) return;
+          const threshold = event.pointerType === 'touch' ? 40 : 28;
+          const index = findNearestVisibleNode(event.clientX, event.clientY, threshold);
+          triggerPulseAt(index);
+        }, { passive: true });
+
+        window.addEventListener('pointercancel', () => {
+          state.activePointer = -1;
+          state.dragged = true;
+        }, { passive: true });
+
+        canvas.addEventListener('pointerleave', () => {
+          state.hoveredIndex = -1;
+          canvas.classList.remove('is-over-form');
+        });
+
+        canvas.addEventListener('keydown', event => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          event.preventDefault();
+          const rect = canvas.getBoundingClientRect();
+          const index = findNearestVisibleNode(rect.left + rect.width / 2, rect.top + rect.height / 2, Math.max(rect.width, rect.height));
+          triggerPulseAt(index);
+        });
+      }
+
+      function bindInterface() {
+        const shell = document.getElementById('interface');
+        const panel = document.getElementById('settings-panel');
+        const toggle = document.getElementById('settings-toggle');
+        const morphControl = document.querySelector('.morph-segments');
+
+        const setPanelOpen = open => {
+          shell.classList.toggle('expanded', open);
+          toggle.setAttribute('aria-expanded', String(open));
+          toggle.setAttribute('aria-label', open ? 'Collapse settings' : 'Expand settings');
+          panel.setAttribute('aria-hidden', String(!open));
+          panel.inert = !open;
+        };
+
+        toggle.addEventListener('click', () => setPanelOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+        document.getElementById('collapse-panel').addEventListener('click', () => {
+          setPanelOpen(false);
+          toggle.focus();
+        });
+
+        document.querySelectorAll('.segment-button').forEach(button => {
+          button.addEventListener('click', () => setShape(Number(button.dataset.shape)));
+        });
+
+        function setShape(shape) {
+          state.targetShape = shape;
+          if (reducedMotionQuery.matches) {
+            state.morph = shape;
+            state.morphVelocity = 0;
+            uniforms.uMorph.value = shape;
+          }
+          morphControl.style.setProperty('--segment', shape ? '100%' : '0%');
+          document.querySelectorAll('.segment-button').forEach(button => {
+            button.setAttribute('aria-pressed', String(Number(button.dataset.shape) === shape));
+          });
+        }
+
+        document.querySelectorAll('.palette-button').forEach(button => {
+          button.addEventListener('click', () => beginPaletteTransition(Number(button.dataset.palette)));
+        });
+
+        function beginPaletteTransition(index) {
+          const mixValue = smoothstep(paletteState.progress);
+          for (let i = 0; i < 8; i++) {
+            paletteState.from[i].copy(paletteState.from[i]).lerp(paletteState.to[i], mixValue);
+            paletteState.to[i].copy(palettes[index][i]);
+          }
+          paletteState.progress = 0;
+          paletteState.active = index;
+          canvas.dataset.paletteIndex = String(index);
+          uniforms.uPaletteMix.value = 0;
+          document.querySelectorAll('.palette-button').forEach(button => {
+            button.setAttribute('aria-pressed', String(Number(button.dataset.palette) === index));
+          });
+        }
+
+        bindRange('motion-range', value => {
+          state.motion = reducedMotionQuery.matches ? 0 : value;
+          uniforms.uMotion.value = state.motion;
+        });
+        bindRange('glow-range', value => {
+          state.glow = 0.2 + value * 1.4;
+          canvas.dataset.glowEffective = state.glow.toFixed(3);
+        });
+        bindRange('ripple-range', value => {
+          state.interaction = value;
+          uniforms.uInteraction.value = value;
+        });
+
+        function bindRange(id, apply) {
+          const input = document.getElementById(id);
+          const output = input.parentElement.querySelector('output');
+          const sync = () => {
+            const value = Number(input.value);
+            input.style.setProperty('--fill', `${value}%`);
+            output.value = String(value);
+            output.textContent = String(value);
+            apply(value / 100);
+          };
+          input.addEventListener('input', sync);
+          sync();
+        }
+
+        document.getElementById('reset-view').addEventListener('click', () => resetView());
+
+        shell.addEventListener('pointermove', event => {
+          const rect = shell.getBoundingClientRect();
+          shell.style.setProperty('--glass-x', `${event.clientX - rect.left}px`);
+          shell.style.setProperty('--glass-y', `${event.clientY - rect.top}px`);
+        }, { passive: true });
+      }
+
+      function resetView() {
+        state.cameraTween = {
+          elapsed: 0,
+          duration: reducedMotionQuery.matches ? 0.01 : 0.85,
+          start: camera.position.clone(),
+          end: defaultCameraPosition()
+        };
+      }
+
+      function updateCameraTween(dt) {
+        const tween = state.cameraTween;
+        if (!tween) return;
+        tween.elapsed += dt;
+        const t = smoothstep(tween.elapsed / tween.duration);
+        camera.position.lerpVectors(tween.start, tween.end, t);
+        controls.target.lerp(origin, t);
+        if (t >= 1) state.cameraTween = null;
+      }
+
+      function bindLifecycle() {
+        window.addEventListener('resize', onResize, { passive: true });
+        document.addEventListener('visibilitychange', () => {
+          state.hidden = document.hidden;
+          if (!state.hidden) {
+            state.lastTime = performance.now() * 0.001;
+          }
+        });
+        reducedMotionQuery.addEventListener('change', event => {
+          const input = document.getElementById('motion-range');
+          state.motion = event.matches ? 0 : Number(input.value) / 100;
+          uniforms.uMotion.value = state.motion;
+        });
+        window.addEventListener('pagehide', dispose, { once: true });
+      }
+
+      function responsiveCameraDistance() {
+        return innerHeight > innerWidth ? 29.5 : 24.5;
+      }
+
+      function defaultCameraPosition(out = new THREE.Vector3()) {
+        const distance = responsiveCameraDistance();
+        return out.set(distance * 0.11, distance * 0.62, distance * 0.78);
+      }
+
+      function updateResponsiveFrame() {
+        state.frameScaleTarget = innerHeight > innerWidth ? 0.62 : 1.24;
+      }
+
+      function onResize() {
+        camera.aspect = innerWidth / innerHeight;
+        camera.fov = innerHeight > innerWidth ? 48 : 42;
+        camera.updateProjectionMatrix();
+        renderer.setPixelRatio(Math.min(devicePixelRatio, innerWidth < 700 ? 1.65 : 1.85));
+        renderer.setSize(innerWidth, innerHeight, false);
+        composer.setPixelRatio(renderer.getPixelRatio());
+        composer.setSize(innerWidth, innerHeight);
+        uniforms.uPixelRatio.value = renderer.getPixelRatio();
+        updateResponsiveFrame();
+      }
+
+      function dispose() {
+        if (state.disposed) return;
+        state.disposed = true;
+        renderer.setAnimationLoop(null);
+        controls.dispose();
+        nodeGeometry.dispose();
+        lineGeometry.dispose();
+        nodeMaterial.dispose();
+        lineMaterial.dispose();
+        composer.dispose();
+        renderer.dispose();
+      }
+
+      function renderFrame() {
+        if (state.disposed || state.hidden) return;
+        const now = performance.now() * 0.001;
+        const dt = Math.min(0.05, Math.max(0.001, now - state.lastTime));
+        state.lastTime = now;
+        uniforms.uTime.value += dt;
+
+        const target = state.targetShape;
+        state.morphVelocity += (target - state.morph) * 11 * dt;
+        state.morphVelocity *= Math.exp(-6.6 * dt);
+        state.morph += state.morphVelocity * dt;
+        if (state.morph <= 0 && target === 0) { state.morph = 0; state.morphVelocity = 0; }
+        if (state.morph >= 1 && target === 1) { state.morph = 1; state.morphVelocity = 0; }
+        state.morph = THREE.MathUtils.clamp(state.morph, 0, 1);
+        uniforms.uMorph.value = state.morph;
+        if (now >= telemetryAt) {
+          telemetryAt = now + 0.2;
+          canvas.dataset.morphProgress = state.morph.toFixed(3);
+          let activePulses = 0;
+          for (let i = 0; i < PULSE_COUNT; i++) {
+            if (pulseIndices[i] >= 0 && uniforms.uTime.value - uniforms.uPulseStart.value[i] < 3.0) activePulses++;
+          }
+          canvas.dataset.activePulses = String(activePulses);
+        }
+
+        if (paletteState.progress < 1) {
+          paletteState.progress = Math.min(1, paletteState.progress + dt / 0.82);
+          uniforms.uPaletteMix.value = smoothstep(paletteState.progress);
+        }
+        uniforms.uPaletteOffset.value = (uniforms.uPaletteOffset.value + dt * 0.012 * state.motion) % 1;
+        uniforms.uHoverStrength.value *= Math.exp(-dt * (state.hoveredIndex >= 0 ? 1.2 : 8.5));
+
+        updatePulseAnchors();
+        updateHover();
+        updateCameraTween(dt);
+        const shapeEase = smoothstep(state.morph);
+        state.frameScaleTarget = innerHeight > innerWidth ? THREE.MathUtils.lerp(0.62, 0.74, shapeEase) : 1.24;
+        state.frameScale += (state.frameScaleTarget - state.frameScale) * (1 - Math.exp(-dt * 5));
+        if (innerHeight > innerWidth) {
+          artwork.scale.set(
+            state.frameScale * THREE.MathUtils.lerp(0.97, 1.0, shapeEase),
+            THREE.MathUtils.lerp(0.72, 1.0, shapeEase),
+            THREE.MathUtils.lerp(0.82, 0.74, shapeEase)
+          );
+        } else {
+          artwork.scale.setScalar(state.frameScale);
+        }
+        const bloomTilt = innerHeight > innerWidth ? 0.15 : 0.1;
+        artwork.rotation.y = 0.28 + Math.sin(uniforms.uTime.value * 0.19) * 0.085 * state.motion;
+        artwork.rotation.x = THREE.MathUtils.lerp(bloomTilt, -0.04, shapeEase) + Math.sin(uniforms.uTime.value * 0.14 + 1.1) * 0.035 * state.motion;
+        artwork.rotation.z = -0.08 + Math.sin(uniforms.uTime.value * 0.11 + 2.4) * 0.028 * state.motion;
+
+        let pulseGlow = 0;
+        for (let i = 0; i < PULSE_COUNT; i++) {
+          const age = uniforms.uTime.value - uniforms.uPulseStart.value[i];
+          if (pulseIndices[i] >= 0 && age >= 0 && age < 3) {
+            const attack = Math.min(1, age / 0.08);
+            pulseGlow += attack * Math.exp(-age * 0.72) * 0.22;
+          }
+        }
+        pulseGlow = Math.min(0.4, pulseGlow);
+        canvas.dataset.pulseGlow = pulseGlow.toFixed(3);
+        bloomPass.strength = 0.42 + state.glow * 0.55 + pulseGlow;
+        bloomPass.radius = 0.31 + state.glow * 0.2 + pulseGlow * 0.08;
+        controls.update(dt);
+        composer.render(dt);
+      }
+    }
+  </script>
+</body>
+</html>
+

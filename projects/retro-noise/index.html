@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZHONK // Retro Noise CRT</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=JetBrains+Mono:wght@700;900&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+    <style>
+      .retro-export-wrapper {
+        position: fixed;
+        top: 14px;
+        right: 14px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 6px;
+        font-family: 'JetBrains Mono', 'Courier New', monospace;
+      }
+      .retro-toggle-btn {
+        background: rgba(10, 14, 20, 0.85);
+        border: 1px solid #2a3b4c;
+        color: #6a8ea8;
+        padding: 5px 10px;
+        font-size: 10px;
+        font-weight: 700;
+        font-family: inherit;
+        letter-spacing: 0.08em;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+        transition: all 0.15s ease;
+      }
+      .retro-toggle-btn:hover {
+        color: #25e86e;
+        border-color: #25e86e;
+      }
+      .retro-export-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(10, 14, 20, 0.94);
+        border: 1px solid #1f2937;
+        padding: 6px 10px;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+        transition: all 0.2s ease;
+      }
+      .retro-export-bar.hidden {
+        display: none !important;
+      }
+      .retro-fps-wrap {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #050709;
+        border: 1px solid #2a3b4c;
+        padding: 4px 8px;
+        font-size: 10px;
+        letter-spacing: 0.05em;
+      }
+      .retro-fps-select {
+        background: transparent;
+        border: none;
+        color: #25e86e;
+        font-family: inherit;
+        font-size: 10px;
+        font-weight: 700;
+        outline: none;
+        cursor: pointer;
+      }
+      .retro-btn {
+        background: #050709;
+        border: 1px solid #333;
+        color: #fff;
+        padding: 5px 10px;
+        font-size: 10px;
+        font-weight: 700;
+        font-family: inherit;
+        letter-spacing: 0.08em;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        border-radius: 0px;
+        outline: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .retro-btn:hover {
+        transform: translateY(-1px);
+      }
+      .retro-btn-png {
+        background: #25e86e;
+        border-color: #25e86e;
+        color: #000;
+      }
+      .retro-btn-png:hover {
+        background: #84ffb5;
+        box-shadow: 0 0 10px rgba(37, 232, 110, 0.4);
+      }
+      .retro-btn-jpg {
+        background: #050709;
+        border-color: #25e86e;
+        color: #25e86e;
+      }
+      .retro-btn-jpg:hover {
+        background: #25e86e;
+        color: #000;
+        box-shadow: 0 0 10px rgba(37, 232, 110, 0.4);
+      }
+      .retro-btn-mp4 {
+        border-color: #00f0ff;
+        color: #00f0ff;
+      }
+      .retro-btn-mp4:hover {
+        background: #00f0ff;
+        color: #000;
+        box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+      }
+      .retro-btn-gif {
+        border-color: #ffb000;
+        color: #ffb000;
+      }
+      .retro-btn-gif:hover {
+        background: #ffb000;
+        color: #000;
+        box-shadow: 0 0 10px rgba(255, 176, 0, 0.4);
+      }
+      .retro-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+
+      .edit-hint {
+        position: fixed;
+        bottom: 12px;
+        right: 14px;
+        font-family: 'JetBrains Mono', 'Courier New', monospace;
+        font-size: 10px;
+        color: rgba(37, 232, 110, 0.7);
+        background: rgba(5, 7, 9, 0.85);
+        border: 1px solid rgba(37, 232, 110, 0.3);
+        padding: 4px 8px;
+        letter-spacing: 1px;
+        pointer-events: none;
+        text-transform: uppercase;
+        z-index: 100;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Top Terminal Export Toolbar (Hidden by Default with Toggle) -->
+    <div class="retro-export-wrapper">
+      <button class="retro-toggle-btn" id="retroToggleExportBtn" title="Toggle Export Bar">⚙ EXPORT</button>
+      <div class="retro-export-bar hidden" id="retroExportBar">
+        <div class="retro-fps-wrap">
+          <span style="color: #6a8ea8;">FPS:</span>
+          <select class="retro-fps-select" id="exportFpsSelect">
+            <option value="60" selected style="background:#111; color:#25e86e;">60 FPS (TURBO SMOOTH)</option>
+            <option value="30" style="background:#111; color:#00f0ff;">30 FPS (STANDARD SMOOTH)</option>
+            <option value="24" style="background:#111; color:#ffb000;">24 FPS (CINEMATIC)</option>
+          </select>
+        </div>
+        <button class="retro-btn retro-btn-png" id="exportPngBtn">⚡ PNG</button>
+        <button class="retro-btn retro-btn-jpg" id="exportJpgBtn">📷 JPG</button>
+        <button class="retro-btn retro-btn-mp4" id="exportMp4Btn">▶ EXPORT MP4</button>
+        <button class="retro-btn retro-btn-gif" id="exportGifBtn">🎞 EXPORT GIF</button>
+      </div>
+    </div>
+
+    <div class="crt-screen">
+      <svg viewBox="0 0 300 200" xmlns='http://www.w3.org/2000/svg' id="zhonkSvg">
+        <defs>
+          <filter id='screen-noise'>
+            <feTurbulence id="zhonkTurbulence" type='turbulence' result='ZHOIK' baseFrequency='0.2' numOctaves='1' seed='2' stitchTiles='noStitch' />
+            <feOffset dy="0" dx="0">
+              <animate attributeName="dy" values="0;-20" dur=".1s" repeatCount="indefinite" />
+              <animate attributeName="dx" values="0;20" dur=".3s" repeatCount="indefinite" />
+            </feOffset>
+            <feComponentTransfer>
+              <feFuncR type="linear" slope="1" intercept="-0.4" />
+              <feFuncG type="linear" slope="1" intercept="-0.4" />
+              <feFuncB type="linear" slope="1" intercept="-0.4" />
+            </feComponentTransfer>
+            <feBlend in="SourceGraphic" in2="ZHOIK" mode="multiply" result="screen-content" />
+            <feTurbulence id="zhonkWaves" baseFrequency="0.01 1" result="waves" numOctaves="2" />
+            <feDisplacementMap id="zhonkDisplacement" in="screen-content" in2="waves" scale="2" xChannelSelector="R" yChannelSelector="R">
+              <animate attributeName="scale" values="0;10;0;50;5" dur="9s" repeatCount="indefinite" />
+            </feDisplacementMap>
+          </filter>
+          <filter id="Glow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="6 2" result="glow" />
+            <feMerge>
+              <feMergeNode in="glow" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <pattern id="Grid" x="0" y="0" width="0.2" height="0.2">
+            <rect x="0" y="0" width="100px" height="100px" stroke='blue' fill='transparent' stroke-width='2' />
+            <rect x="2" y="0" width="100px" height="100px" stroke='green' fill='transparent' stroke-width='2' />
+            <animateTransform attributeType="xml" attributeName="patternTransform" type="translate" values="0,0;60,40" dur="5s" repeatCount="indefinite" />
+          </pattern>
+        </defs>
+        <rect height="100%" width="100%" fill="url(#Grid)" filter="url(#Glow)" />
+        <text id="zhonkText" x="50%" y="50%" dy=".35em" text-anchor="middle">
+          ZHONK
+        </text>
+        <animateTransform attributeType="xml" attributeName="transform" type="translate" values="0,0;0,3;0,-2;0,0;0,5;0,0;0,-3" dur="2s" repeatCount="indefinite" />
+      </svg>
+    </div>
+
+    <div class="edit-hint">[CLICK SCREEN TO EDIT WORD]</div>
+
+    <!-- Hidden Offscreen Canvas for Snapshot & Stream Capture -->
+    <canvas id="offscreenCanvas" width="600" height="400" style="display:none;"></canvas>
+
+    <script type="module">
+      import { CanvasGifEncoder } from './gif-encoder.js';
+
+      const textEl = document.getElementById('zhonkText');
+      const svgEl = document.getElementById('zhonkSvg');
+      const offscreenCanvas = document.getElementById('offscreenCanvas');
+      const offCtx = offscreenCanvas.getContext('2d');
+
+      function updateWord(word) {
+        if (!textEl) return;
+        const clean = (word || 'ZHONK').trim().toUpperCase();
+        textEl.textContent = clean;
+        
+        // Dynamically scale font size
+        const len = clean.length;
+        if (len <= 5) {
+          textEl.style.fontSize = '50px';
+        } else if (len <= 8) {
+          textEl.style.fontSize = `${Math.floor(260 / len)}px`;
+        } else {
+          textEl.style.fontSize = `${Math.max(18, Math.floor(280 / len))}px`;
+        }
+      }
+
+      // Live mutation sync from workbench
+      window.addEventListener('message', (e) => {
+        if (e.data && e.data.type === 'DNA_MUTATION') {
+          const p = e.data.parameters || {};
+          if (p.zhonk_word !== undefined) {
+            updateWord(p.zhonk_word);
+          }
+          if (p.zhonk_intensity !== undefined) {
+            const turb = document.getElementById('zhonkTurbulence');
+            if (turb) turb.setAttribute('baseFrequency', (0.1 * p.zhonk_intensity).toFixed(3));
+          }
+          if (p.zhonk_frequency !== undefined) {
+            const waves = document.getElementById('zhonkWaves');
+            if (waves) waves.setAttribute('baseFrequency', `0.01 ${p.zhonk_frequency}`);
+          }
+        }
+      });
+
+      // Sound triggers
+      function triggerHoverSound() {
+        try {
+          if (window.parent && window.parent !== window) {
+            window.parent.postMessage({ type: 'UI_HOVER' }, '*');
+          }
+        } catch (e) {}
+      }
+
+      const crtEl = document.querySelector('.crt-screen');
+      if (crtEl) crtEl.addEventListener('mouseenter', triggerHoverSound);
+      if (textEl) textEl.addEventListener('mouseenter', triggerHoverSound);
+
+      // Click to edit directly
+      document.body.addEventListener('click', (e) => {
+        if (e.target.closest('.retro-export-bar')) return;
+        try {
+          if (window.parent && window.parent !== window) {
+            window.parent.postMessage({ type: 'UI_CLICK' }, '*');
+          }
+        } catch (e) {}
+        const current = textEl.textContent.trim();
+        const input = prompt('ENTER CUSTOM WORD FOR ZHONK DISPLAY:', current);
+        if (input !== null && input.trim() !== '') {
+          updateWord(input);
+        }
+      });
+
+      // =========================================================================
+      // SVG TO CANVAS RENDERER (WITH INLINE EMBEDDED FONT & CRT TEXTURE)
+      // =========================================================================
+      let cachedFontBase64 = null;
+
+      async function getAudiowideBase64() {
+        if (cachedFontBase64) return cachedFontBase64;
+        try {
+          // Check document.fonts for Audiowide
+          const fontFaces = Array.from(document.fonts.values());
+          const audiowide = fontFaces.find(f => f.family.includes('Audiowide'));
+          if (audiowide && audiowide.src) {
+            const match = audiowide.src.match(/url\(['"]?(.*?)['"]?\)/);
+            if (match && match[1]) {
+              const res = await fetch(match[1]);
+              const blob = await res.blob();
+              return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  cachedFontBase64 = reader.result;
+                  resolve(cachedFontBase64);
+                };
+                reader.readAsDataURL(blob);
+              });
+            }
+          }
+        } catch (e) {}
+        return null;
+      }
+
+      async function drawSvgToCanvas(targetCanvas) {
+        const ctx = targetCanvas.getContext('2d');
+        const serializer = new XMLSerializer();
+        
+        // Wait for font to be ready
+        await document.fonts.ready;
+
+        // Clone and inject explicit CSS styles and font-family so the SVG serializer captures the exact CRT look
+        const clonedSvg = svgEl.cloneNode(true);
+        const fontDataUri = await getAudiowideBase64();
+        
+        const styleTag = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+        styleTag.textContent = `
+          ${fontDataUri ? `@font-face { font-family: 'Audiowide'; src: url('${fontDataUri}') format('woff2'); }` : ''}
+          text {
+            font-family: 'Audiowide', 'JetBrains Mono', cursive, sans-serif !important;
+            font-weight: 900;
+            text-transform: uppercase;
+            fill: red !important;
+            filter: url(#Glow);
+          }
+        `;
+        clonedSvg.insertBefore(styleTag, clonedSvg.firstChild);
+
+        const svgStr = serializer.serializeToString(clonedSvg);
+        const svgBlob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(svgBlob);
+        
+        const img = new Image();
+        await new Promise((resolve) => {
+          img.onload = () => {
+            // 1. Black CRT background
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, targetCanvas.width, targetCanvas.height);
+            
+            // 2. Render the full animated SVG CRT Screen
+            ctx.drawImage(img, 0, 0, targetCanvas.width, targetCanvas.height);
+            
+            // 3. Render 3x3 pixel CRT Dot-Matrix phosphor mesh overlay (matching body:before in CSS)
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+            for (let y = 0; y < targetCanvas.height; y += 3) {
+              ctx.fillRect(0, y, targetCanvas.width, 1.5);
+            }
+            for (let x = 0; x < targetCanvas.width; x += 3) {
+              ctx.fillRect(x, 0, 1.5, targetCanvas.height);
+            }
+
+            // 4. Subtle chromatic scanline glow
+            ctx.fillStyle = 'rgba(255, 0, 50, 0.04)';
+            ctx.fillRect(0, 0, targetCanvas.width, targetCanvas.height);
+
+            URL.revokeObjectURL(url);
+            resolve();
+          };
+          img.onerror = () => {
+            URL.revokeObjectURL(url);
+            resolve();
+          };
+          img.src = url;
+        });
+      }
+
+      // =========================================================================
+      // 0. TOGGLE EXPORT TOOLBAR (HIDDEN BY DEFAULT)
+      // =========================================================================
+      const toggleBtn = document.getElementById('retroToggleExportBtn');
+      const exportBar = document.getElementById('retroExportBar');
+      if (toggleBtn && exportBar) {
+        toggleBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          exportBar.classList.toggle('hidden');
+          toggleBtn.innerText = exportBar.classList.contains('hidden') ? '⚙ EXPORT' : '✕ CLOSE';
+        });
+      }
+
+      // =========================================================================
+      // 1. EXPORT PNG & JPG SNAPSHOTS
+      // =========================================================================
+      document.getElementById('exportPngBtn').addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const btn = document.getElementById('exportPngBtn');
+        const origText = btn.innerText;
+        btn.disabled = true;
+
+        await drawSvgToCanvas(offscreenCanvas);
+        const url = offscreenCanvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `retro-noise-zhonk-${Date.now()}.png`;
+        a.click();
+
+        btn.innerText = '✓ SAVED';
+        setTimeout(() => {
+          btn.innerText = origText;
+          btn.disabled = false;
+        }, 2000);
+      });
+
+      document.getElementById('exportJpgBtn').addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const btn = document.getElementById('exportJpgBtn');
+        const origText = btn.innerText;
+        btn.disabled = true;
+
+        await drawSvgToCanvas(offscreenCanvas);
+        const url = offscreenCanvas.toDataURL('image/jpeg', 0.95);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `retro-noise-zhonk-${Date.now()}.jpg`;
+        a.click();
+
+        btn.innerText = '✓ SAVED';
+        setTimeout(() => {
+          btn.innerText = origText;
+          btn.disabled = false;
+        }, 2000);
+      });
+
+      // =========================================================================
+      // 2. EXPORT HIGH-FIDELITY MP4 VIDEO
+      // =========================================================================
+      document.getElementById('exportMp4Btn').addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const btn = document.getElementById('exportMp4Btn');
+        const origText = btn.innerText;
+        btn.disabled = true;
+
+        const fpsVal = document.getElementById('exportFpsSelect')?.value || '60';
+        const targetFps = parseInt(fpsVal, 10) || 60;
+        const duration = 4.0; // 4 second seamless animation loop
+
+        try {
+          await drawSvgToCanvas(offscreenCanvas);
+          const stream = offscreenCanvas.captureStream(targetFps);
+
+          const mimeTypes = [
+            'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
+            'video/mp4;codecs=avc1',
+            'video/mp4',
+            'video/webm;codecs=vp9',
+            'video/webm'
+          ];
+          const selectedMime = mimeTypes.find(m => MediaRecorder.isTypeSupported(m)) || 'video/webm';
+          const ext = selectedMime.includes('mp4') ? 'mp4' : 'webm';
+
+          const recorder = new MediaRecorder(stream, {
+            mimeType: selectedMime,
+            videoBitsPerSecond: 16000000
+          });
+
+          const chunks = [];
+          recorder.ondataavailable = (ev) => {
+            if (ev.data && ev.data.size > 0) chunks.push(ev.data);
+          };
+
+          recorder.onstop = () => {
+            const blob = new Blob(chunks, { type: selectedMime });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `retro-noise-zhonk-${targetFps}fps-${Date.now()}.${ext}`;
+            a.click();
+            btn.innerText = '✓ EXPORT COMPLETE';
+            setTimeout(() => {
+              btn.innerText = origText;
+              btn.disabled = false;
+              URL.revokeObjectURL(url);
+            }, 3000);
+          };
+
+          recorder.start(100);
+
+          let elapsed = 0;
+          let isRecording = true;
+
+          const renderLoop = async () => {
+            if (!isRecording) return;
+            await drawSvgToCanvas(offscreenCanvas);
+            requestAnimationFrame(renderLoop);
+          };
+          requestAnimationFrame(renderLoop);
+
+          const interval = setInterval(() => {
+            elapsed += 0.2;
+            const pct = Math.min(100, Math.round((elapsed / duration) * 100));
+            btn.innerText = `🔴 REC ${elapsed.toFixed(1)}s / ${duration.toFixed(1)}s (${pct}%) @ ${targetFps}fps...`;
+
+            if (elapsed >= duration) {
+              isRecording = false;
+              clearInterval(interval);
+              if (recorder.state !== 'inactive') recorder.stop();
+            }
+          }, 200);
+
+        } catch (err) {
+          alert('Video export error: ' + err.message);
+          btn.innerText = origText;
+          btn.disabled = false;
+        }
+      });
+
+      // =========================================================================
+      // 3. EXPORT ADAPTIVE ANIMATED GIF
+      // =========================================================================
+      document.getElementById('exportGifBtn').addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const btn = document.getElementById('exportGifBtn');
+        const origText = btn.innerText;
+        btn.disabled = true;
+
+        const fpsVal = document.getElementById('exportFpsSelect')?.value || '30';
+        const targetFps = Math.min(30, parseInt(fpsVal, 10) || 30);
+        const totalFrames = 30; // 30 frames at ~30 FPS = ~1-2s crisp loop
+
+        try {
+          const captured = [];
+
+          for (let f = 0; f < totalFrames; f++) {
+            const frameCanvas = document.createElement('canvas');
+            frameCanvas.width = 480;
+            frameCanvas.height = 320;
+            await drawSvgToCanvas(frameCanvas);
+            captured.push(frameCanvas);
+
+            const pct = Math.round(((f + 1) / totalFrames) * 100);
+            btn.innerText = `🎞️ ${f + 1}/${totalFrames} (${pct}%) @ ${targetFps}fps...`;
+            await new Promise(r => setTimeout(r, 60));
+          }
+
+          btn.innerText = `⚙️ ENCODING ADAPTIVE GIF...`;
+          await new Promise(r => setTimeout(r, 80));
+
+          const encoder = new CanvasGifEncoder(captured[0].width, captured[0].height, Math.round(1000 / targetFps));
+          for (const fc of captured) {
+            encoder.addFrame(fc);
+          }
+
+          const gifBlob = encoder.encode();
+          const url = URL.createObjectURL(gifBlob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `retro-noise-zhonk-${targetFps}fps-${Date.now()}.gif`;
+          a.click();
+
+          btn.innerText = '✓ GIF READY';
+          setTimeout(() => {
+            btn.innerText = origText;
+            btn.disabled = false;
+            URL.revokeObjectURL(url);
+          }, 3000);
+
+        } catch (err) {
+          alert('GIF export error: ' + err.message);
+          btn.innerText = origText;
+          btn.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+{
+  "id": "ref-05-silicon-yield",
+  "name": "Wafer Yield Defect & Silicon Geometry Telemetry",
+  "archetype": "vector_wireframe",
+  "source": "Image Reference 03 (Wafer Matrix)",
+  "colorway": {
+    "primary": "#00E5FF",
+    "secondary": "#FF3366",
+    "background": "#05080E",
+    "accent": "#FFEA00",
+    "glow": "rgba(0, 229, 255, 0.4)",
+    "spectrum": ["#00E5FF", "#0088FF", "#FF3366", "#FFEA00", "#00FF66"]
+  },
+  "typography": {
+    "displayFont": "'Fira Code', monospace",
+    "monoFont": "'Share Tech Mono', monospace",
+    "tracking": "0.1em",
+    "textTransform": "none"
+  },
+  "telemetry": {
+    "gridResolution": "48x48",
+    "hasOscilloscope": true,
+    "hasWireframeGrid": true,
+    "hasHexDump": true,
+    "labels": ["WAFER-ID: FAB-84-ALPHA", "DIE YIELD: 98.42%", "DEFECT DENSITY: 0.014/cm²", "INTERCONNECT: 7nm Cu", "RETICLE STEP: (14, 22)"]
+  },
+  "optics": {
+    "scanlines": 0.5,
+    "bloom": 0.55,
+    "chromaticAberration": 0.3,
+    "curvature": 0.1,
+    "flicker": 0.05
+  },
+  "parameters": {
+    "waferRadius": { "value": 300, "min": 100, "max": 600, "step": 10, "label": "Wafer Diameter (mm)" },
+    "gridPitch": { "value": 16, "min": 4, "max": 64, "step": 2, "label": "Die Reticle Step" },
+    "defectProbability": { "value": 0.045, "min": 0.001, "max": 0.25, "step": 0.005, "label": "Defect Seeding Ratio" },
+    "inspectionScanSpeed": { "value": 2.4, "min": 0.5, "max": 8.0, "step": 0.1, "label": "Laser Inspection Rate" }
+  }
+}

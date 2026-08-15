@@ -1,0 +1,85 @@
+{
+  "id": "cpfp",
+  "title": "CPFP // Cyberpunk Reticle PFP Studio",
+  "slug": "cpfp",
+  "channel": "CH-01-CRT-TELEMETRY",
+  "year": "2026",
+  "engine": "Canvas 2D / CRT Shader",
+  "tags": [
+    "CYBERPUNK",
+    "RETICLE",
+    "PFP",
+    "SNIPER HUD",
+    "TELEMETRY",
+    "RAIN PHYSICS",
+    "CRT"
+  ],
+  "author": "CreativeCode",
+  "metadata": {
+    "status": "OPERATIONAL",
+    "seed": "0x7F9E41",
+    "description": "Tactical Cyberpunk Reticle & CRT Telemetry PFP Generator. Upload any portrait, customize sniper crosshairs, rain physics, smoke particles, and live HUD telemetry."
+  },
+  "parameters": {
+    "hudText": {
+      "type": "string",
+      "default": "DELETE"
+    },
+    "theme": {
+      "type": "select",
+      "options": [
+        "crimson",
+        "mint",
+        "cyan",
+        "amber",
+        "purple",
+        "ice"
+      ],
+      "default": "crimson"
+    },
+    "reticleStyle": {
+      "type": "select",
+      "options": [
+        "milliradian",
+        "tactical-circle",
+        "cyber-grid",
+        "minimal"
+      ],
+      "default": "milliradian"
+    },
+    "rainDensity": {
+      "type": "range",
+      "min": 0,
+      "max": 100,
+      "default": 65
+    },
+    "smokePhysics": {
+      "type": "boolean",
+      "default": true
+    },
+    "scanlines": {
+      "type": "boolean",
+      "default": true
+    },
+    "lensZoom": {
+      "type": "range",
+      "min": 50,
+      "max": 200,
+      "default": 100
+    },
+    "lensPanX": {
+      "type": "range",
+      "min": -100,
+      "max": 100,
+      "default": 0
+    },
+    "lensPanY": {
+      "type": "range",
+      "min": -100,
+      "max": 100,
+      "default": 0
+    }
+  },
+  "entryType": "iframe",
+  "entryPoint": "./projects/cpfp/index.html"
+}

@@ -1,0 +1,124 @@
+/**
+ * CreativeCode.my — Telemetry HUD & Status Bar Styles
+ * Hardware Console & Synthesizer Aesthetic
+ */
+
+.hud-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(20, 23, 32, 0.96);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--dna-border);
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hud-brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hud-logo {
+  font-family: var(--font-display);
+  font-size: 32px;
+  line-height: 1;
+  color: #f0f3fa;
+  letter-spacing: 0.12em;
+  text-shadow: 0 0 10px var(--dna-glow);
+  cursor: pointer;
+}
+.hud-logo span {
+  color: var(--dna-secondary);
+}
+
+.hud-canonical-tag {
+  font-size: 11px;
+  border: 1px solid var(--dna-border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  color: var(--dna-text-muted);
+  letter-spacing: 0.1em;
+}
+
+/* Nav Modes */
+.hud-nav {
+  display: flex;
+  gap: 8px;
+}
+.hud-nav-btn {
+  font-size: 12px;
+  padding: 6px 12px;
+  border: 1px solid var(--dna-border);
+  border-radius: var(--border-radius, 6px);
+  color: var(--dna-text-muted);
+  background: var(--dna-bg-subtle);
+  transition: all 0.15s ease;
+}
+.hud-nav-btn:hover {
+  color: var(--dna-accent);
+  border-color: var(--dna-border);
+}
+.hud-nav-btn.active {
+  border-color: var(--dna-secondary);
+  color: #ffffff;
+  background: var(--dna-secondary);
+  box-shadow: 0 0 12px var(--dna-glow);
+  font-weight: bold;
+}
+
+/* Telemetry Stats strip in Header */
+.hud-telemetry-cluster {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--dna-text-muted);
+}
+
+.telemetry-item {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.telemetry-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: var(--dna-text-muted);
+}
+.telemetry-val {
+  font-size: 13px;
+  color: var(--dna-primary);
+  font-weight: bold;
+}
+
+/* Live Oscilloscope Bar */
+.mini-oscilloscope {
+  width: 90px;
+  height: 24px;
+  border: 1px solid var(--dna-border);
+  border-radius: 4px;
+  background: var(--dna-bg);
+  display: block;
+}
+
+/* Sound & CRT Quick Toggles */
+.hud-controls-cluster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.icon-btn {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: var(--border-radius, 6px);
+}
+.icon-btn.on {
+  border-color: var(--dna-primary);
+  color: #000;
+  background: var(--dna-primary);
+  box-shadow: 0 0 8px rgba(34, 229, 160, 0.4);
+}

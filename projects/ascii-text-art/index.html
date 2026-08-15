@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII Matrix // TheDraw & FIGlet Synthesizer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg-obsidian: #050709;
+        --surface-panel: #0a0e14;
+        --surface-elevated: #111827;
+        --border-wire: #1f2937;
+        --border-active: #25e86e;
+        --phosphor-green: #25e86e;
+        --phosphor-cyan: #00f0ff;
+        --phosphor-amber: #ffb000;
+        --phosphor-blood: #ff2a42;
+        --phosphor-magenta: #f43f5e;
+        --text-primary: #f1f5f9;
+        --text-muted: #64748b;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: var(--bg-obsidian);
+        color: var(--text-primary);
+        font-family: 'JetBrains Mono', 'Courier New', monospace;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* CRT Scanline Overlay */
+      .crt-scanlines {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        z-index: 99;
+        pointer-events: none;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.45) 50%);
+        background-size: 100% 3px;
+      }
+
+      /* Header Bar */
+      header {
+        background: var(--surface-panel);
+        border-bottom: 1px solid var(--border-wire);
+        padding: 8px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        z-index: 100;
+        flex-wrap: wrap;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+      }
+      .brand-badge {
+        background: rgba(37, 232, 110, 0.12);
+        border: 1px solid var(--phosphor-green);
+        color: var(--phosphor-green);
+        padding: 2px 6px;
+        font-size: 9px;
+      }
+
+      .controls-strip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .ctrl-group {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #050709;
+        border: 1px solid var(--border-wire);
+        padding: 3px 8px;
+        font-size: 10px;
+      }
+
+      .ctrl-label {
+        color: var(--text-muted);
+        font-weight: 700;
+      }
+
+      select, input[type="text"], textarea {
+        background: transparent;
+        border: none;
+        color: var(--phosphor-green);
+        font-family: inherit;
+        font-size: 10px;
+        font-weight: 700;
+        outline: none;
+        cursor: pointer;
+      }
+
+      select option {
+        background: #0d121c;
+        color: #fff;
+      }
+      optgroup {
+        background: #050709;
+        color: var(--phosphor-cyan);
+        font-weight: 700;
+      }
+
+      input[type="text"], textarea {
+        cursor: text;
+        color: #fff;
+        border-bottom: 1px dashed #334155;
+        padding: 2px 4px;
+      }
+      input[type="text"]:focus, textarea:focus {
+        border-color: var(--phosphor-green);
+      }
+
+      .btn {
+        background: #050709;
+        border: 1px solid var(--border-wire);
+        color: var(--text-primary);
+        padding: 5px 8px;
+        font-size: 10px;
+        font-weight: 700;
+        font-family: inherit;
+        letter-spacing: 0.06em;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        outline: none;
+      }
+      .btn:hover {
+        border-color: var(--phosphor-green);
+        color: var(--phosphor-green);
+        transform: translateY(-1px);
+      }
+      .btn-primary {
+        background: var(--phosphor-green);
+        border-color: var(--phosphor-green);
+        color: #000;
+      }
+      .btn-primary:hover {
+        background: #84ffb5;
+        color: #000;
+      }
+      .btn-cyan {
+        border-color: var(--phosphor-cyan);
+        color: var(--phosphor-cyan);
+      }
+      .btn-cyan:hover {
+        background: var(--phosphor-cyan);
+        color: #000;
+      }
+      .btn-amber {
+        border-color: var(--phosphor-amber);
+        color: var(--phosphor-amber);
+      }
+      .btn-amber:hover {
+        background: var(--phosphor-amber);
+        color: #000;
+      }
+
+      /* Main Stage Area */
+      .main-stage {
+        flex: 1;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      canvas#asciiCanvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      /* Sub Control Toolbar */
+      .sub-toolbar {
+        background: rgba(10, 14, 20, 0.95);
+        border-top: 1px solid var(--border-wire);
+        padding: 6px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 10px;
+        z-index: 100;
+        flex-wrap: wrap;
+      }
+
+      .presets-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        overflow-x: auto;
+      }
+      .preset-chip {
+        background: #050709;
+        border: 1px solid #334155;
+        color: #94a3b8;
+        padding: 2px 7px;
+        cursor: pointer;
+        white-space: nowrap;
+        font-size: 9.5px;
+        transition: all 0.15s ease;
+      }
+      .preset-chip:hover {
+        border-color: var(--phosphor-green);
+        color: var(--phosphor-green);
+      }
+
+      /* Multiline Popover */
+      .multiline-input-box {
+        display: none;
+        position: absolute;
+        top: 48px;
+        left: 14px;
+        z-index: 200;
+        background: #0a0e14;
+        border: 1px solid var(--phosphor-green);
+        padding: 10px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.8);
+      }
+      .multiline-input-box.open {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      /* Toast */
+      .toast {
+        position: fixed;
+        bottom: 50px;
+        right: 18px;
+        z-index: 1000;
+        background: #0a0e14;
+        border: 1px solid var(--phosphor-green);
+        color: var(--phosphor-green);
+        padding: 6px 14px;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        box-shadow: 0 0 16px rgba(37, 232, 110, 0.3);
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="crt-scanlines" id="scanlinesOverlay"></div>
+
+    <header>
+      <div class="brand">
+        <span class="brand-badge">THEDRAW // TAAG</span>
+        <span>ASCII ART MATRIX</span>
+      </div>
+
+      <div class="controls-strip">
+        <!-- Input Text & Multiline Toggle -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">TEXT:</span>
+          <input type="text" id="asciiInput" value="CREATIVE CODE" placeholder="ENTER TEXT..." maxlength="40" style="width: 130px;">
+          <button class="btn" id="toggleMultilineBtn" style="padding: 2px 5px; font-size: 9px;" title="Toggle Multiline Input">¶ MULTI</button>
+        </div>
+
+        <!-- TheDraw & FIGlet Font Selector -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">FONT:</span>
+          <select id="fontSelect">
+            <optgroup label="── THEDRAW BBS ORIGINALS ──">
+              <option value="acid-blue" selected>Acid Blue (TheDraw)</option>
+              <option value="twisted">Twisted Wire (TheDraw)</option>
+              <option value="sub-zero">Sub-Zero Heavy (TheDraw)</option>
+              <option value="graffiti">Graffiti Shadow (TheDraw)</option>
+              <option value="gothic">Gothic Matrix (TheDraw)</option>
+              <option value="ghost">Ghost Wireframe (TheDraw)</option>
+            </optgroup>
+            <optgroup label="── FIGLET CLASSICS ──">
+              <option value="slant">Slant Matrix</option>
+              <option value="standard">Standard Banner</option>
+              <option value="doom">Doom Heavy</option>
+            </optgroup>
+            <optgroup label="── 3D & ISOMETRIC ──">
+              <option value="isometric">3D Isometric</option>
+            </optgroup>
+            <optgroup label="── CYBER & DIGITAL ──">
+              <option value="cybermedium">Cybermedium HUD</option>
+            </optgroup>
+            <optgroup label="── COMPACT ──">
+              <option value="mini">Mini Micro</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <!-- Theme Color -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">THEME:</span>
+          <select id="themeSelect">
+            <option value="phosphor" selected>PHOSPHOR GREEN</option>
+            <option value="cyber">CYBER CYAN</option>
+            <option value="amber">AMBER CRT</option>
+            <option value="blood">BLOOD NEON</option>
+            <option value="magenta">SYNTHWAVE MAGENTA</option>
+            <option value="rainbow">RAINBOW MATRIX</option>
+            <option value="ice">ICE MONOCHROME</option>
+          </select>
+        </div>
+
+        <!-- Background Mode -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">BG:</span>
+          <select id="bgSelect">
+            <option value="black" selected>OBSIDIAN BLACK</option>
+            <option value="slate">DEEP SLATE</option>
+            <option value="transparent">TRANSPARENT</option>
+          </select>
+        </div>
+
+        <!-- Alignment -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">ALIGN:</span>
+          <select id="alignSelect">
+            <option value="center" selected>CENTER</option>
+            <option value="left">LEFT</option>
+            <option value="right">RIGHT</option>
+          </select>
+        </div>
+
+        <!-- Frame -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">FRAME:</span>
+          <select id="frameSelect">
+            <option value="terminal" selected>TERMINAL ┌─┐</option>
+            <option value="double">DOUBLE ╔═╗</option>
+            <option value="brackets">BRACKETS [ / ]</option>
+            <option value="block">BLOCK █▀▄</option>
+            <option value="stars">STARS ***</option>
+            <option value="slash">SLASH //==\\</option>
+            <option value="none">NONE (RAW)</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <!-- Multiline Popover Box -->
+    <div class="multiline-input-box" id="multilineBox">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:10px; color:var(--phosphor-green); font-weight:700;">MULTILINE TEXT INPUT:</span>
+        <button class="btn" id="closeMultilineBtn" style="padding:2px 5px;">✕</button>
+      </div>
+      <textarea id="multilineTextArea" rows="4" cols="30" style="font-size:11px; width:260px; height:80px;"></textarea>
+    </div>
+
+    <!-- Center Stage -->
+    <main class="main-stage">
+      <canvas id="asciiCanvas"></canvas>
+    </main>
+
+    <!-- Sub Toolbar with Presets and Multi-Format Exports -->
+    <footer class="sub-toolbar">
+      <div class="presets-row">
+        <span style="color: var(--text-muted); font-size: 9px; font-weight: 700;">PRESETS:</span>
+        <button class="preset-chip" data-text="ACID BLUE" data-font="acid-blue" data-theme="cyber">ACID BLUE</button>
+        <button class="preset-chip" data-text="TWISTED" data-font="twisted" data-theme="amber">TWISTED</button>
+        <button class="preset-chip" data-text="SUB-ZERO" data-font="sub-zero" data-theme="ice">SUB-ZERO</button>
+        <button class="preset-chip" data-text="GRAFFITI" data-font="graffiti" data-theme="blood">GRAFFITI</button>
+        <button class="preset-chip" data-text="GOTHIC" data-font="gothic" data-theme="magenta">GOTHIC</button>
+        <button class="preset-chip" data-text="GHOST WIRE" data-font="ghost" data-theme="phosphor">GHOST</button>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+        <button class="btn" id="copyTextBtn" title="Copy Raw Monospaced ASCII">📋 COPY TEXT</button>
+        <button class="btn" id="copyMdBtn" title="Copy Markdown Codeblock">📋 MD</button>
+        <button class="btn btn-primary" id="exportPngBtn">⚡ PNG</button>
+        <button class="btn" id="exportPngTransBtn" title="Transparent Background PNG">⚡ TRANS PNG</button>
+        <button class="btn" id="exportJpgBtn">📷 JPG</button>
+        <button class="btn btn-cyan" id="exportMp4Btn">▶ REC MP4</button>
+        <button class="btn btn-amber" id="exportGifBtn">🎞 REC GIF</button>
+      </div>
+    </footer>
+
+    <div class="toast" id="toastNotice">✓ COPIED RAW ASCII ART TO CLIPBOARD</div>
+
+    <script type="module">
+      import { renderTheDrawArt, THEDRAW_FONTS } from './figlet-fonts.js';
+      import { CanvasGifEncoder } from '../../src/engine/gif-encoder.js';
+
+      const canvas = document.getElementById('asciiCanvas');
+      const ctx = canvas.getContext('2d');
+      const inputEl = document.getElementById('asciiInput');
+      const fontSelect = document.getElementById('fontSelect');
+      const themeSelect = document.getElementById('themeSelect');
+      const bgSelect = document.getElementById('bgSelect');
+      const alignSelect = document.getElementById('alignSelect');
+      const frameSelect = document.getElementById('frameSelect');
+      const toastEl = document.getElementById('toastNotice');
+
+      const multilineBox = document.getElementById('multilineBox');
+      const multilineTextArea = document.getElementById('multilineTextArea');
+      const toggleMultilineBtn = document.getElementById('toggleMultilineBtn');
+      const closeMultilineBtn = document.getElementById('closeMultilineBtn');
+
+      let currentText = inputEl.value;
+      let currentFont = fontSelect.value;
+      let currentTheme = themeSelect.value;
+      let currentBg = bgSelect.value;
+      let currentAlign = alignSelect.value;
+      let currentFrame = frameSelect.value;
+      let currentSpacing = 1;
+      let glitchIntensity = 0.15;
+      let matrixRainEnabled = true;
+
+      // Matrix Rain Background
+      const rainCols = [];
+      const rainChars = '0123456789ABCDEF$#@%&*+=<>~[]{}';
+
+      function resizeCanvas() {
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = canvas.clientWidth * dpr;
+        canvas.height = canvas.clientHeight * dpr;
+        
+        const totalCols = Math.floor(canvas.width / 24);
+        rainCols.length = 0;
+        for (let i = 0; i < totalCols; i++) {
+          rainCols.push({
+            x: i * 24,
+            y: Math.random() * canvas.height,
+            speed: 1.5 + Math.random() * 3.5
+          });
+        }
+      }
+
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+
+      // Color Theme Palettes
+      const THEMES = {
+        phosphor: {
+          main: '#25E86E',
+          glow: 'rgba(37, 232, 110, 0.45)',
+          rain: 'rgba(37, 232, 110, 0.12)'
+        },
+        cyber: {
+          main: '#00F0FF',
+          glow: 'rgba(0, 240, 255, 0.45)',
+          rain: 'rgba(0, 240, 255, 0.12)'
+        },
+        amber: {
+          main: '#FFB000',
+          glow: 'rgba(255, 176, 0, 0.45)',
+          rain: 'rgba(255, 176, 0, 0.12)'
+        },
+        blood: {
+          main: '#FF2A42',
+          glow: 'rgba(255, 42, 66, 0.45)',
+          rain: 'rgba(255, 42, 66, 0.12)'
+        },
+        magenta: {
+          main: '#F43F5E',
+          glow: 'rgba(244, 63, 94, 0.45)',
+          rain: 'rgba(244, 63, 94, 0.12)'
+        },
+        rainbow: {
+          main: '#25E86E',
+          glow: 'rgba(0, 240, 255, 0.45)',
+          rain: 'rgba(37, 232, 110, 0.12)'
+        },
+        ice: {
+          main: '#E0F2FE',
+          glow: 'rgba(186, 230, 253, 0.5)',
+          rain: 'rgba(186, 230, 253, 0.12)'
+        }
+      };
+
+      function showToast(msg) {
+        toastEl.innerText = msg;
+        toastEl.style.display = 'block';
+        setTimeout(() => { toastEl.style.display = 'none'; }, 2200);
+      }
+
+      // Main Render Function
+      function drawAsciiFrame(targetCtx, w, h, time, isTransparent = false) {
+        const theme = THEMES[currentTheme] || THEMES.phosphor;
+
+        // Clear canvas
+        if (isTransparent) {
+          targetCtx.clearRect(0, 0, w, h);
+        } else {
+          if (currentBg === 'slate') {
+            targetCtx.fillStyle = '#0f172a';
+          } else {
+            targetCtx.fillStyle = '#050709';
+          }
+          targetCtx.fillRect(0, 0, w, h);
+        }
+
+        // 1. Matrix Digital Rain (if not transparent and enabled)
+        if (!isTransparent && matrixRainEnabled && currentBg !== 'transparent') {
+          targetCtx.font = '12px "JetBrains Mono", monospace';
+          targetCtx.fillStyle = theme.rain;
+          for (let col of rainCols) {
+            col.y += col.speed;
+            if (col.y > h + 100) col.y = -50;
+
+            const charCount = 8;
+            for (let i = 0; i < charCount; i++) {
+              const cy = col.y - i * 16;
+              if (cy > 0 && cy < h) {
+                const char = rainChars[Math.floor(Math.random() * rainChars.length)];
+                targetCtx.fillText(char, col.x, cy);
+              }
+            }
+          }
+        }
+
+        // 2. Render TheDraw ASCII Art Block (Centering in Viewport)
+        const asciiStr = renderTheDrawArt(currentText, currentFont, currentSpacing, currentAlign, currentFrame);
+        const lines = asciiStr.split('\n');
+
+        const maxLineLen = Math.max(...lines.map(l => l.length), 1);
+        
+        // Calculate optimal font size ensuring fit horizontally & vertically
+        const maxFontSizeH = Math.floor((w * 0.88) / (maxLineLen * 0.60));
+        const maxFontSizeV = Math.floor((h * 0.80) / (lines.length * 1.25));
+        const fontSize = Math.max(9, Math.min(36, maxFontSizeH, maxFontSizeV));
+
+        targetCtx.font = `bold ${fontSize}px "JetBrains Mono", monospace`;
+        targetCtx.textBaseline = 'middle';
+
+        // Precise monospaced metrics measurement
+        const sampleCharWidth = targetCtx.measureText('M').width;
+        const totalBlockWidth = maxLineLen * sampleCharWidth;
+        const lineHeight = fontSize * 1.28;
+        const totalBlockHeight = lines.length * lineHeight;
+
+        // Mathematical True Centering in Viewport
+        const startX = Math.max(8, (w - totalBlockWidth) / 2);
+        const startY = Math.max(lineHeight / 2, (h - totalBlockHeight) / 2 + lineHeight / 2);
+
+        lines.forEach((line, rowIndex) => {
+          let lineY = startY + rowIndex * lineHeight;
+          let lineX = startX;
+
+          // Glitch jitter
+          if (Math.random() < glitchIntensity * 0.08) {
+            lineX += (Math.random() - 0.5) * 10;
+          }
+
+          // Phosphor Bloom Glow
+          targetCtx.shadowColor = currentTheme === 'rainbow' ? `hsl(${(time * 0.05 + rowIndex * 20) % 360}, 100%, 60%)` : theme.glow;
+          targetCtx.shadowBlur = 12;
+          targetCtx.fillStyle = currentTheme === 'rainbow' ? `hsl(${(time * 0.05 + rowIndex * 20) % 360}, 100%, 60%)` : theme.main;
+
+          // Random glitch char replacements
+          let displayLine = line;
+          if (Math.random() < glitchIntensity * 0.06) {
+            const chars = line.split('');
+            const rIdx = Math.floor(Math.random() * chars.length);
+            if (chars[rIdx] && chars[rIdx] !== ' ') {
+              chars[rIdx] = rainChars[Math.floor(Math.random() * rainChars.length)];
+            }
+            displayLine = chars.join('');
+          }
+
+          targetCtx.fillText(displayLine, lineX, lineY);
+          targetCtx.shadowBlur = 0;
+        });
+
+        // 3. Scanline grid overlay
+        if (!isTransparent && currentBg !== 'transparent') {
+          targetCtx.fillStyle = 'rgba(255, 255, 255, 0.015)';
+          for (let y = 0; y < h; y += 4) {
+            targetCtx.fillRect(0, y, w, 1);
+          }
+        }
+      }
+
+      // Animation Loop
+      let animationFrameId;
+      function loop(time) {
+        drawAsciiFrame(ctx, canvas.width, canvas.height, time, currentBg === 'transparent');
+        animationFrameId = requestAnimationFrame(loop);
+      }
+      animationFrameId = requestAnimationFrame(loop);
+
+      // Event Listeners
+      inputEl.addEventListener('input', (e) => {
+        currentText = e.target.value;
+        multilineTextArea.value = currentText;
+      });
+
+      fontSelect.addEventListener('change', (e) => {
+        currentFont = e.target.value;
+      });
+
+      themeSelect.addEventListener('change', (e) => {
+        currentTheme = e.target.value;
+      });
+
+      bgSelect.addEventListener('change', (e) => {
+        currentBg = e.target.value;
+      });
+
+      alignSelect.addEventListener('change', (e) => {
+        currentAlign = e.target.value;
+      });
+
+      frameSelect.addEventListener('change', (e) => {
+        currentFrame = e.target.value;
+      });
+
+      // Multiline Popover
+      toggleMultilineBtn.addEventListener('click', () => {
+        multilineBox.classList.toggle('open');
+        multilineTextArea.value = currentText;
+        if (multilineBox.classList.contains('open')) multilineTextArea.focus();
+      });
+      closeMultilineBtn.addEventListener('click', () => {
+        multilineBox.classList.remove('open');
+      });
+      multilineTextArea.addEventListener('input', (e) => {
+        currentText = e.target.value;
+        inputEl.value = currentText.replace(/\n/g, ' ');
+      });
+
+      // Presets bar
+      document.querySelectorAll('.preset-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentText = btn.getAttribute('data-text');
+          inputEl.value = currentText;
+          multilineTextArea.value = currentText;
+          if (btn.getAttribute('data-font')) {
+            currentFont = btn.getAttribute('data-font');
+            fontSelect.value = currentFont;
+          }
+          if (btn.getAttribute('data-theme')) {
+            currentTheme = btn.getAttribute('data-theme');
+            themeSelect.value = currentTheme;
+          }
+        });
+      });
+
+      // =========================================================================
+      // EXPORT ACTIONS
+      // =========================================================================
+
+      // 1. Copy Raw ASCII Text
+      document.getElementById('copyTextBtn').addEventListener('click', () => {
+        const text = renderTheDrawArt(currentText, currentFont, currentSpacing, currentAlign, currentFrame);
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('✓ COPIED RAW THEDRAW ASCII ART');
+        }).catch(() => {
+          prompt('Copy ASCII Art:', text);
+        });
+      });
+
+      // 2. Copy Markdown Code Block
+      document.getElementById('copyMdBtn').addEventListener('click', () => {
+        const text = renderTheDrawArt(currentText, currentFont, currentSpacing, currentAlign, currentFrame);
+        const md = '```\n' + text + '\n```';
+        navigator.clipboard.writeText(md).then(() => {
+          showToast('✓ COPIED MARKDOWN CODE BLOCK');
+        }).catch(() => {
+          prompt('Copy Markdown:', md);
+        });
+      });
+
+      // 3. Export PNG (High-Res Snapshot)
+      document.getElementById('exportPngBtn').addEventListener('click', () => {
+        const exportCanvas = document.createElement('canvas');
+        exportCanvas.width = canvas.width;
+        exportCanvas.height = canvas.height;
+        const expCtx = exportCanvas.getContext('2d');
+        drawAsciiFrame(expCtx, exportCanvas.width, exportCanvas.height, performance.now(), false);
+
+        const a = document.createElement('a');
+        a.download = `thedraw-ascii-${currentFont}-${Date.now()}.png`;
+        a.href = exportCanvas.toDataURL('image/png');
+        a.click();
+        showToast('✓ EXPORTED PNG SNAPSHOT');
+      });
+
+      // 4. Export Transparent PNG
+      document.getElementById('exportPngTransBtn').addEventListener('click', () => {
+        const exportCanvas = document.createElement('canvas');
+        exportCanvas.width = canvas.width;
+        exportCanvas.height = canvas.height;
+        const expCtx = exportCanvas.getContext('2d');
+        drawAsciiFrame(expCtx, exportCanvas.width, exportCanvas.height, performance.now(), true);
+
+        const a = document.createElement('a');
+        a.download = `thedraw-ascii-transparent-${currentFont}-${Date.now()}.png`;
+        a.href = exportCanvas.toDataURL('image/png');
+        a.click();
+        showToast('✓ EXPORTED TRANSPARENT PNG');
+      });
+
+      // 5. Export JPG
+      document.getElementById('exportJpgBtn').addEventListener('click', () => {
+        const exportCanvas = document.createElement('canvas');
+        exportCanvas.width = canvas.width;
+        exportCanvas.height = canvas.height;
+        const expCtx = exportCanvas.getContext('2d');
+        drawAsciiFrame(expCtx, exportCanvas.width, exportCanvas.height, performance.now(), false);
+
+        const a = document.createElement('a');
+        a.download = `thedraw-ascii-${currentFont}-${Date.now()}.jpg`;
+        a.href = exportCanvas.toDataURL('image/jpeg', 0.95);
+        a.click();
+        showToast('✓ EXPORTED JPG SNAPSHOT');
+      });
+
+      // 6. Export MP4 (60 FPS)
+      document.getElementById('exportMp4Btn').addEventListener('click', () => {
+        const btn = document.getElementById('exportMp4Btn');
+        const orig = btn.innerText;
+        btn.disabled = true;
+
+        const stream = canvas.captureStream(60);
+        let mimeType = 'video/mp4;codecs=avc1.42E01E';
+        if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/mp4';
+        if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm;codecs=vp9';
+        if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm';
+
+        const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 16000000 });
+        const chunks = [];
+        recorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+
+        const duration = 4.0;
+        const start = performance.now();
+        const timer = setInterval(() => {
+          const elap = (performance.now() - start) / 1000;
+          btn.innerText = `🔴 REC ${elap.toFixed(1)}s / ${duration}s...`;
+        }, 100);
+
+        recorder.onstop = () => {
+          clearInterval(timer);
+          btn.innerText = '⚙️ PACKAGING MP4...';
+          const blob = new Blob(chunks, { type: mimeType });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
+          a.download = `thedraw-matrix-${Date.now()}.${ext}`;
+          a.href = url;
+          a.click();
+          URL.revokeObjectURL(url);
+          btn.innerText = '✓ SAVED';
+          setTimeout(() => { btn.innerText = orig; btn.disabled = false; }, 2000);
+        };
+
+        recorder.start(50);
+        setTimeout(() => { if (recorder.state === 'recording') recorder.stop(); }, duration * 1000);
+      });
+
+      // 7. Export Looping GIF
+      document.getElementById('exportGifBtn').addEventListener('click', async () => {
+        const btn = document.getElementById('exportGifBtn');
+        const orig = btn.innerText;
+        btn.disabled = true;
+
+        const sampleCanvas = document.createElement('canvas');
+        sampleCanvas.width = 640;
+        sampleCanvas.height = 400;
+        const sampleCtx = sampleCanvas.getContext('2d');
+
+        const totalFrames = 25;
+        const delayMs = 50;
+        const encoder = new CanvasGifEncoder(640, 400, delayMs);
+
+        for (let f = 0; f < totalFrames; f++) {
+          sampleCtx.drawImage(canvas, 0, 0, 640, 400);
+          encoder.addFrame(sampleCanvas);
+          btn.innerText = `🎞️ ${f + 1}/${totalFrames}...`;
+          await new Promise(r => setTimeout(r, delayMs));
+        }
+
+        btn.innerText = '⚙️ ENCODING GIF...';
+        await new Promise(r => setTimeout(r, 60));
+        const gifBlob = encoder.encode();
+        const url = URL.createObjectURL(gifBlob);
+        const a = document.createElement('a');
+        a.download = `thedraw-matrix-${Date.now()}.gif`;
+        a.href = url;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        btn.innerText = '✓ SAVED';
+        setTimeout(() => { btn.innerText = orig; btn.disabled = false; }, 2000);
+      });
+
+      // Mutation Workbench Synchronization
+      window.addEventListener('message', (e) => {
+        if (e.data && e.data.type === 'DNA_MUTATION') {
+          const p = e.data.parameters || {};
+          if (p.ascii_text !== undefined) {
+            currentText = p.ascii_text;
+            inputEl.value = currentText;
+            multilineTextArea.value = currentText;
+          }
+          if (p.ascii_font !== undefined) {
+            currentFont = p.ascii_font;
+            fontSelect.value = currentFont;
+          }
+          if (p.ascii_theme !== undefined) {
+            currentTheme = p.ascii_theme;
+            themeSelect.value = currentTheme;
+          }
+          if (p.ascii_spacing !== undefined) {
+            currentSpacing = parseInt(p.ascii_spacing, 10);
+          }
+          if (p.ascii_align !== undefined) {
+            currentAlign = p.ascii_align;
+            alignSelect.value = currentAlign;
+          }
+          if (p.ascii_frame !== undefined) {
+            currentFrame = p.ascii_frame;
+            frameSelect.value = currentFrame;
+          }
+          if (p.ascii_glitch !== undefined) {
+            glitchIntensity = parseFloat(p.ascii_glitch);
+          }
+          if (p.matrix_rain !== undefined) {
+            matrixRainEnabled = Boolean(p.matrix_rain);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

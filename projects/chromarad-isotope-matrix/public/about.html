@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Grainrad Bulk Exporter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid #222;
+            border-radius: 16px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            background: linear-gradient(90deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+        }
+
+        .story {
+            color: #999;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .story strong {
+            color: #00ff88;
+        }
+
+        .free-badge {
+            display: inline-block;
+            padding: 0.5rem 1.2rem;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 20px;
+            color: #00ff88;
+            font-size: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .credit {
+            color: #555;
+            font-size: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .credit a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+
+        .credit a:hover {
+            text-decoration: underline;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn-secondary {
+            background: #222;
+            border: 1px solid #333;
+            color: #888;
+        }
+
+        .btn-secondary:hover {
+            background: #333;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1>About This Tool</h1>
+
+        <p class="story">
+            I discovered <strong>Grainrad.com</strong> — a really cool free tool that converts images into
+            interactive 3D scenes using WebGPU. I loved it so much that I built this bulk exporter
+            on top of it to process multiple images at once.
+        </p>
+
+        <p class="story">
+            This tool is <strong>100% free</strong> because the original Grainrad is free,
+            and I believe creative tools should be accessible to everyone.
+            No paywalls, no subscriptions, no BS.
+        </p>
+
+        <div class="free-badge">✨ Free Forever</div>
+
+        <p class="credit">
+            Built by <strong>Desmond Baker Jr</strong><br>
+            Original tool: <a href="https://grainrad.com" target="_blank">grainrad.com</a>
+        </p>
+
+        <div class="buttons">
+            <a href="/" class="btn btn-primary">← Back to Exporter</a>
+            <a href="https://beacons.ai/dbcreations" target="_blank" class="btn btn-secondary">
+                🔗 More of My Stuff
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

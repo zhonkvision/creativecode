@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Input/Output folders (keep structure, ignore contents)
+input/*
+!input/.gitkeep
+output/*
+!output/.gitkeep
+
+# Environment files (may contain secrets in future)
+.env
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Package lock (optional, some prefer to commit this)
+# package-lock.json

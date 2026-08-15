@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATARI 84 — Prismatic Rainbow Raster Coin-Op</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background: #08080a;
+      color: #ff3366;
+      font-family: 'Share Tech Mono', monospace;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #atari-frame {
+      position: relative;
+      width: 90vw;
+      max-width: 800px;
+      height: 90vh;
+      max-height: 800px;
+      border: 3px solid #ff3344;
+      box-shadow: 0 0 35px rgba(255, 51, 68, 0.45), inset 0 0 30px rgba(255, 51, 68, 0.15);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #050508 radial-gradient(circle at center, rgba(255, 51, 68, 0.05) 0%, rgba(0, 0, 0, 0.95) 100%);
+    }
+
+    /* Top Left Coin Box */
+    .coin-box {
+      border: 2px solid #ff3344;
+      width: 120px;
+      padding: 6px 8px;
+      text-align: center;
+      background: rgba(255, 51, 68, 0.08);
+      box-shadow: 0 0 12px rgba(255, 51, 68, 0.3);
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .coin-box:active {
+      transform: scale(0.96);
+    }
+    .coin-title {
+      font-size: 13px;
+      font-weight: bold;
+      color: #ff5566;
+      letter-spacing: 0.1em;
+      line-height: 1.1;
+    }
+    .coin-bar {
+      height: 6px;
+      background: #ff3344;
+      margin: 4px 0;
+      box-shadow: 0 0 6px #ff3344;
+    }
+    .coin-price {
+      font-size: 13px;
+      color: #ffea00;
+      letter-spacing: 0.05em;
+    }
+
+    /* Canvas Stage */
+    .stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+    }
+    canvas#atari-canvas {
+      width: 480px;
+      height: 320px;
+      max-width: 90vw;
+      display: block;
+      cursor: pointer;
+    }
+
+    /* Title Block */
+    .brand-section {
+      text-align: center;
+      margin-top: 6px;
+    }
+    .brand-title {
+      font-size: 84px;
+      font-family: 'Share Tech Mono', sans-serif;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      color: #fffff0;
+      text-shadow: 0 0 20px rgba(255, 255, 240, 0.8), -3px 0 #ff0055, 3px 0 #00ffff;
+      line-height: 0.9;
+    }
+    .brand-sub {
+      font-size: 20px;
+      letter-spacing: 0.2em;
+      color: #ffea00;
+      margin-top: 6px;
+    }
+
+    /* Footer Payment */
+    .footer-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+    }
+    .status-msg {
+      font-size: 18px;
+      color: #ff7788;
+      letter-spacing: 0.1em;
+    }
+    .payment-bar-track {
+      width: 280px;
+      max-width: 80vw;
+      height: 20px;
+      border: 2px solid #ff3344;
+      padding: 2px;
+      background: #110508;
+    }
+    .payment-bar-fill {
+      height: 100%;
+      background: #ff3344;
+      box-shadow: 0 0 8px #ff3344;
+      width: 50%;
+      animation: coinSweep 2.2s infinite ease-in-out;
+    }
+    @keyframes coinSweep {
+      0% { width: 10%; margin-left: 0; }
+      50% { width: 45%; margin-left: 35%; }
+      100% { width: 10%; margin-left: 85%; }
+    }
+    .stamp-wk {
+      position: absolute;
+      right: 4px;
+      bottom: 0px;
+      border: 2px solid #ff3344;
+      padding: 1px 6px;
+      font-size: 20px;
+      font-weight: 900;
+      color: #ff3344;
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="atari-frame">
+    <!-- Top Coin Slot -->
+    <div class="coin-box" id="coinBtn">
+      <div class="coin-title">INSERT<br>COIN</div>
+      <div class="coin-bar"></div>
+      <div class="coin-price">0.001 BTC</div>
+    </div>
+
+    <!-- Center Stage -->
+    <div class="stage">
+      <canvas id="atari-canvas"></canvas>
+
+      <div class="brand-section">
+        <div class="brand-title">ATARI<sup style="font-size: 40px;">84</sup></div>
+        <div class="brand-sub">1984年アメリカ製</div>
+      </div>
+    </div>
+
+    <!-- Footer Payment -->
+    <div class="footer-panel">
+      <div class="status-msg" id="statusText">Processing payment...</div>
+      <div class="payment-bar-track">
+        <div class="payment-bar-fill"></div>
+      </div>
+      <div class="stamp-wk">WK</div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('atari-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let time = 0;
+    let credits = 0;
+    let rippleRadius = 0;
+
+    let params = {
+      slatCount: 32,
+      spectrumCycleSpeed: 0.05,
+      beamSpread: 1.0,
+      glowStrength: 1.0
+    };
+
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // 8-Bit Web Audio Sound Effect
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function playCoinSound() {
+      if (!audioCtx) audioCtx = new AudioCtx();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(987.77, audioCtx.currentTime); // B5
+      osc.frequency.setValueAtTime(1318.51, audioCtx.currentTime + 0.08); // E6
+
+      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.36);
+    }
+
+    document.getElementById('coinBtn').addEventListener('click', () => {
+      credits++;
+      playCoinSound();
+      rippleRadius = 1;
+      document.getElementById('statusText').innerText = `CREDIT ${credits} // SYSTEM READY`;
+    });
+
+    canvas.addEventListener('click', () => {
+      playCoinSound();
+      rippleRadius = 1;
+    });
+
+    // Spectrum Color Function
+    function getSpectrumColor(t) {
+      const hue = (t * 360) % 360;
+      return `hsl(${hue}, 100%, 55%)`;
+    }
+
+    function drawAtari() {
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+      ctx.save();
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      const dw = w / window.devicePixelRatio;
+      const dh = h / window.devicePixelRatio;
+
+      time += params.spectrumCycleSpeed;
+
+      const cx = dw / 2;
+      const cy = dh / 2 - 10;
+      const totalSlats = params.slatCount;
+      const slatH = 4.5;
+      const slatGap = 3.5;
+      const totalH = totalSlats * (slatH + slatGap);
+      const startY = cy - totalH / 2;
+
+      // Ripple Wave expansion
+      if (rippleRadius > 0) {
+        rippleRadius += 4;
+        if (rippleRadius > dw) rippleRadius = 0;
+      }
+
+      // Draw 3 Symmetrical Pillars of Atari Logo (Left Arc, Center Pillar, Right Arc)
+      for (let i = 0; i < totalSlats; i++) {
+        const progress = i / totalSlats; // 0 = top, 1 = bottom
+        const y = startY + i * (slatH + slatGap);
+        const color = getSpectrumColor(progress * 0.8 + time * 0.2);
+
+        ctx.fillStyle = color;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 8 * params.glowStrength;
+
+        // 1. Center Pillar (vertical straight line, constant width)
+        const centerW = 24;
+        ctx.fillRect(cx - centerW / 2, y, centerW, slatH);
+
+        // 2. Left Arc & Right Arc (curving outwards towards bottom)
+        const sideW = 24;
+        // Curve formula: exponential flare outwards towards the bottom
+        const curveOffset = Math.pow(progress, 2.2) * (140 * params.beamSpread) + 32;
+
+        // Left Slat
+        ctx.fillRect(cx - curveOffset - sideW, y, sideW + (progress * 20), slatH);
+        // Right Slat
+        ctx.fillRect(cx + curveOffset - (progress * 20), y, sideW + (progress * 20), slatH);
+      }
+
+      // Interactive Click Ripple
+      if (rippleRadius > 0) {
+        ctx.strokeStyle = `rgba(255, 230, 0, ${1.0 - rippleRadius / dw})`;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(cx, cy, rippleRadius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+      requestAnimationFrame(drawAtari);
+    }
+    drawAtari();
+
+    // Hot DNA Mutation listener
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.type === 'DNA_MUTATION') {
+        const p = e.data.parameters;
+        if (p.spectrumShift !== undefined) params.spectrumCycleSpeed = p.spectrumShift * 0.03;
+        if (p.rasterGlow !== undefined) params.glowStrength = p.rasterGlow;
+        if (p.beamWidth !== undefined) params.beamSpread = p.beamWidth / 18;
+      }
+    });
+  </script>
+</body>
+</html>

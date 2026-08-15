@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Ambient Chiptune Generator - ChiptuneSynth</title>
+    <link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <!-- Star field (populated by JS) -->
+<div class="stars" id="stars"></div>
+
+<!-- Click-to-start overlay -->
+<div id="overlay">
+  <h1>AMBIENT CHIPTUNE</h1>
+  <p>generative soundscape engine</p>
+  <div class="start-ring"><span>ENTER</span></div>
+</div>
+
+<!-- Main UI -->
+<div class="main">
+  <div id="noteDisplay">. . .</div>
+
+  <canvas id="vizCanvas" width="320" height="320"></canvas>
+
+  <button id="playBtn" aria-label="Play / Pause">
+    <svg id="playIcon" viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg>
+  </button>
+
+  <div class="moods">
+    <button class="mood-btn active" data-mood="cosmic"
+      style="--mood-color:#8b5cf6;--mood-bg:#8b5cf610;--mood-glow:#8b5cf622">Cosmic</button>
+    <button class="mood-btn" data-mood="rain"
+      style="--mood-color:#22d3ee;--mood-bg:#22d3ee10;--mood-glow:#22d3ee22">Rain</button>
+    <button class="mood-btn" data-mood="forest"
+      style="--mood-color:#4ade80;--mood-bg:#4ade8010;--mood-glow:#4ade8022">Forest</button>
+    <button class="mood-btn" data-mood="cave"
+      style="--mood-color:#f59e0b;--mood-bg:#f59e0b10;--mood-glow:#f59e0b22">Cave</button>
+  </div>
+
+  <div class="sliders">
+    <div class="slider-group">
+      <label>Volume</label>
+      <input type="range" id="volSlider" min="0" max="100" value="50">
+    </div>
+    <div class="slider-group">
+      <label>Density</label>
+      <input type="range" id="densSlider" min="1" max="10" value="4">
+    </div>
+  </div>
+</div>
+
+<div class="foot"><a href="https://chiptune-synth.8binami.com" target="_blank">ChiptuneSynth</a> &mdash; @8bitforge</div>
+    <script src='https://cdn.chiptune-synth.8binami.com/3.0.0/chiptune-synth.min.js'></script>
+<script src='https://cdn.chiptune-synth.8binami.com/3.0.0/chiptune-sound-font.min.js'></script><script  src="./script.js"></script>
+
+  </body>
+  
+</html>

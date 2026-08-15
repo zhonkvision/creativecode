@@ -1,0 +1,40 @@
+{
+  "id": "ref-02-windows-84",
+  "name": "Microsoft Windows 84 Phosphor CRT Display",
+  "archetype": "phosphor_raster",
+  "source": "Image Reference 04 (Windows 84 CRT)",
+  "colorway": {
+    "primary": "#00FF66",
+    "secondary": "#00CC55",
+    "background": "#020904",
+    "accent": "#FF3B30",
+    "glow": "rgba(0, 255, 102, 0.5)",
+    "spectrum": ["#FF3B30", "#007AFF", "#FFCC00", "#34C759", "#00FF66"]
+  },
+  "typography": {
+    "displayFont": "'VT323', monospace",
+    "monoFont": "'Share Tech Mono', monospace",
+    "tracking": "0.12em",
+    "textTransform": "none"
+  },
+  "telemetry": {
+    "gridResolution": "16x16",
+    "hasOscilloscope": false,
+    "hasWireframeGrid": false,
+    "hasHexDump": true,
+    "labels": ["> This connection is monitored for your safety.", "Microsoft Windows 84", "アメリカ製1984年", "Loading...", "WK-SYS // TERMINAL 09"]
+  },
+  "optics": {
+    "scanlines": 0.92,
+    "bloom": 0.75,
+    "chromaticAberration": 0.65,
+    "curvature": 0.35,
+    "flicker": 0.22
+  },
+  "parameters": {
+    "rasterBarCount": { "value": 36, "min": 10, "max": 80, "step": 2, "label": "Phosphor Raster Lines" },
+    "rgbOffset": { "value": 3.8, "min": 0, "max": 12.0, "step": 0.2, "label": "RGB Fringe Delta" },
+    "loadProgress": { "value": 64, "min": 0, "max": 100, "step": 1, "label": "Boot Sequence Index" },
+    "scanlineSpeed": { "value": 0.8, "min": 0.0, "max": 4.0, "step": 0.1, "label": "Vertical Refresh Pulse" }
+  }
+}

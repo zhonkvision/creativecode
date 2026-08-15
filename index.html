@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/">
+  <title>CreativeCode.my — Living Visual DNA & Experimental Generative Gallery</title>
+  <meta name="description" content="An experimental playground for creative coding, generative art, interactive visual systems, and live parameter mutation.">
+
+  <!-- Typography: JetBrains Mono and VT323 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=VT323&display=swap" rel="stylesheet">
+
+  <!-- Core Anti-Generic Design System Stylesheets -->
+  <link rel="stylesheet" href="./src/styles/tokens.css">
+  <link rel="stylesheet" href="./src/styles/system.css">
+  <link rel="stylesheet" href="./src/styles/crt.css">
+</head>
+<body>
+  <!-- Preloader Mount -->
+  <div id="preloader-mount"></div>
+
+  <!-- System Telemetry Header (Aligned to layout-container) -->
+  <header class="system-header">
+    <div class="header-inner">
+      <div class="brand-block">
+        <div class="brand-title">CREATIVE<span>CODE</span>.MY</div>
+        <div class="brand-tag">CC-VISUAL-DNA // v2.6.0</div>
+      </div>
+
+      <nav class="system-nav">
+        <button class="nav-tab-btn active" data-tab="specimens">Specimens</button>
+        <button class="nav-tab-btn" data-tab="atlas">DNA Atlas</button>
+      </nav>
+
+      <div class="telemetry-status-cluster">
+        <div class="telemetry-field">
+          <span class="telemetry-key">SYSTEM CLOCK</span>
+          <span class="telemetry-val" id="systemClockVal">--:--:--</span>
+        </div>
+        <div class="telemetry-field audio-track-field" id="audioTrackField" title="Click to cycle Music for Programming track">
+          <span class="telemetry-key">AMBIENT STREAM</span>
+          <span class="telemetry-val" id="audioTrackName" style="color: var(--phosphor-cyan);">MFP 78: Datassette</span>
+        </div>
+        <button class="sys-btn sys-btn-primary" id="btnAudioToggle">🔊 AUDIO: ON</button>
+        <button class="sys-btn" id="btnCrtToggle">CRT ON</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Curated Featured Specimens Hero Slider Mount -->
+  <div id="featured-slider-mount"></div>
+
+  <!-- Specimens View Section (Aligned to layout-container) -->
+  <section id="specimensSection">
+    <!-- Toolbar -->
+    <div class="archive-toolbar">
+      <div class="filter-group">
+        <button class="filter-btn active" data-channel="ALL">ALL CHANNELS</button>
+        <button class="filter-btn" data-channel="CH-01-CRT-TELEMETRY">CH-01 CRT TELEMETRY</button>
+        <button class="filter-btn" data-channel="CH-02-NUMERIC-GRID">CH-02 NUMERIC GRID</button>
+        <button class="filter-btn" data-channel="CH-03-VECTOR-PERSPECTIVE">CH-03 VECTOR 3D</button>
+        <button class="filter-btn" data-channel="CH-04-STEPPED-RASTER">CH-04 STEPPED RASTER</button>
+      </div>
+
+      <input type="text" class="search-box" id="archiveSearchInput" placeholder="Filter specimens, tags, lineage..." />
+    </div>
+
+    <!-- Grid of Specimen Cards -->
+    <main class="specimens-grid" id="specimensGrid"></main>
+  </section>
+
+  <!-- Atlas Mount -->
+  <div id="atlas-mount"></div>
+
+  <!-- Detail Modal Mount -->
+  <div id="modal-mount"></div>
+
+  <!-- Application Entrypoint -->
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

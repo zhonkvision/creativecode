@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>False Earth — Procedural Planetary Terrain</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #050709;
+      color: #00F0FF;
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+    }
+    #canvas-container {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0; left: 0;
+    }
+    .hud-overlay {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      pointer-events: none;
+      z-index: 10;
+      font-size: 11px;
+      line-height: 1.5;
+      background: rgba(5, 7, 9, 0.8);
+      border: 1px solid #1E293B;
+      padding: 8px 12px;
+    }
+    .hud-overlay strong { color: #25E86E; }
+    .hud-bottom {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      pointer-events: none;
+      z-index: 10;
+      font-size: 10px;
+      color: #64748B;
+      border: 1px solid #1E293B;
+      padding: 4px 8px;
+      background: rgba(5, 7, 9, 0.8);
+    }
+  </style>
+  <!-- Three.js standalone CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+  <div id="canvas-container"></div>
+  <div class="hud-overlay">
+    <div>SURFACE: <strong>FALSE EARTH // SECTOR 9</strong></div>
+    <div>ALTITUDE: <span id="altVal" style="color:#00F0FF;">142.8m</span> &bull; TERRAIN: <span style="color:#25E86E;">PROCEDURAL FBM</span></div>
+    <div>COSMIC FLUX: <span style="color:#FFB000;">9.84 THz</span> &bull; BEAM: <span style="color:#FF2A42;">LOCKED</span></div>
+  </div>
+  <div class="hud-bottom">
+    CH-03-VECTOR-PERSPECTIVE &bull; REF-003
+  </div>
+
+  <script>
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x050709, 0.0035);
+
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 3000);
+    camera.position.set(0, 75, 160);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.0));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x050709, 1);
+    container.appendChild(renderer.domElement);
+
+    // Live Parameters
+    let params = {
+      speed: 1.0,
+      intensity: 1.0,
+      elevation: 45.0,
+      wireGlow: 0.8
+    };
+
+    // 1. Procedural 3D Terrain Mesh (FBM Simulation)
+    const gridW = 320;
+    const gridH = 320;
+    const segments = 90;
+    const terrainGeo = new THREE.PlaneGeometry(gridW, gridH, segments, segments);
+    terrainGeo.rotateX(-Math.PI / 2);
+
+    const posAttr = terrainGeo.attributes.position;
+    const initialZ = new Float32Array(posAttr.count);
+    for (let i = 0; i < posAttr.count; i++) {
+      initialZ[i] = posAttr.getY(i);
+    }
+
+    const terrainMat = new THREE.MeshBasicMaterial({
+      color: 0x00F0FF,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.75
+    });
+    const terrainMesh = new THREE.Mesh(terrainGeo, terrainMat);
+    scene.add(terrainMesh);
+
+    // 2. Cosmic Particle Beams
+    const particleCount = 600;
+    const particleGeo = new THREE.BufferGeometry();
+    const particlePositions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount; i++) {
+      particlePositions[i * 3] = (Math.random() - 0.5) * 400;
+      particlePositions[i * 3 + 1] = Math.random() * 200 + 10;
+      particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 400;
+    }
+    particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+    const particleMat = new THREE.PointsMaterial({
+      color: 0x25E86E,
+      size: 2.5,
+      transparent: true,
+      opacity: 0.8
+    });
+    const particles = new THREE.Points(particleGeo, particleMat);
+    scene.add(particles);
+
+    // 3. Central Wireframe Beacon Marker (Astronaut Coordinates)
+    const beaconGeo = new THREE.OctahedronGeometry(6, 1);
+    const beaconMat = new THREE.MeshBasicMaterial({ color: 0xFF2A42, wireframe: true });
+    const beacon = new THREE.Mesh(beaconGeo, beaconMat);
+    beacon.position.set(0, 30, 0);
+    scene.add(beacon);
+
+    // Mouse Interaction
+    let mouseX = 0, mouseY = 0;
+    window.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+    });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Simplex/FBM approximation function
+    function fbm(x, y, t) {
+      return Math.sin(x * 0.04 + t) * Math.cos(y * 0.04 + t * 0.8) * 18 +
+             Math.sin(x * 0.08 - t * 0.5) * Math.cos(y * 0.08 + t * 0.6) * 9 +
+             Math.sin(x * 0.15 + y * 0.15 + t * 2) * 3;
+    }
+
+    let clock = 0;
+    function animate() {
+      requestAnimationFrame(animate);
+      clock += 0.015 * params.speed;
+
+      // Update Terrain Vertices
+      const pos = terrainGeo.attributes.position;
+      for (let i = 0; i < pos.count; i++) {
+        const vx = pos.getX(i);
+        const vz = pos.getZ(i);
+        const h = fbm(vx, vz, clock) * (params.intensity * 1.5);
+        pos.setY(i, h);
+      }
+      pos.needsUpdate = true;
+
+      // Animate Cosmic Particles
+      const pPos = particleGeo.attributes.position;
+      for (let i = 0; i < particleCount; i++) {
+        let py = pPos.getY(i) - 0.4 * params.speed;
+        if (py < 0) py = 200;
+        pPos.setY(i, py);
+      }
+      pPos.needsUpdate = true;
+
+      // Animate Beacon
+      beacon.rotation.y += 0.02;
+      beacon.rotation.x += 0.01;
+      beacon.position.y = 25 + Math.sin(clock * 2) * 4;
+
+      // Smooth Camera Drift
+      camera.position.x += (mouseX * 40 - camera.position.x) * 0.05;
+      camera.position.y += (75 - mouseY * 30 - camera.position.y) * 0.05;
+      camera.lookAt(0, 15, 0);
+
+      const alt = (Math.sin(clock) * 12 + 140).toFixed(1);
+      const altEl = document.getElementById('altVal');
+      if (altEl) altEl.innerText = alt + 'm';
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Hot DNA Mutation listener
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.type === 'DNA_MUTATION') {
+        const p = e.data.parameters;
+        if (p.speed !== undefined) params.speed = p.speed;
+        if (p.intensity !== undefined) params.intensity = p.intensity;
+      }
+    });
+  </script>
+</body>
+</html>

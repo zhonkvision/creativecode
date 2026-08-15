@@ -1,0 +1,48 @@
+{
+  "id": "EXP-014",
+  "slug": "inkdrum",
+  "title": "Inkdrum Risograph Studio",
+  "year": 2026,
+  "category": "generative-matrix",
+  "technology": "WebGL2 / GLSL Shaders / Riso",
+  "visualDNA_channel": "CH-02-NUMERIC-GRID",
+  "entryType": "iframe",
+  "entryPoint": "./projects/inkdrum/index.html",
+  "parameters": {
+    "paperTooth": {
+      "type": "range",
+      "min": 0,
+      "max": 1,
+      "step": 0.05,
+      "default": 0.45
+    },
+    "bleed": {
+      "type": "range",
+      "min": 0,
+      "max": 1,
+      "step": 0.05,
+      "default": 0.3
+    },
+    "roller": {
+      "type": "range",
+      "min": 0,
+      "max": 1,
+      "step": 0.05,
+      "default": 0.25
+    },
+    "wear": {
+      "type": "range",
+      "min": 0,
+      "max": 1,
+      "step": 0.05,
+      "default": 0.2
+    }
+  },
+  "metadata": {
+    "author": "Jackson Fall",
+    "seed": "0x8E3B1C",
+    "status": "OPERATIONAL",
+    "lineage": "REF-002",
+    "description": "Authentic browser-based Risograph print shop. Multi-pass ink drums, real Riso colors, physical misregistration, halftone/grain screens, and procedural paper stocks."
+  }
+}

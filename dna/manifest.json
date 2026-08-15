@@ -1,0 +1,1320 @@
+[
+  {
+    "id": "EXP-001",
+    "slug": "ambient-chiptune",
+    "title": "Ambient Chiptune",
+    "year": 2026,
+    "category": "stepped-raster",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-04-STEPPED-RASTER",
+    "entryType": "iframe",
+    "entryPoint": "./projects/ambient-chiptune/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x539400",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Ambient Chiptune."
+    }
+  },
+  {
+    "id": "EXP-031",
+    "slug": "ascii-text-art",
+    "title": "ASCII Matrix // FIGlet Art Synthesizer",
+    "year": 2026,
+    "category": "generative-matrix",
+    "technology": "Canvas 2D / TheDraw Engine / FIGlet",
+    "visualDNA_channel": "CH-01-CRT-TELEMETRY",
+    "description": "High-fidelity Text-to-ASCII Art generator featuring the complete TheDraw BBS font collection (Acid Blue, Twisted Wire, Sub-Zero, Graffiti, Gothic, Ghost) and FIGlet classics with multiline support, framing grids, phosphor themes, and multi-format exports (PNG, Transparent PNG, JPG, 60 FPS MP4, and Looping GIF).",
+    "entryPoint": "./projects/ascii-text-art/index.html",
+    "entryType": "iframe",
+    "featured": true,
+    "parameters": {
+      "ascii_text": {
+        "type": "string",
+        "default": "CREATIVE CODE",
+        "label": "TEXT PAYLOAD"
+      },
+      "ascii_font": {
+        "type": "select",
+        "default": "acid-blue",
+        "options": [
+          "acid-blue",
+          "twisted",
+          "sub-zero",
+          "graffiti",
+          "gothic",
+          "ghost",
+          "slant",
+          "standard",
+          "doom",
+          "isometric",
+          "cybermedium",
+          "mini"
+        ],
+        "label": "THEDRAW / FIGLET FONT"
+      },
+      "ascii_theme": {
+        "type": "select",
+        "default": "phosphor",
+        "options": [
+          "phosphor",
+          "cyber",
+          "amber",
+          "blood",
+          "magenta",
+          "rainbow",
+          "ice"
+        ],
+        "label": "CRT PHOSPHOR THEME"
+      },
+      "ascii_align": {
+        "type": "select",
+        "default": "center",
+        "options": [
+          "center",
+          "left",
+          "right"
+        ],
+        "label": "TEXT ALIGNMENT"
+      },
+      "ascii_spacing": {
+        "type": "range",
+        "min": 0,
+        "max": 5,
+        "step": 1,
+        "default": 1,
+        "label": "LETTER KERNING"
+      },
+      "ascii_frame": {
+        "type": "select",
+        "default": "terminal",
+        "options": [
+          "none",
+          "terminal",
+          "double",
+          "brackets",
+          "block",
+          "stars",
+          "slash"
+        ],
+        "label": "BORDER FRAMING"
+      },
+      "ascii_glitch": {
+        "type": "range",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "default": 0.15,
+        "label": "GLITCH INTENSITY"
+      },
+      "matrix_rain": {
+        "type": "boolean",
+        "default": true,
+        "label": "MATRIX DIGITAL RAIN"
+      }
+    },
+    "tags": [
+      "TheDraw",
+      "ASCII Art",
+      "FIGlet",
+      "BBS Retro",
+      "Typography",
+      "CRT Phosphor",
+      "Matrix Rain"
+    ]
+  },
+  {
+    "id": "EXP-002",
+    "slug": "atari84-spectrum",
+    "title": "Atari84 Spectrum",
+    "year": 2026,
+    "category": "stepped-raster",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-04-STEPPED-RASTER",
+    "entryType": "iframe",
+    "entryPoint": "./projects/atari84-spectrum/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0xCBD89F",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Atari84 Spectrum."
+    }
+  },
+  {
+    "id": "EXP-003",
+    "slug": "bioelectric",
+    "title": "Bioelectric",
+    "year": 2026,
+    "category": "crt-telemetry",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-01-CRT-TELEMETRY",
+    "entryType": "iframe",
+    "entryPoint": "./projects/bioelectric/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x2519CF",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Bioelectric."
+    }
+  },
+  {
+    "id": "EXP-017",
+    "slug": "chromarad-isotope-matrix",
+    "title": "Chromarad // Isotope Matrix",
+    "year": 2026,
+    "category": "generative-matrix",
+    "technology": "WebGL / WebGPU / Three.js",
+    "visualDNA_channel": "CH-02-NUMERIC-GRID",
+    "entryType": "iframe",
+    "entryPoint": "./projects/chromarad-isotope-matrix/index.html",
+    "parameters": {
+      "brightness": {
+        "type": "range",
+        "min": -100,
+        "max": 100,
+        "step": 1,
+        "default": 0
+      },
+      "contrast": {
+        "type": "range",
+        "min": -100,
+        "max": 100,
+        "step": 1,
+        "default": 0
+      },
+      "saturation": {
+        "type": "range",
+        "min": -100,
+        "max": 100,
+        "step": 1,
+        "default": 0
+      },
+      "gamma": {
+        "type": "range",
+        "min": 0.2,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "bloom": {
+        "type": "range",
+        "min": 0,
+        "max": 2,
+        "step": 0.1,
+        "default": 0
+      },
+      "scanlines": {
+        "type": "range",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "default": 0
+      }
+    },
+    "metadata": {
+      "author": "Desmond Baker Jr / JackDog",
+      "seed": "0x4A2F8B",
+      "status": "OPERATIONAL",
+      "lineage": "REF-002",
+      "description": "Experimental radial isotope matrix with 15 styles, Original Colour retention, full Colour Editor, pre-adjustments, and batch export.",
+      "preview": "./projects/chromarad-isotope-matrix/preview.png",
+      "video": "./projects/chromarad-isotope-matrix/assets/tcozVqT9HvYsu.mp4"
+    }
+  },
+  {
+    "id": "EXP-004",
+    "slug": "compulsive-neurology-hud",
+    "title": "Compulsive Neurology Hud",
+    "year": 2026,
+    "category": "crt-telemetry",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-01-CRT-TELEMETRY",
+    "entryType": "iframe",
+    "entryPoint": "./projects/compulsive-neurology-hud/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0xF1DEED",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Compulsive Neurology Hud."
+    }
+  },
+  {
+    "id": "EXP-003",
+    "slug": "compulsive-wireframe",
+    "title": "Compulsive Wireframe HUD",
+    "year": 2026,
+    "category": "crt-telemetry",
+    "technology": "Canvas 2D / 3D Mesh",
+    "visualDNA_channel": "CH-01-CRT-TELEMETRY",
+    "parameters": {
+      "rotationRate": {
+        "type": "range",
+        "min": 0.2,
+        "max": 4,
+        "step": 0.1,
+        "default": 1.2
+      },
+      "wireDensity": {
+        "type": "range",
+        "min": 10,
+        "max": 36,
+        "step": 2,
+        "default": 20
+      },
+      "splitGap": {
+        "type": "range",
+        "min": 10,
+        "max": 60,
+        "step": 2,
+        "default": 30
+      },
+      "waveFrequency": {
+        "type": "range",
+        "min": 1,
+        "max": 15,
+        "step": 0.5,
+        "default": 4.5
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0xC038FA",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Dual-tone segmented 3D wireframe cranial scan with real-time waveform ribbon oscilloscope, split HUD framing, and diagnostic status flags."
+    },
+    "entryType": "module",
+    "entryPoint": "./projects/compulsive-wireframe/experiment.js"
+  },
+  {
+    "id": "EXP-006",
+    "slug": "cosmos-inmotion",
+    "title": "Cosmos Inmotion",
+    "year": 2026,
+    "category": "generative-matrix",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-02-NUMERIC-GRID",
+    "entryType": "iframe",
+    "entryPoint": "./projects/cosmos-inmotion/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x313BC5",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Cosmos Inmotion."
+    }
+  },
+  {
+    "id": "cpfp",
+    "title": "CPFP // Cyberpunk Reticle PFP Studio",
+    "slug": "cpfp",
+    "channel": "CH-01-CRT-TELEMETRY",
+    "year": "2026",
+    "engine": "Canvas 2D / CRT Shader",
+    "tags": [
+      "CYBERPUNK",
+      "RETICLE",
+      "PFP",
+      "SNIPER HUD",
+      "TELEMETRY",
+      "RAIN PHYSICS",
+      "CRT"
+    ],
+    "author": "CreativeCode",
+    "metadata": {
+      "status": "OPERATIONAL",
+      "seed": "0x7F9E41",
+      "description": "Tactical Cyberpunk Reticle & CRT Telemetry PFP Generator. Upload any portrait, customize sniper crosshairs, rain physics, smoke particles, and live HUD telemetry."
+    },
+    "parameters": {
+      "hudText": {
+        "type": "string",
+        "default": "DELETE"
+      },
+      "theme": {
+        "type": "select",
+        "options": [
+          "crimson",
+          "mint",
+          "cyan",
+          "amber",
+          "purple",
+          "ice"
+        ],
+        "default": "crimson"
+      },
+      "reticleStyle": {
+        "type": "select",
+        "options": [
+          "milliradian",
+          "tactical-circle",
+          "cyber-grid",
+          "minimal"
+        ],
+        "default": "milliradian"
+      },
+      "rainDensity": {
+        "type": "range",
+        "min": 0,
+        "max": 100,
+        "default": 65
+      },
+      "smokePhysics": {
+        "type": "boolean",
+        "default": true
+      },
+      "scanlines": {
+        "type": "boolean",
+        "default": true
+      },
+      "lensZoom": {
+        "type": "range",
+        "min": 50,
+        "max": 200,
+        "default": 100
+      },
+      "lensPanX": {
+        "type": "range",
+        "min": -100,
+        "max": 100,
+        "default": 0
+      },
+      "lensPanY": {
+        "type": "range",
+        "min": -100,
+        "max": 100,
+        "default": 0
+      }
+    },
+    "entryType": "iframe",
+    "entryPoint": "./projects/cpfp/index.html"
+  },
+  {
+    "id": "EXP-007",
+    "slug": "cyberpunk-retro-crt",
+    "title": "ZHONKCRT",
+    "year": 2026,
+    "category": "stepped-raster",
+    "technology": "WebGL / Canvas / CRT Stepped Raster",
+    "visualDNA_channel": "CH-04-STEPPED-RASTER",
+    "entryType": "iframe",
+    "entryPoint": "./projects/cyberpunk-retro-crt/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x697568",
+      "status": "OPERATIONAL",
+      "lineage": "REF-004",
+      "description": "ZHONKCRT // Stepped raster phosphor beam display and scanline CRT simulation."
+    }
+  },
+  {
+    "id": "EXP-008",
+    "slug": "echo-of-aria",
+    "title": "Echo Of Aria",
+    "year": 2026,
+    "category": "crt-telemetry",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-01-CRT-TELEMETRY",
+    "entryType": "iframe",
+    "entryPoint": "./projects/echo-of-aria/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x234D28",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Echo Of Aria."
+    }
+  },
+  {
+    "id": "EXP-009",
+    "slug": "false-earth",
+    "title": "False Earth",
+    "year": 2026,
+    "category": "vector-perspective",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-03-VECTOR-PERSPECTIVE",
+    "entryType": "iframe",
+    "entryPoint": "./projects/false-earth/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0xE09CA6",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: False Earth."
+    }
+  },
+  {
+    "id": "EXP-010",
+    "slug": "geometry-in-flux",
+    "title": "Geometry In Flux",
+    "year": 2026,
+    "category": "vector-perspective",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-03-VECTOR-PERSPECTIVE",
+    "entryType": "iframe",
+    "entryPoint": "./projects/geometry-in-flux/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x27348D",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Geometry In Flux."
+    }
+  },
+  {
+    "id": "EXP-012",
+    "slug": "gsap-inertia-audio",
+    "title": "Gsap Inertia Audio",
+    "year": 2026,
+    "category": "vector-perspective",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-03-VECTOR-PERSPECTIVE",
+    "entryType": "iframe",
+    "entryPoint": "./projects/gsap-inertia-audio/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x42713B",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Gsap Inertia Audio."
+    }
+  },
+  {
+    "id": "EXP-013",
+    "slug": "hopffibration",
+    "title": "Hopffibration",
+    "year": 2026,
+    "category": "vector-perspective",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-03-VECTOR-PERSPECTIVE",
+    "entryType": "iframe",
+    "entryPoint": "./projects/hopffibration/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0xCA0013",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Hopffibration."
+    }
+  },
+  {
+    "id": "EXP-001",
+    "slug": "ic-wafer-matrix",
+    "title": "IC Wafer Yield Matrix",
+    "year": 2026,
+    "category": "generative-matrix",
+    "technology": "Canvas 2D / Procedural",
+    "visualDNA_channel": "CH-02-NUMERIC-GRID",
+    "parameters": {
+      "gridSize": {
+        "type": "range",
+        "min": 8,
+        "max": 32,
+        "step": 1,
+        "default": 20
+      },
+      "defectRate": {
+        "type": "range",
+        "min": 0.01,
+        "max": 0.5,
+        "step": 0.01,
+        "default": 0.12
+      },
+      "scanSpeed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 4,
+        "step": 0.1,
+        "default": 1.5
+      },
+      "colorMode": {
+        "type": "select",
+        "options": [
+          "HEAT_MAP",
+          "PHOSPHOR_GREEN",
+          "RAW_AMBER"
+        ],
+        "default": "HEAT_MAP"
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x4A2F8B",
+      "status": "OPERATIONAL",
+      "lineage": "REF-002",
+      "description": "Procedural silicon wafer yield matrix with circular substrate clipping, stochastic defect clustering, heat-map calculations, and laser inspection sweep."
+    },
+    "entryType": "module",
+    "entryPoint": "./projects/ic-wafer-matrix/experiment.js"
+  },
+  {
+    "id": "EXP-014",
+    "slug": "inkdrum",
+    "title": "Inkdrum Risograph Studio",
+    "year": 2026,
+    "category": "generative-matrix",
+    "technology": "WebGL2 / GLSL Shaders / Riso",
+    "visualDNA_channel": "CH-02-NUMERIC-GRID",
+    "entryType": "iframe",
+    "entryPoint": "./projects/inkdrum/index.html",
+    "parameters": {
+      "paperTooth": {
+        "type": "range",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "default": 0.45
+      },
+      "bleed": {
+        "type": "range",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "default": 0.3
+      },
+      "roller": {
+        "type": "range",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "default": 0.25
+      },
+      "wear": {
+        "type": "range",
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "default": 0.2
+      }
+    },
+    "metadata": {
+      "author": "Jackson Fall",
+      "seed": "0x8E3B1C",
+      "status": "OPERATIONAL",
+      "lineage": "REF-002",
+      "description": "Authentic browser-based Risograph print shop. Multi-pass ink drums, real Riso colors, physical misregistration, halftone/grain screens, and procedural paper stocks."
+    }
+  },
+  {
+    "id": "EXP-016",
+    "slug": "interactive-p5-wave-grid",
+    "title": "Interactive P5 Wave Grid",
+    "year": 2026,
+    "category": "stepped-raster",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-04-STEPPED-RASTER",
+    "entryType": "iframe",
+    "entryPoint": "./projects/interactive-p5-wave-grid/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x7090FF",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Interactive P5 Wave Grid."
+    }
+  },
+  {
+    "id": "EXP-017",
+    "slug": "interactive-webgl-neon-ripple",
+    "title": "Interactive Webgl Neon Ripple",
+    "year": 2026,
+    "category": "generative-matrix",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-02-NUMERIC-GRID",
+    "entryType": "iframe",
+    "entryPoint": "./projects/interactive-webgl-neon-ripple/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x21D461",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Interactive Webgl Neon Ripple."
+    }
+  },
+  {
+    "id": "EXP-018",
+    "slug": "loading-bar-cyberpunk",
+    "title": "Loading Bar Cyberpunk",
+    "year": 2026,
+    "category": "crt-telemetry",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-01-CRT-TELEMETRY",
+    "entryType": "iframe",
+    "entryPoint": "./projects/loading-bar-cyberpunk/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x36E6B2",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Loading Bar Cyberpunk."
+    }
+  },
+  {
+    "id": "EXP-019",
+    "slug": "magma-particle",
+    "title": "Magma Particle",
+    "year": 2026,
+    "category": "generative-matrix",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-02-NUMERIC-GRID",
+    "entryType": "iframe",
+    "entryPoint": "./projects/magma-particle/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x74B8A4",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Magma Particle."
+    }
+  },
+  {
+    "id": "EXP-020",
+    "slug": "mediterranean-drift",
+    "title": "Mediterranean Drift",
+    "year": 2026,
+    "category": "vector-perspective",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-03-VECTOR-PERSPECTIVE",
+    "entryType": "iframe",
+    "entryPoint": "./projects/mediterranean-drift/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x2F1B6A",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Mediterranean Drift."
+    }
+  },
+  {
+    "id": "EXP-021",
+    "slug": "morphing-cyber-lattice",
+    "title": "Morphing Cyber Lattice",
+    "year": 2026,
+    "category": "vector-perspective",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-03-VECTOR-PERSPECTIVE",
+    "entryType": "iframe",
+    "entryPoint": "./projects/morphing-cyber-lattice/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x39499E",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Morphing Cyber Lattice."
+    }
+  },
+  {
+    "id": "EXP-022",
+    "slug": "opposing-forces",
+    "title": "Opposing Forces",
+    "year": 2026,
+    "category": "crt-telemetry",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-01-CRT-TELEMETRY",
+    "entryType": "iframe",
+    "entryPoint": "./projects/opposing-forces/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x1909E2",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Opposing Forces."
+    }
+  },
+  {
+    "id": "EXP-023",
+    "slug": "quantumlotus",
+    "title": "Quantumlotus",
+    "year": 2026,
+    "category": "vector-perspective",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-03-VECTOR-PERSPECTIVE",
+    "entryType": "iframe",
+    "entryPoint": "./projects/quantumlotus/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0xCFA48F",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Quantumlotus."
+    }
+  },
+  {
+    "id": "EXP-024",
+    "slug": "quiet-worlds-piano",
+    "title": "Quiet Worlds Piano",
+    "year": 2026,
+    "category": "stepped-raster",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-04-STEPPED-RASTER",
+    "entryType": "iframe",
+    "entryPoint": "./projects/quiet-worlds-piano/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0xF9E77F",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Quiet Worlds Piano."
+    }
+  },
+  {
+    "id": "EXP-004",
+    "slug": "retro-loader-84",
+    "title": "Retro Loader 84",
+    "year": 2026,
+    "category": "stepped-raster",
+    "technology": "Canvas 2D / CRT Optics",
+    "visualDNA_channel": "CH-04-STEPPED-RASTER",
+    "parameters": {
+      "slatCount": {
+        "type": "range",
+        "min": 8,
+        "max": 28,
+        "step": 2,
+        "default": 16
+      },
+      "chromaOffset": {
+        "type": "range",
+        "min": 0.5,
+        "max": 8,
+        "step": 0.5,
+        "default": 3
+      },
+      "waveSpeed": {
+        "type": "range",
+        "min": 0.2,
+        "max": 4,
+        "step": 0.1,
+        "default": 1.2
+      },
+      "loadSpeed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2.5,
+        "step": 0.1,
+        "default": 0.8
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x84E1A9",
+      "status": "OPERATIONAL",
+      "lineage": "REF-004",
+      "description": "Stepped raster color-channel block rendering with RGB chromatic fringe offset, segmented boot progress telemetry, and Japanese terminal stamps."
+    },
+    "entryType": "module",
+    "entryPoint": "./projects/retro-loader-84/experiment.js"
+  },
+  {
+    "id": "EXP-026",
+    "slug": "retro-noise",
+    "title": "ZHONK",
+    "year": 2026,
+    "category": "stepped-raster",
+    "technology": "WebGL / SVG / CRT Stepped Raster",
+    "visualDNA_channel": "CH-04-STEPPED-RASTER",
+    "entryType": "iframe",
+    "entryPoint": "./projects/retro-noise/index.html",
+    "parameters": {
+      "zhonk_word": {
+        "type": "text",
+        "default": "ZHONK"
+      },
+      "zhonk_intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "zhonk_frequency": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2.5,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x453EA6",
+      "status": "OPERATIONAL",
+      "lineage": "REF-004",
+      "description": "ZHONK // Interactive stepped raster typography and analog CRT displacement experiment with customizable word mutation."
+    }
+  },
+  {
+    "id": "EXP-002",
+    "slug": "scan-mode-cathedral",
+    "title": "Scan-Mode Cathedral",
+    "year": 2026,
+    "category": "vector-perspective",
+    "technology": "Canvas 2D / Vector 3D",
+    "visualDNA_channel": "CH-03-VECTOR-PERSPECTIVE",
+    "parameters": {
+      "archPillars": {
+        "type": "range",
+        "min": 6,
+        "max": 24,
+        "step": 2,
+        "default": 12
+      },
+      "vaultHeight": {
+        "type": "range",
+        "min": 100,
+        "max": 350,
+        "step": 10,
+        "default": 220
+      },
+      "sweepVelocity": {
+        "type": "range",
+        "min": 0.2,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "wireframeGlow": {
+        "type": "range",
+        "min": 0.2,
+        "max": 1,
+        "step": 0.05,
+        "default": 0.65
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x89BC1A",
+      "status": "OPERATIONAL",
+      "lineage": "REF-003",
+      "description": "Monochrome phosphor vector architectural cathedral perspective projection with radar azimuth sweeps and structural stress telemetry."
+    },
+    "entryType": "module",
+    "entryPoint": "./projects/scan-mode-cathedral/experiment.js"
+  },
+  {
+    "id": "EXP-028",
+    "slug": "webgl-fluid-simulation",
+    "title": "Webgl Fluid Simulation",
+    "year": 2026,
+    "category": "generative-matrix",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-02-NUMERIC-GRID",
+    "entryType": "iframe",
+    "entryPoint": "./projects/webgl-fluid-simulation/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x42A629",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Webgl Fluid Simulation."
+    }
+  },
+  {
+    "id": "EXP-029",
+    "slug": "windows84-raster",
+    "title": "Windows84 Raster",
+    "year": 2026,
+    "category": "stepped-raster",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-04-STEPPED-RASTER",
+    "entryType": "iframe",
+    "entryPoint": "./projects/windows84-raster/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x86FC1A",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Windows84 Raster."
+    }
+  },
+  {
+    "id": "EXP-030",
+    "slug": "xylophone",
+    "title": "Xylophone",
+    "year": 2026,
+    "category": "vector-perspective",
+    "technology": "WebGL / Canvas / Interactive",
+    "visualDNA_channel": "CH-03-VECTOR-PERSPECTIVE",
+    "entryType": "iframe",
+    "entryPoint": "./projects/xylophone/index.html",
+    "parameters": {
+      "speed": {
+        "type": "range",
+        "min": 0.1,
+        "max": 3,
+        "step": 0.1,
+        "default": 1
+      },
+      "intensity": {
+        "type": "range",
+        "min": 0.1,
+        "max": 2,
+        "step": 0.1,
+        "default": 1
+      }
+    },
+    "metadata": {
+      "author": "Adib Zahran",
+      "seed": "0x2798E9",
+      "status": "OPERATIONAL",
+      "lineage": "REF-001",
+      "description": "Experimental generative visualization: Xylophone."
+    }
+  }
+]

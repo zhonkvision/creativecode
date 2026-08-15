@@ -1,0 +1,38 @@
+{
+  "id": "EXP-026",
+  "slug": "retro-noise",
+  "title": "ZHONK",
+  "year": 2026,
+  "category": "stepped-raster",
+  "technology": "WebGL / SVG / CRT Stepped Raster",
+  "visualDNA_channel": "CH-04-STEPPED-RASTER",
+  "entryType": "iframe",
+  "entryPoint": "./projects/retro-noise/index.html",
+  "parameters": {
+    "zhonk_word": {
+      "type": "text",
+      "default": "ZHONK"
+    },
+    "zhonk_intensity": {
+      "type": "range",
+      "min": 0.1,
+      "max": 3,
+      "step": 0.1,
+      "default": 1
+    },
+    "zhonk_frequency": {
+      "type": "range",
+      "min": 0.1,
+      "max": 2.5,
+      "step": 0.1,
+      "default": 1
+    }
+  },
+  "metadata": {
+    "author": "Adib Zahran",
+    "seed": "0x453EA6",
+    "status": "OPERATIONAL",
+    "lineage": "REF-004",
+    "description": "ZHONK // Interactive stepped raster typography and analog CRT displacement experiment with customizable word mutation."
+  }
+}

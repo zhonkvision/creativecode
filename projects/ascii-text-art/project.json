@@ -1,0 +1,107 @@
+{
+  "id": "EXP-031",
+  "slug": "ascii-text-art",
+  "title": "ASCII Matrix // FIGlet Art Synthesizer",
+  "year": 2026,
+  "category": "generative-matrix",
+  "technology": "Canvas 2D / TheDraw Engine / FIGlet",
+  "visualDNA_channel": "CH-01-CRT-TELEMETRY",
+  "description": "High-fidelity Text-to-ASCII Art generator featuring the complete TheDraw BBS font collection (Acid Blue, Twisted Wire, Sub-Zero, Graffiti, Gothic, Ghost) and FIGlet classics with multiline support, framing grids, phosphor themes, and multi-format exports (PNG, Transparent PNG, JPG, 60 FPS MP4, and Looping GIF).",
+  "entryPoint": "./projects/ascii-text-art/index.html",
+  "entryType": "iframe",
+  "featured": true,
+  "parameters": {
+    "ascii_text": {
+      "type": "string",
+      "default": "CREATIVE CODE",
+      "label": "TEXT PAYLOAD"
+    },
+    "ascii_font": {
+      "type": "select",
+      "default": "acid-blue",
+      "options": [
+        "acid-blue",
+        "twisted",
+        "sub-zero",
+        "graffiti",
+        "gothic",
+        "ghost",
+        "slant",
+        "standard",
+        "doom",
+        "isometric",
+        "cybermedium",
+        "mini"
+      ],
+      "label": "THEDRAW / FIGLET FONT"
+    },
+    "ascii_theme": {
+      "type": "select",
+      "default": "phosphor",
+      "options": [
+        "phosphor",
+        "cyber",
+        "amber",
+        "blood",
+        "magenta",
+        "rainbow",
+        "ice"
+      ],
+      "label": "CRT PHOSPHOR THEME"
+    },
+    "ascii_align": {
+      "type": "select",
+      "default": "center",
+      "options": [
+        "center",
+        "left",
+        "right"
+      ],
+      "label": "TEXT ALIGNMENT"
+    },
+    "ascii_spacing": {
+      "type": "range",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 1,
+      "label": "LETTER KERNING"
+    },
+    "ascii_frame": {
+      "type": "select",
+      "default": "terminal",
+      "options": [
+        "none",
+        "terminal",
+        "double",
+        "brackets",
+        "block",
+        "stars",
+        "slash"
+      ],
+      "label": "BORDER FRAMING"
+    },
+    "ascii_glitch": {
+      "type": "range",
+      "min": 0,
+      "max": 1,
+      "step": 0.05,
+      "default": 0.15,
+      "label": "GLITCH INTENSITY"
+    },
+    "matrix_rain": {
+      "type": "boolean",
+      "default": true,
+      "label": "MATRIX DIGITAL RAIN"
+    }
+  },
+  "tags": [
+    "TheDraw",
+    "ASCII Art",
+    "FIGlet",
+    "BBS Retro",
+    "Typography",
+    "CRT Phosphor",
+    "Matrix Rain"
+  ]
+}

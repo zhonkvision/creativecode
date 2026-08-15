@@ -9,22 +9,6 @@
       "destination": "/projects/projects.json"
     },
     {
-      "source": "/dna/:match*",
-      "destination": "/dna/:match*"
-    },
-    {
-      "source": "/src/:match*",
-      "destination": "/src/:match*"
-    },
-    {
-      "source": "/projects/:match*",
-      "destination": "/projects/:match*"
-    },
-    {
-      "source": "/public/:match*",
-      "destination": "/public/:match*"
-    },
-    {
       "source": "/experiment/:slug*",
       "destination": "/index.html"
     },

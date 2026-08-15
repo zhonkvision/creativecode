@@ -2,22 +2,18 @@
   "cleanUrls": true,
   "routes": [
     {
-      "src": "/api/projects",
+      "src": "^/api/projects$",
       "dest": "/projects/projects.json"
     },
     {
       "handle": "filesystem"
     },
     {
-      "src": "/experiment/.*",
+      "src": "^/experiment/.*$",
       "dest": "/index.html"
     },
     {
-      "src": "/specimen/.*",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/.*",
+      "src": "^/specimen/.*$",
       "dest": "/index.html"
     }
   ]

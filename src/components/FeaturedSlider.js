@@ -101,14 +101,19 @@ export class FeaturedSlider {
     // Render Stage Content
     const stage = this.container.querySelector('#featuredHeroStage');
     const isModule = current.entryType === 'module';
+    const videoSrc = current.metadata?.video || (current.slug === 'chromarad-isotope-matrix' ? '/projects/chromarad-isotope-matrix/assets/tcozVqT9HvYsu.mp4' : null);
+    const previewSrc = current.metadata?.preview ? current.metadata.preview.replace(/^\.\//, '/') : '';
 
     const entryPath = (isModule
       ? current.entryPoint.replace('/experiment.js', '/index.html')
       : current.entryPoint).replace(/^\.\//, '/');
 
     stage.innerHTML = `
-      <div class="featured-preview-pane">
-        <iframe class="featured-iframe" src="${entryPath}" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>
+      <div class="featured-preview-pane" style="cursor: pointer;">
+        ${videoSrc 
+          ? `<video class="featured-iframe" src="${videoSrc.replace(/^\.\//, '/')}" autoplay loop muted playsinline poster="${previewSrc}" style="object-fit: cover; width: 100%; height: 100%;"></video>`
+          : `<iframe class="featured-iframe" src="${entryPath}" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>`
+        }
         <div class="featured-corner-tl"></div>
         <div class="featured-corner-br"></div>
       </div>

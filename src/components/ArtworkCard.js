@@ -25,13 +25,18 @@ export class ArtworkCard {
     this.element.setAttribute('data-category', this.config.category || '');
 
     const isModule = this.config.entryType === 'module';
+    const videoSrc = this.config.metadata?.video || (this.config.slug === 'chromarad-isotope-matrix' ? '/projects/chromarad-isotope-matrix/assets/tcozVqT9HvYsu.mp4' : null);
+    const previewSrc = this.config.metadata?.preview ? this.config.metadata.preview.replace(/^\.\//, '/') : '';
     const entrySrc = this.config.entryPoint.replace(/^\.\//, '/');
 
     this.element.innerHTML = `
       <div class="card-viewport-stage">
-        ${isModule 
-          ? `<canvas class="card-canvas"></canvas>` 
-          : `<iframe class="card-canvas" src="${entrySrc}" loading="lazy" sandbox="allow-scripts allow-same-origin" style="border:none; pointer-events:none;"></iframe>`
+        ${videoSrc
+          ? `<video class="card-canvas card-video-preview" src="${videoSrc.replace(/^\.\//, '/')}" autoplay loop muted playsinline poster="${previewSrc}" style="width:100%; height:100%; object-fit:cover; border:none;"></video>`
+          : (isModule 
+            ? `<canvas class="card-canvas"></canvas>` 
+            : `<iframe class="card-canvas" src="${entrySrc}" loading="lazy" sandbox="allow-scripts allow-same-origin" style="border:none; pointer-events:none;"></iframe>`
+          )
         }
         <div class="card-telemetry-badge-strip">
           <span class="tech-tag">${this.config.technology || 'Procedural'}</span>

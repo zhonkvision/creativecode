@@ -33,9 +33,12 @@ export class ArtworkCard {
       <div class="card-viewport-stage">
         ${videoSrc
           ? `<video class="card-canvas card-video-preview" src="${videoSrc.replace(/^\.\//, '/')}" autoplay loop muted playsinline poster="${previewSrc}" style="width:100%; height:100%; object-fit:cover; border:none;"></video>`
-          : (isModule 
-            ? `<canvas class="card-canvas"></canvas>` 
-            : `<iframe class="card-canvas" src="${entrySrc}" loading="lazy" sandbox="allow-scripts allow-same-origin" style="border:none; pointer-events:none;"></iframe>`
+          : (previewSrc
+            ? `<img class="card-canvas card-img-preview" src="${previewSrc}" alt="${this.config.title}" style="width:100%; height:100%; object-fit:cover; border:none; display:block;" />`
+            : (isModule 
+              ? `<canvas class="card-canvas"></canvas>` 
+              : `<iframe class="card-canvas" src="${entrySrc}" loading="lazy" sandbox="allow-scripts allow-same-origin" style="border:none; pointer-events:none;"></iframe>`
+            )
           )
         }
         <div class="card-telemetry-badge-strip">

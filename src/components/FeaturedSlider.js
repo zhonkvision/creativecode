@@ -112,7 +112,10 @@ export class FeaturedSlider {
       <div class="featured-preview-pane" style="cursor: pointer;">
         ${videoSrc 
           ? `<video class="featured-iframe" src="${videoSrc.replace(/^\.\//, '/')}" autoplay loop muted playsinline poster="${previewSrc}" style="object-fit: cover; width: 100%; height: 100%;"></video>`
-          : `<iframe class="featured-iframe" src="${entryPath}" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>`
+          : (previewSrc
+            ? `<img class="featured-iframe" src="${previewSrc}" alt="${current.title}" style="object-fit: cover; width: 100%; height: 100%; display:block;" />`
+            : `<iframe class="featured-iframe" src="${entryPath}" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>`
+          )
         }
         <div class="featured-corner-tl"></div>
         <div class="featured-corner-br"></div>

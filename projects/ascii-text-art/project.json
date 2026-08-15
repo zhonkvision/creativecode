@@ -37,7 +37,7 @@
     },
     "ascii_theme": {
       "type": "select",
-      "default": "phosphor",
+      "default": "blood",
       "options": [
         "phosphor",
         "cyber",
@@ -103,5 +103,13 @@
     "Typography",
     "CRT Phosphor",
     "Matrix Rain"
-  ]
+  ],
+  "metadata": {
+    "author": "CreativeCode BBS",
+    "seed": "0x4F19E2",
+    "status": "OPERATIONAL",
+    "lineage": "REF-001",
+    "description": "High-fidelity Text-to-ASCII Art generator featuring TheDraw BBS & FIGlet typography engines with Blood Neon phosphor and matrix digital rain.",
+    "preview": "./projects/ascii-text-art/preview.png"
+  }
 }

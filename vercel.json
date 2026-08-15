@@ -1,10 +1,28 @@
 {
   "version": 2,
   "cleanUrls": true,
+  "buildCommand": "node src/engine/discovery.js",
+  "outputDirectory": ".",
   "rewrites": [
     {
       "source": "/api/projects",
       "destination": "/projects/projects.json"
+    },
+    {
+      "source": "/dna/:match*",
+      "destination": "/dna/:match*"
+    },
+    {
+      "source": "/src/:match*",
+      "destination": "/src/:match*"
+    },
+    {
+      "source": "/projects/:match*",
+      "destination": "/projects/:match*"
+    },
+    {
+      "source": "/public/:match*",
+      "destination": "/public/:match*"
     },
     {
       "source": "/experiment/:slug*",

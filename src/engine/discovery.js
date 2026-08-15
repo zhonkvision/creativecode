@@ -132,12 +132,16 @@ export function scanAndGenerateProjects() {
   }
 
   // Write master catalog to projects/projects.json and dna/manifest.json
-  const masterCatalogPath = path.join(projectsDir, 'projects.json');
-  fs.writeFileSync(masterCatalogPath, JSON.stringify(allProjects, null, 2));
+  try {
+    const masterCatalogPath = path.join(projectsDir, 'projects.json');
+    fs.writeFileSync(masterCatalogPath, JSON.stringify(allProjects, null, 2));
 
-  const manifestPath = path.resolve(__dirname, '../../dna/manifest.json');
-  fs.writeFileSync(manifestPath, JSON.stringify(allProjects, null, 2));
-  console.log(`\n✓ Generated master catalog: ${allProjects.length} projects in projects.json and dna/manifest.json`);
+    const manifestPath = path.resolve(__dirname, '../../dna/manifest.json');
+    fs.writeFileSync(manifestPath, JSON.stringify(allProjects, null, 2));
+    console.log(`\n✓ Generated master catalog: ${allProjects.length} projects in projects.json and dna/manifest.json`);
+  } catch (err) {
+    console.warn('[DISCOVERY] Could not write to disk (read-only filesystem):', err.message);
+  }
   return allProjects;
 }
 

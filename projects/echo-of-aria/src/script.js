@@ -30,9 +30,18 @@ var DRONE_PROG = [
    AUDIO INIT
    ═══════════════════════════════════════════════════════════════ */
 async function initAudio(){
-  if(audioReady || audioInitPending) return;
+  if(audioReady) {
+    if (synth.ctx && synth.ctx.state === 'suspended') {
+      try { await synth.ctx.resume(); } catch (e) {}
+    }
+    return;
+  }
+  if(audioInitPending) return;
   audioInitPending = true;
   await synth.init();
+  if (synth.ctx && synth.ctx.state === 'suspended') {
+    try { await synth.ctx.resume(); } catch (e) {}
+  }
   synth.setMasterVolume(0.38);
 
   /* ── TK_PIANO : piano (triangle) — C418 deep & soft ───────── */
@@ -928,6 +937,35 @@ document.addEventListener('keydown', function(e){
     var labels = detectedAzerty ? ['Q','S','D','F','G','H'] : ['A','S','D','F','G','H'];
     document.querySelectorAll('.pad-key').forEach(function(el,i){ el.textContent = labels[i]; });
   }
+});
+
+/* ── Live DNA Mutation listener from gallery workbench ─────── */
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'DNA_MUTATION') {
+    if (!audioReady) {
+      initAudio();
+    } else if (synth && synth.ctx && synth.ctx.state === 'suspended') {
+      try { synth.ctx.resume(); } catch (err) {}
+    }
+    var p = e.data.parameters || {};
+    var enabled = e.data.enabled || e.data.toggles || {};
+    if (synth) {
+      if (enabled.intensity === false) {
+        synth.setMasterVolume(0.38);
+      } else if (p.intensity !== undefined) {
+        synth.setMasterVolume(0.38 * p.intensity);
+      }
+    }
+  }
+});
+
+/* ── Universal audio unlock on user interaction ────────────── */
+['click', 'keydown', 'touchstart', 'pointerdown'].forEach(function(ev){
+  window.addEventListener(ev, function(){
+    if(synth && synth.ctx && synth.ctx.state === 'suspended'){
+      try { synth.ctx.resume(); } catch(e){}
+    }
+  }, { passive: true });
 });
 
 /* ── Boot ─────────────────────────────────────────────────────── */

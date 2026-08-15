@@ -1,6 +1,6 @@
 /**
  * ChiptuneSynth — Self-Contained Web Audio API Sound Generator & Synthesizer
- * Full polyphony, instruments, envelopes, biquad filters, reverb, chorus, delay & sound effects.
+ * Full polyphony, unison voices, instruments, ADSR envelopes, biquad filters, reverb, chorus, delay, compressors & sound effects.
  */
 class ChiptuneSynth {
   constructor() {
@@ -9,6 +9,7 @@ class ChiptuneSynth {
     this.analyser = null;
     this.tracks = [];
     this.activeVoices = new Map();
+    this.activeNotes = this.activeVoices; // Backward compatibility alias
     this.voiceCounter = 0;
     this.isInitialized = false;
 
@@ -42,8 +43,18 @@ class ChiptuneSynth {
     };
   }
 
+  get audioContext() {
+    return this.ctx;
+  }
+
   async init() {
-    if (this.isInitialized) return;
+    if (this.isInitialized && this.ctx) {
+      if (this.ctx.state === 'suspended') {
+        try { await this.ctx.resume(); } catch (e) {}
+      }
+      return;
+    }
+
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     if (!AudioContextClass) return;
 
@@ -56,10 +67,12 @@ class ChiptuneSynth {
         document.removeEventListener('click', unlock);
         document.removeEventListener('keydown', unlock);
         document.removeEventListener('touchstart', unlock);
+        document.removeEventListener('pointerdown', unlock);
       };
       document.addEventListener('click', unlock, { once: true });
       document.addEventListener('keydown', unlock, { once: true });
       document.addEventListener('touchstart', unlock, { once: true });
+      document.addEventListener('pointerdown', unlock, { once: true });
     }
 
     this.masterGain = this.ctx.createGain();
@@ -72,7 +85,10 @@ class ChiptuneSynth {
     this.masterGain.connect(this.analyser);
     this.analyser.connect(this.ctx.destination);
 
-    // Initialize 8 tracks with dedicated faders, filters, and FX
+    // Shared Reverb Convolver Node with Synthetic Ethereal Impulse
+    this.reverbBuffer = this.createSyntheticImpulseResponse(3.2, 2.5);
+
+    // Initialize 8 tracks with dedicated faders, filters, panner, delay, reverb, and compressor
     for (let i = 0; i < 8; i++) {
       const trackGain = this.ctx.createGain();
       trackGain.gain.value = 0.7;
@@ -84,6 +100,14 @@ class ChiptuneSynth {
       filter.frequency.value = 4000;
       filter.Q.value = 0.5;
 
+      const compressor = this.ctx.createDynamicsCompressor();
+      compressor.threshold.value = -18;
+      compressor.knee.value = 12;
+      compressor.ratio.value = 6;
+      compressor.attack.value = 0.003;
+      compressor.release.value = 0.15;
+
+      // Delay Node
       const delay = this.ctx.createDelay();
       delay.delayTime.value = 0.35;
       const delayFeedback = this.ctx.createGain();
@@ -95,33 +119,68 @@ class ChiptuneSynth {
       delayFeedback.connect(delay);
       delay.connect(delayMix);
 
+      // Reverb Convolver Node
+      const reverb = this.ctx.createConvolver();
+      reverb.buffer = this.reverbBuffer;
+      const reverbMix = this.ctx.createGain();
+      reverbMix.gain.value = 0.3;
+      reverb.connect(reverbMix);
+
+      // Signal Routing: TrackGain -> Filter -> Compressor -> [Dry & Wet] -> Panner -> MasterGain
+      trackGain.connect(filter);
+      filter.connect(compressor);
+
       if (panner) {
-        trackGain.connect(filter);
-        filter.connect(panner);
-        panner.connect(this.masterGain);
-        filter.connect(delay);
+        compressor.connect(panner);
+        compressor.connect(delay);
+        compressor.connect(reverb);
         delayMix.connect(panner);
+        reverbMix.connect(panner);
+        panner.connect(this.masterGain);
       } else {
-        trackGain.connect(filter);
-        filter.connect(this.masterGain);
-        filter.connect(delay);
+        compressor.connect(this.masterGain);
+        compressor.connect(delay);
+        compressor.connect(reverb);
         delayMix.connect(this.masterGain);
+        reverbMix.connect(this.masterGain);
       }
 
       this.tracks.push({
         gain: trackGain,
         filter: filter,
+        compressor: compressor,
         panner: panner,
         delay: delay,
         delayFeedback: delayFeedback,
         delayMix: delayMix,
+        reverb: reverb,
+        reverbMix: reverbMix,
         instrument: 'piano',
+        unisonVoices: 1,
+        unisonDetune: 4,
+        unisonSpread: 20,
         envelope: { attack: 0.02, decay: 0.5, sustain: 0.5, release: 2.0 },
         vibrato: { rate: 4.0, depth: 3.0 }
       });
     }
 
     this.isInitialized = true;
+  }
+
+  createSyntheticImpulseResponse(duration = 3.0, decay = 2.0) {
+    if (!this.ctx) return null;
+    const sampleRate = this.ctx.sampleRate;
+    const length = Math.floor(sampleRate * duration);
+    const buffer = this.ctx.createBuffer(2, length, sampleRate);
+    const left = buffer.getChannelData(0);
+    const right = buffer.getChannelData(1);
+    for (let i = 0; i < length; i++) {
+      const t = i / length;
+      const factor = Math.exp(-t * decay);
+      left[i] = (Math.random() * 2 - 1) * factor;
+      right[i] = (Math.random() * 2 - 1) * factor;
+    }
+    return buffer;
   }
 
   setMasterVolume(vol) {
@@ -154,6 +213,9 @@ class ChiptuneSynth {
     if (opts.filterType !== undefined && track.filter) {
       track.filter.type = opts.filterType;
     }
+    if (opts.unisonVoices !== undefined) track.unisonVoices = opts.unisonVoices;
+    if (opts.unisonDetune !== undefined) track.unisonDetune = opts.unisonDetune;
+    if (opts.unisonSpread !== undefined) track.unisonSpread = opts.unisonSpread;
   }
 
   updateEnvelope(trackIndex, env = {}) {
@@ -171,15 +233,21 @@ class ChiptuneSynth {
   }
 
   loadFxPreset(trackIndex, presetName) {
-    // Preset configurations for ambient reverb / delay
     if (presetName === 'space' || presetName === 'cave') {
-      this.setDelayTime(trackIndex, 0.45);
-      this.setDelayFeedback(trackIndex, 0.4);
-      this.setDelayMix(trackIndex, 0.35);
+      this.setDelayTime(trackIndex, 0.55);
+      this.setDelayFeedback(trackIndex, 0.35);
+      this.setDelayMix(trackIndex, 0.25);
+      this.setReverbMix(trackIndex, 0.75);
     }
   }
 
-  setReverbMix(trackIndex, val) {}
+  setReverbMix(trackIndex, val) {
+    const track = this.tracks[trackIndex];
+    if (track && track.reverbMix && this.ctx) {
+      track.reverbMix.gain.setTargetAtTime(Math.max(0, Math.min(1, val)), this.ctx.currentTime, 0.05);
+    }
+  }
+
   setReverbDecay(trackIndex, val) {}
   setChorusRate(trackIndex, val) {}
   setChorusDepth(trackIndex, val) {}
@@ -220,6 +288,32 @@ class ChiptuneSynth {
     }
   }
 
+  setTrackCompressorEnabled(trackIndex, val) {}
+  setTrackCompressorThreshold(trackIndex, val) {
+    const track = this.tracks[trackIndex];
+    if (track && track.compressor && this.ctx) {
+      track.compressor.threshold.setValueAtTime(val, this.ctx.currentTime);
+    }
+  }
+  setTrackCompressorRatio(trackIndex, val) {
+    const track = this.tracks[trackIndex];
+    if (track && track.compressor && this.ctx) {
+      track.compressor.ratio.setValueAtTime(val, this.ctx.currentTime);
+    }
+  }
+  setTrackCompressorAttack(trackIndex, val) {
+    const track = this.tracks[trackIndex];
+    if (track && track.compressor && this.ctx) {
+      track.compressor.attack.setValueAtTime(val, this.ctx.currentTime);
+    }
+  }
+  setTrackCompressorRelease(trackIndex, val) {
+    const track = this.tracks[trackIndex];
+    if (track && track.compressor && this.ctx) {
+      track.compressor.release.setValueAtTime(val, this.ctx.currentTime);
+    }
+  }
+
   noteToFreq(noteName, octave = 4) {
     const base = this.NOTE_FREQS[noteName] || 440;
     return base * Math.pow(2, octave);
@@ -230,46 +324,66 @@ class ChiptuneSynth {
   }
 
   playNoteByName(note, octave = 4, trackIndex = 0, duration = 1.0, velocity = 0.7) {
-    if (!this.isInitialized) {
+    if (!this.isInitialized || !this.ctx) {
       this.init();
     }
     if (!this.ctx) return null;
+
+    if (this.ctx.state === 'suspended') {
+      try { this.ctx.resume(); } catch (e) {}
+    }
 
     const freq = typeof note === 'number' ? note : this.noteToFreq(note, octave);
     const track = this.tracks[trackIndex] || this.tracks[0];
     const inst = this.INSTRUMENTS[track.instrument] || this.INSTRUMENTS['piano'];
     const now = this.ctx.currentTime;
 
-    const osc = this.ctx.createOscillator();
-    osc.type = inst.wave || 'triangle';
-    osc.frequency.setValueAtTime(freq, now);
-
     const voiceGain = this.ctx.createGain();
     voiceGain.gain.setValueAtTime(0, now);
 
     const env = track.envelope || inst;
-    const attack = env.attack || 0.02;
-    const decay = env.decay || 0.4;
+    const attack = env.attack !== undefined ? env.attack : 0.02;
+    const decay = env.decay !== undefined ? env.decay : 0.4;
     const sustain = (env.sustain !== undefined ? env.sustain : 0.5) * velocity;
-    const release = env.release || 1.5;
+    const release = env.release !== undefined ? env.release : 1.5;
 
     // ADSR Envelope Timing
-    voiceGain.gain.linearRampToValueAtTime(velocity, now + attack);
-    voiceGain.gain.setTargetAtTime(sustain, now + attack, decay);
+    voiceGain.gain.linearRampToValueAtTime(Math.max(0.001, velocity), now + Math.max(0.005, attack));
+    voiceGain.gain.setTargetAtTime(Math.max(0.001, sustain), now + Math.max(0.005, attack), decay);
 
-    osc.connect(voiceGain);
+    // Unison voices with detuning for rich acoustic depth
+    const numVoices = track.unisonVoices || 1;
+    const detuneSpread = track.unisonDetune || 4;
+    const oscillators = [];
+
+    for (let v = 0; v < numVoices; v++) {
+      const osc = this.ctx.createOscillator();
+      osc.type = inst.wave || 'triangle';
+      const detune = numVoices > 1 ? (v - (numVoices - 1) / 2) * detuneSpread : 0;
+      osc.frequency.setValueAtTime(freq, now);
+      osc.detune.setValueAtTime(detune, now);
+      osc.connect(voiceGain);
+      osc.start(now);
+      oscillators.push(osc);
+    }
+
     voiceGain.connect(track.gain);
 
-    osc.start(now);
-
     const voiceId = ++this.voiceCounter;
-    this.activeVoices.set(voiceId, {
-      osc,
+    const voiceData = {
+      id: voiceId,
+      gainNode: voiceGain,
       gain: voiceGain,
+      oscillators: oscillators,
+      osc: oscillators[0],
+      lfo: null,
+      extraLfos: [],
       startTime: now,
-      release,
-      trackIndex
-    });
+      release: release,
+      trackIndex: trackIndex
+    };
+
+    this.activeVoices.set(voiceId, voiceData);
 
     if (duration > 0 && duration < 30) {
       setTimeout(() => {
@@ -287,22 +401,24 @@ class ChiptuneSynth {
     const now = this.ctx.currentTime;
     const release = voice.release || 1.0;
 
-    voice.gain.gain.cancelScheduledValues(now);
-    voice.gain.gain.setTargetAtTime(0, now, release * 0.3);
+    try {
+      voice.gainNode.gain.cancelScheduledValues(now);
+      voice.gainNode.gain.setTargetAtTime(0, now, Math.max(0.02, release * 0.25));
+    } catch (e) {}
 
     setTimeout(() => {
       try {
-        voice.osc.stop();
-        voice.osc.disconnect();
-        voice.gain.disconnect();
+        voice.oscillators.forEach(osc => {
+          try { osc.stop(); osc.disconnect(); } catch (e) {}
+        });
+        voice.gainNode.disconnect();
       } catch (e) {}
       this.activeVoices.delete(voiceId);
     }, (release + 0.1) * 1000);
   }
 
   triggerSfx(presetName) {
-    if (!this.ctx) this.init();
-    if (!this.ctx) return;
+    if (!this.isInitialized || !this.ctx) return;
     const now = this.ctx.currentTime;
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
@@ -312,31 +428,50 @@ class ChiptuneSynth {
       osc.frequency.setValueAtTime(987.77, now);
       osc.frequency.setValueAtTime(1318.51, now + 0.08);
       gain.gain.setValueAtTime(0.3, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
       osc.connect(gain);
       gain.connect(this.masterGain);
       osc.start(now);
-      osc.stop(now + 0.4);
+      osc.stop(now + 0.35);
     } else if (presetName === 'blip') {
       osc.type = 'triangle';
-      osc.frequency.setValueAtTime(440, now);
-      osc.frequency.exponentialRampToValueAtTime(880, now + 0.05);
-      gain.gain.setValueAtTime(0.2, now);
+      osc.frequency.setValueAtTime(800, now);
+      osc.frequency.exponentialRampToValueAtTime(200, now + 0.1);
+      gain.gain.setValueAtTime(0.4, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
       osc.connect(gain);
       gain.connect(this.masterGain);
       osc.start(now);
       osc.stop(now + 0.1);
+    } else if (presetName === '1up') {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(330, now);
+      osc.frequency.setValueAtTime(392, now + 0.08);
+      osc.frequency.setValueAtTime(659, now + 0.16);
+      osc.frequency.setValueAtTime(523, now + 0.24);
+      osc.frequency.setValueAtTime(587, now + 0.32);
+      osc.frequency.setValueAtTime(784, now + 0.40);
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+      osc.start(now);
+      osc.stop(now + 0.6);
     }
   }
 
-  getAnalyser() {
-    return this.analyser;
-  }
-
-  getAudioContext() {
-    return this.ctx;
+  getFrequencyData() {
+    if (!this.analyser) return new Uint8Array(64);
+    const data = new Uint8Array(this.analyser.frequencyBinCount);
+    this.analyser.getByteFrequencyData(data);
+    return data;
   }
 }
 
-window.ChiptuneSynth = ChiptuneSynth;
+// Universal module & global browser attachment
+if (typeof window !== 'undefined') {
+  window.ChiptuneSynth = ChiptuneSynth;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = ChiptuneSynth;
+};

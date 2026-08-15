@@ -58,8 +58,10 @@ if (googleLink) {
 
 // Live DNA Mutation listener from gallery workbench
 window.addEventListener('message', e => {
-    if (e.data && e.data.type === 'DNA_MUTATION' && e.data.parameters) {
-        const p = e.data.parameters;
+    if (e.data && e.data.type === 'DNA_MUTATION') {
+        const p = e.data.parameters || {};
+        const toggles = e.data.enabled || e.data.toggles || {};
+
         if (p.speed !== undefined) {
             config.COLOR_UPDATE_SPEED = 10 * p.speed;
             config.VELOCITY_DISSIPATION = 0.2 / p.speed;
@@ -68,6 +70,50 @@ window.addEventListener('message', e => {
             config.SPLAT_RADIUS = 0.25 * p.intensity;
             config.BLOOM_INTENSITY = 0.8 * p.intensity;
         }
+        if (p.curl !== undefined) {
+            config.CURL = parseFloat(p.curl);
+        }
+        if (p.splat_radius !== undefined) {
+            config.SPLAT_RADIUS = parseFloat(p.splat_radius);
+        }
+        if (p.density_dissipation !== undefined) {
+            config.DENSITY_DISSIPATION = parseFloat(p.density_dissipation);
+        }
+        if (p.colorful !== undefined) {
+            config.COLORFUL = !!p.colorful;
+        }
+        if (p.shading !== undefined) {
+            config.SHADING = !!p.shading;
+            if (typeof updateKeywords === 'function') updateKeywords();
+        }
+        if (p.bloom !== undefined) {
+            config.BLOOM = !!p.bloom;
+            if (typeof updateKeywords === 'function') updateKeywords();
+        }
+        if (p.sunrays !== undefined) {
+            config.SUNRAYS = !!p.sunrays;
+            if (typeof updateKeywords === 'function') updateKeywords();
+        }
+
+        // GUI visibility toggle
+        if (p.show_gui !== undefined) {
+            const isVisible = !!p.show_gui;
+            if (isVisible) {
+                document.body.classList.remove('hide-ui');
+                document.body.classList.add('show-gui-forced');
+            } else {
+                document.body.classList.remove('show-gui-forced');
+                if (window.self !== window.top) {
+                    document.body.classList.add('hide-ui');
+                }
+            }
+            const toggleBtn = document.getElementById('fluidGuiToggleBtn');
+            if (toggleBtn) {
+                toggleBtn.innerText = isVisible ? '[ ⚙ CONTROLS: ON ]' : '[ ⚙ CONTROLS: OFF ]';
+                toggleBtn.classList.toggle('active', isVisible);
+            }
+        }
+
         splatStack.push(parseInt(Math.random() * 10) + 3);
     }
 });

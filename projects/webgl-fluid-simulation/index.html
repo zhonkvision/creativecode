@@ -53,16 +53,60 @@
                 opacity: 0.9;
             }
 
-            /* Clean Thumbnail Embed Mode — Hide dat.gui parameter controls and promo popups */
-            body.hide-ui .dg,
-            body.hide-ui .dg.ac,
-            body.hide-ui .dg.main,
-            body.hide-ui .promo {
+            /* Clean Thumbnail Embed Mode — Hide dat.gui parameter controls by default unless toggled on */
+            body.hide-ui:not(.show-gui-forced) .dg,
+            body.hide-ui:not(.show-gui-forced) .dg.ac,
+            body.hide-ui:not(.show-gui-forced) .dg.main,
+            body.hide-ui:not(.show-gui-forced) .promo {
                 display: none !important;
             }
 
             @media (max-width: 580px), (max-height: 440px) {
-                .dg, .dg.ac, .dg.main, .promo {
+                body:not(.show-gui-forced) .dg,
+                body:not(.show-gui-forced) .dg.ac,
+                body:not(.show-gui-forced) .dg.main,
+                body:not(.show-gui-forced) .promo {
+                    display: none !important;
+                }
+            }
+
+            .fluid-hud-toggle-btn {
+                position: fixed;
+                top: 14px;
+                right: 14px;
+                z-index: 10001;
+                background: rgba(10, 10, 10, 0.85);
+                border: 1px solid #262626;
+                color: #a3a3a3;
+                font-family: monospace;
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 0.08em;
+                padding: 6px 12px;
+                cursor: pointer;
+                border-radius: 2px;
+                transition: all 0.2s ease;
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                outline: none;
+            }
+
+            .fluid-hud-toggle-btn:hover {
+                color: #ffffff;
+                border-color: #ff2424;
+                box-shadow: 0 0 10px rgba(255, 36, 36, 0.3);
+            }
+
+            .fluid-hud-toggle-btn.active {
+                background: rgba(255, 36, 36, 0.15);
+                border-color: #ff2424;
+                color: #ffffff;
+                box-shadow: 0 0 12px rgba(255, 36, 36, 0.4);
+            }
+
+            /* Hide the toggle button itself on small gallery card thumbnails */
+            @media (max-width: 380px), (max-height: 280px) {
+                .fluid-hud-toggle-btn {
                     display: none !important;
                 }
             }
@@ -227,12 +271,35 @@
             </div>
         </div>
 
+        <button id="fluidGuiToggleBtn" class="fluid-hud-toggle-btn" title="Toggle Native Fluid Parameters">[ ⚙ CONTROLS: OFF ]</button>
+
         <script>
-            // Auto-detect thumbnail and card viewports to hide dat.gui parameter controls
+            // Auto-detect thumbnail and card viewports to hide dat.gui parameter controls by default
             if (window.self !== window.top || window.location.search.includes('thumbnail=1') || window.location.search.includes('hide_ui=1')) {
                 document.addEventListener('DOMContentLoaded', () => document.body.classList.add('hide-ui'));
                 if (document.body) document.body.classList.add('hide-ui');
             }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const toggleBtn = document.getElementById('fluidGuiToggleBtn');
+                if (toggleBtn) {
+                    toggleBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const isForced = document.body.classList.toggle('show-gui-forced');
+                        if (isForced) {
+                            document.body.classList.remove('hide-ui');
+                            toggleBtn.innerText = '[ ⚙ CONTROLS: ON ]';
+                            toggleBtn.classList.add('active');
+                        } else {
+                            if (window.self !== window.top) {
+                                document.body.classList.add('hide-ui');
+                            }
+                            toggleBtn.innerText = '[ ⚙ CONTROLS: OFF ]';
+                            toggleBtn.classList.remove('active');
+                        }
+                    });
+                }
+            });
         </script>
         <script src="./script.js"></script>
     </body>

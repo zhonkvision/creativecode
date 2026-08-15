@@ -1,5 +1,5 @@
-import * as THREE from "https://esm.sh/three@0.175.0";
-import { OrbitControls } from "https://esm.sh/three@0.175.0/examples/jsm/controls/OrbitControls.js";
+import * as THREE from "./three.module.js";
+import { OrbitControls } from "./OrbitControls.module.js";
 document.addEventListener("DOMContentLoaded", function () {
   setupExpandingCirclesPreloader();
   let audioContext = null;
@@ -347,6 +347,47 @@ document.addEventListener("DOMContentLoaded", function () {
       addTerminalMessage("ERROR: AUDIO FILE PROCESSING FAILED.");
       showNotification("AUDIO FILE ERROR");
     }
+  let synthInterval = null;
+  function startSyntheticCyberpunkAudio() {
+    if (!isAudioInitialized && !initAudio()) return;
+    ensureAudioContextStarted();
+    if (!audioContext || !audioAnalyser) return;
+
+    if (synthInterval) clearInterval(synthInterval);
+
+    isAudioPlaying = true;
+    zoomCameraForAudio(true);
+    addTerminalMessage("SYNTHESIZING REAL-TIME ANOMALY AUDIO STREAM.");
+    showNotification("ANOMALY AUDIO SYNTHESIS ONLINE");
+
+    const scale = [110, 130.81, 146.83, 164.81, 196.00, 220.00, 261.63, 293.66, 329.63, 392.00, 440.00];
+    let step = 0;
+
+    synthInterval = setInterval(() => {
+      if (!isAudioPlaying || !audioContext) return;
+      if (audioContext.state === 'suspended') {
+        try { audioContext.resume(); } catch (e) {}
+      }
+      const now = audioContext.currentTime;
+      const freq = scale[step % scale.length];
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      
+      osc.type = step % 4 === 0 ? 'sawtooth' : (step % 2 === 0 ? 'triangle' : 'sine');
+      osc.frequency.setValueAtTime(freq, now);
+      
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.18, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+      osc.connect(gain);
+      gain.connect(audioAnalyser);
+
+      osc.start(now);
+      osc.stop(now + 0.38);
+
+      step++;
+    }, 180);
   }
 
   function loadAudioFromURL(url) {
@@ -358,6 +399,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const audioPlayer = createNewAudioElement();
       currentAudioSrc = url;
       audioPlayer.src = url;
+      audioPlayer.onerror = function () {
+        console.warn("Remote audio track unreachable, activating real-time synthesis engine.");
+        startSyntheticCyberpunkAudio();
+      };
       audioPlayer.onloadeddata = function () {
         if (setupAudioSource(audioPlayer)) {
           audioPlayer
@@ -369,11 +414,8 @@ document.addEventListener("DOMContentLoaded", function () {
               showNotification(`PLAYING: ${url.split("/").pop()}`);
             })
             .catch((e) => {
-              console.warn("Play prevented:", e);
-              addTerminalMessage(
-                "WARNING: AUDIO PLAYBACK PREVENTED BY BROWSER. CLICK PLAY TO START AUDIO."
-              );
-              showNotification("CLICK PLAY TO START AUDIO");
+              console.warn("Play prevented, activating synthesis:", e);
+              startSyntheticCyberpunkAudio();
             });
         }
       };
@@ -383,8 +425,7 @@ document.addEventListener("DOMContentLoaded", function () {
       showNotification("AUDIO URL LOADED");
     } catch (error) {
       console.error("Audio URL error:", error);
-      addTerminalMessage("ERROR: AUDIO URL PROCESSING FAILED.");
-      showNotification("AUDIO URL ERROR");
+      startSyntheticCyberpunkAudio();
     }
   }
   const circularCanvas = document.getElementById("circular-canvas");
@@ -1513,6 +1554,43 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+  // Live DNA Mutation listener from gallery workbench
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'DNA_MUTATION') {
+      const p = e.data.parameters || {};
+      const enabled = e.data.enabled || e.data.toggles || {};
+      if (enabled.sensitivity === false) {
+        audioSensitivity = 5.0;
+      } else if (p.sensitivity !== undefined) {
+        audioSensitivity = parseFloat(p.sensitivity) || 5.0;
+      }
+      if (enabled.reactivity === false) {
+        audioReactivity = 1.0;
+      } else if (p.reactivity !== undefined) {
+        audioReactivity = parseFloat(p.reactivity) || 1.0;
+      }
+      const sensDisp = document.getElementById("sensitivity-value");
+      if (sensDisp) sensDisp.textContent = audioSensitivity.toFixed(1);
+      const sensSlider = document.getElementById("sensitivity-slider");
+      if (sensSlider) sensSlider.value = audioSensitivity;
+
+      if (!isAudioInitialized) {
+        initAudio();
+      } else if (audioContext && audioContext.state === 'suspended') {
+        try { audioContext.resume(); } catch (err) {}
+      }
+    }
+  });
+
+  // Universal audio unlock on user interaction
+  ['click', 'keydown', 'touchstart', 'pointerdown'].forEach(function(ev){
+    window.addEventListener(ev, function(){
+      if (audioContext && audioContext.state === 'suspended') {
+        try { audioContext.resume(); } catch(e){}
+      }
+    }, { passive: true });
+  });
+
   makePanelDraggable(
     document.querySelector(".control-panel"),
     document.getElementById("control-panel-handle")

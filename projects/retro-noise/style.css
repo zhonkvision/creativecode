@@ -35,7 +35,9 @@ body:before {
 
 svg text {
 	text-transform: uppercase;
-	fill: red;
+	fill: #FF1E40;
+	font-family: 'Audiowide', 'JetBrains Mono', monospace;
 	font-size: 50px;
+	letter-spacing: 2px;
 	filter: url(#Glow);
 }

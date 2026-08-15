@@ -180,12 +180,7 @@
               <animate attributeName="dy" values="0;-20" dur=".1s" repeatCount="indefinite" />
               <animate attributeName="dx" values="0;20" dur=".3s" repeatCount="indefinite" />
             </feOffset>
-            <feComponentTransfer>
-              <feFuncR type="linear" slope="1" intercept="-0.4" />
-              <feFuncG type="linear" slope="1" intercept="-0.4" />
-              <feFuncB type="linear" slope="1" intercept="-0.4" />
-            </feComponentTransfer>
-            <feBlend in="SourceGraphic" in2="ZHOIK" mode="multiply" result="screen-content" />
+            <feBlend in="SourceGraphic" in2="ZHOIK" mode="screen" result="screen-content" />
             <feTurbulence id="zhonkWaves" baseFrequency="0.01 1" result="waves" numOctaves="2" />
             <feDisplacementMap id="zhonkDisplacement" in="screen-content" in2="waves" scale="2" xChannelSelector="R" yChannelSelector="R">
               <animate attributeName="scale" values="0;10;0;50;5" dur="9s" repeatCount="indefinite" />
@@ -206,7 +201,7 @@
           </pattern>
         </defs>
         <rect height="100%" width="100%" fill="url(#Grid)" filter="url(#Glow)" />
-        <text id="zhonkText" x="50%" y="50%" dy=".35em" text-anchor="middle">
+        <text id="zhonkText" x="50%" y="50%" dy=".35em" text-anchor="middle" fill="#FF1E40" font-family="'Audiowide', 'JetBrains Mono', monospace" font-size="50" font-weight="900" filter="url(#Glow)">
           ZHONK
         </text>
         <animateTransform attributeType="xml" attributeName="transform" type="translate" values="0,0;0,3;0,-2;0,0;0,5;0,0;0,-3" dur="2s" repeatCount="indefinite" />

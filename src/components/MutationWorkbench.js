@@ -1,5 +1,6 @@
 /**
  * CreativeCode Visual DNA — Mutation Workbench Component (Universal Runner & Iframe Support)
+ * Featuring Individual Illuminated Mechanical Circuit Switches for Every Parameter (OFF by default)
  */
 import { audioEngine } from '../engine/audio.js';
 
@@ -17,6 +18,7 @@ export class MutationWorkbench {
     this.runner = options.runner || null;
     this.iframe = options.iframe || null;
     this.parameters = { ...this.getDefaultParameters() };
+    this.paramToggles = { ...this.getDefaultToggles() };
     this.seed = projectConfig.metadata?.seed || '0x4A2F8B';
     this.render();
   }
@@ -31,12 +33,25 @@ export class MutationWorkbench {
     return defaults;
   }
 
+  getDefaultToggles() {
+    const toggles = {};
+    if (this.config.parameters) {
+      for (const key of Object.keys(this.config.parameters)) {
+        toggles[key] = false; // All parameters OFF by default
+      }
+    }
+    return toggles;
+  }
+
   render() {
     this.container.innerHTML = `
       <div class="drawer-block">
         <div class="drawer-block-title">
-          <span>PARAM MUTATION</span>
-          <span style="font-size: 9px; color: var(--muted-telemetry);">LIVE-BIND</span>
+          <span>PARAM MUTATION & TOGGLES</span>
+          <div style="display: flex; gap: 4px;">
+            <button class="bulk-switch-btn" id="btnEngageAll" title="Enable all parameter toggles">⚡ ENGAGE ALL</button>
+            <button class="bulk-switch-btn" id="btnBypassAll" title="Bypass all parameter toggles">✕ BYPASS ALL</button>
+          </div>
         </div>
         <div id="workbenchParamsList"></div>
       </div>
@@ -80,58 +95,116 @@ export class MutationWorkbench {
 
     list.innerHTML = Object.entries(this.config.parameters).map(([key, meta]) => {
       const currentVal = this.parameters[key] !== undefined ? this.parameters[key] : meta.default;
+      const isToggled = !!this.paramToggles[key];
 
       if (meta.type === 'select') {
         return `
-          <div class="param-row">
+          <div class="param-row ${isToggled ? 'param-active' : 'param-bypassed'}" id="paramRow_${key}">
             <div class="param-meta">
-              <span class="param-name">${key}</span>
+              <div class="param-name-cluster">
+                <span class="param-name" title="${key}">${meta.label || key}</span>
+              </div>
+              <button class="param-toggle-node ${isToggled ? 'node-on' : 'node-off'}" data-key="${key}" title="Toggle ${key} ON/OFF">
+                <span class="node-led"></span>
+                <span class="node-state">${isToggled ? '[ ON ]' : '[ OFF ]'}</span>
+              </button>
             </div>
-            <select class="param-select" data-key="${key}">
-              ${meta.options.map(opt => `<option value="${opt}" ${opt === currentVal ? 'selected' : ''}>${opt}</option>`).join('')}
-            </select>
+            <div class="param-input-wrap ${isToggled ? '' : 'is-bypassed'}">
+              <select class="param-select" data-key="${key}">
+                ${meta.options.map(opt => `<option value="${opt}" ${opt === currentVal ? 'selected' : ''}>${opt}</option>`).join('')}
+              </select>
+            </div>
           </div>
         `;
       }
 
-      if (meta.type === 'text') {
+      if (meta.type === 'text' || meta.type === 'string') {
         return `
-          <div class="param-row">
+          <div class="param-row ${isToggled ? 'param-active' : 'param-bypassed'}" id="paramRow_${key}">
             <div class="param-meta">
-              <span class="param-name">${key}</span>
+              <div class="param-name-cluster">
+                <span class="param-name" title="${key}">${meta.label || key}</span>
+              </div>
+              <button class="param-toggle-node ${isToggled ? 'node-on' : 'node-off'}" data-key="${key}" title="Toggle ${key} ON/OFF">
+                <span class="node-led"></span>
+                <span class="node-state">${isToggled ? '[ ON ]' : '[ OFF ]'}</span>
+              </button>
             </div>
-            <input 
-              type="text" 
-              class="param-text-input" 
-              data-key="${key}"
-              value="${currentVal}"
-              placeholder="Enter custom word..."
-              style="background: var(--void-black); border: 1px solid var(--border-wire); color: var(--phosphor-green); font-family: var(--font-mono); font-size: 11px; padding: 5px 8px; outline: none; width: 100%;"
-            />
+            <div class="param-input-wrap ${isToggled ? '' : 'is-bypassed'}">
+              <input 
+                type="text" 
+                class="param-text-input" 
+                data-key="${key}"
+                value="${currentVal}"
+                placeholder="Enter custom word..."
+                style="background: var(--void-black); border: 1px solid var(--border-wire); color: var(--phosphor-green); font-family: var(--font-mono); font-size: 11px; padding: 5px 8px; outline: none; width: 100%;"
+              />
+            </div>
           </div>
         `;
       }
 
       return `
-        <div class="param-row">
+        <div class="param-row ${isToggled ? 'param-active' : 'param-bypassed'}" id="paramRow_${key}">
           <div class="param-meta">
-            <span class="param-name">${key}</span>
+            <div class="param-name-cluster">
+              <span class="param-name" title="${key}">${meta.label || key}</span>
+            </div>
+            <button class="param-toggle-node ${isToggled ? 'node-on' : 'node-off'}" data-key="${key}" title="Toggle ${key} ON/OFF">
+              <span class="node-led"></span>
+              <span class="node-state">${isToggled ? '[ ON ]' : '[ OFF ]'}</span>
+            </button>
             <span class="param-num" id="val_disp_${key}">${currentVal}</span>
           </div>
-          <input 
-            type="range" 
-            class="param-slider" 
-            data-key="${key}"
-            min="${meta.min}" 
-            max="${meta.max}" 
-            step="${meta.step}" 
-            value="${currentVal}"
-          />
+          <div class="param-input-wrap ${isToggled ? '' : 'is-bypassed'}">
+            <input 
+              type="range" 
+              class="param-slider" 
+              data-key="${key}"
+              min="${meta.min}" 
+              max="${meta.max}" 
+              step="${meta.step}" 
+              value="${currentVal}"
+            />
+          </div>
         </div>
       `;
     }).join('');
 
-    // Event binding
+    // Toggle Button Event Bindings
+    list.querySelectorAll('.param-toggle-node').forEach(toggleBtn => {
+      toggleBtn.addEventListener('mouseenter', () => audioEngine.playHover());
+      toggleBtn.addEventListener('click', () => {
+        const key = toggleBtn.getAttribute('data-key');
+        const newState = !this.paramToggles[key];
+        this.paramToggles[key] = newState;
+
+        if (newState) {
+          audioEngine.playSelect();
+        } else {
+          audioEngine.playClick();
+        }
+
+        // Update Row UI
+        const row = this.container.querySelector(`#paramRow_${key}`);
+        if (row) {
+          row.classList.toggle('param-active', newState);
+          row.classList.toggle('param-bypassed', !newState);
+          
+          toggleBtn.classList.toggle('node-on', newState);
+          toggleBtn.classList.toggle('node-off', !newState);
+          const stateSpan = toggleBtn.querySelector('.node-state');
+          if (stateSpan) stateSpan.innerText = newState ? '[ ON ]' : '[ OFF ]';
+
+          const inputWrap = row.querySelector('.param-input-wrap');
+          if (inputWrap) inputWrap.classList.toggle('is-bypassed', !newState);
+        }
+
+        this.syncParameters();
+      });
+    });
+
+    // Input Event Bindings
     list.querySelectorAll('.param-text-input').forEach(input => {
       input.addEventListener('input', (e) => {
         const key = input.getAttribute('data-key');
@@ -167,18 +240,46 @@ export class MutationWorkbench {
 
   syncParameters() {
     if (this.runner) {
-      this.runner.setParameters(this.parameters);
+      this.runner.setParameters(this.parameters, this.paramToggles);
     }
     if (this.iframe && this.iframe.contentWindow) {
       this.iframe.contentWindow.postMessage({
         type: 'DNA_MUTATION',
         seed: this.seed,
-        parameters: this.parameters
+        parameters: this.parameters,
+        toggles: this.paramToggles,
+        enabled: this.paramToggles
       }, '*');
     }
   }
 
   bindButtons() {
+    // Bulk Switch: Engage All
+    const btnEngageAll = this.container.querySelector('#btnEngageAll');
+    if (btnEngageAll) {
+      btnEngageAll.addEventListener('click', () => {
+        audioEngine.playSelect();
+        for (const key of Object.keys(this.paramToggles)) {
+          this.paramToggles[key] = true;
+        }
+        this.renderSliders();
+        this.syncParameters();
+      });
+    }
+
+    // Bulk Switch: Bypass All
+    const btnBypassAll = this.container.querySelector('#btnBypassAll');
+    if (btnBypassAll) {
+      btnBypassAll.addEventListener('click', () => {
+        audioEngine.playClick();
+        for (const key of Object.keys(this.paramToggles)) {
+          this.paramToggles[key] = false;
+        }
+        this.renderSliders();
+        this.syncParameters();
+      });
+    }
+
     const mutateBtn = this.container.querySelector('#btnMutateSeed');
     mutateBtn.addEventListener('mouseenter', () => audioEngine.playHover());
     mutateBtn.addEventListener('click', () => {
@@ -197,8 +298,9 @@ export class MutationWorkbench {
     resetBtn.addEventListener('click', () => {
       audioEngine.playClick();
       this.parameters = this.getDefaultParameters();
+      this.paramToggles = this.getDefaultToggles(); // Reset all toggles to OFF
       if (this.runner) {
-        this.runner.setParameters(this.parameters);
+        this.runner.setParameters(this.parameters, this.paramToggles);
       }
       this.syncParameters();
       this.renderSliders();
@@ -213,6 +315,7 @@ export class MutationWorkbench {
         slug: this.config.slug,
         seed: this.seed,
         parameters: this.parameters,
+        toggles: this.paramToggles,
         timestamp: new Date().toISOString()
       };
       navigator.clipboard.writeText(JSON.stringify(payload, null, 2)).then(() => {

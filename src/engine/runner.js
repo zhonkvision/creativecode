@@ -13,6 +13,7 @@ export class ExperimentRunner {
     this.ctx = canvas.getContext('2d');
     this.config = projectConfig;
     this.parameters = { ...this.getDefaultParameters(), ...initialParams };
+    this.toggles = { ...this.getDefaultToggles() };
     this.seed = projectConfig.metadata?.seed || '0x4A2F8B';
     
     this.isRunning = false;
@@ -37,6 +38,16 @@ export class ExperimentRunner {
     return defaults;
   }
 
+  getDefaultToggles() {
+    const toggles = {};
+    if (this.config.parameters) {
+      for (const key of Object.keys(this.config.parameters)) {
+        toggles[key] = false;
+      }
+    }
+    return toggles;
+  }
+
   initLifecycle() {
     this.handleResize();
     this.resizeObserver = new ResizeObserver(() => this.handleResize());
@@ -59,9 +70,12 @@ export class ExperimentRunner {
     this.onResize(this.width, this.height);
   }
 
-  setParameters(newParams) {
+  setParameters(newParams, newToggles = null) {
     this.parameters = { ...this.parameters, ...newParams };
-    this.onParameterChange(this.parameters);
+    if (newToggles) {
+      this.toggles = { ...this.toggles, ...newToggles };
+    }
+    this.onParameterChange(this.parameters, this.toggles);
   }
 
   setSeed(hexSeed) {

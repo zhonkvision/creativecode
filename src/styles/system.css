@@ -844,31 +844,144 @@ body {
 .param-row {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   margin-bottom: 10px;
+  padding: 8px 10px;
+  background: rgba(10, 14, 20, 0.4);
+  border: 1px solid var(--border-wire);
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.param-row.param-active {
+  border-color: rgba(37, 232, 110, 0.4);
+  background: rgba(37, 232, 110, 0.04);
+  box-shadow: 0 0 10px rgba(37, 232, 110, 0.1);
+}
+
+.param-row.param-bypassed {
+  border-color: rgba(30, 41, 59, 0.6);
+  opacity: 0.75;
 }
 
 .param-meta {
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: 8px;
   font-size: 11px;
 }
-.param-name { color: var(--mono-white); }
-.param-num { color: var(--phosphor-cyan); }
+
+.param-name-cluster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.param-name {
+  color: var(--mono-white);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Mechanical Circuit Toggle Switch Node */
+.param-toggle-node {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  background: #06090d;
+  border: 1px solid #233040;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s cubic-bezier(0.19, 1, 0.22, 1);
+  outline: none;
+}
+
+.param-toggle-node .node-led {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  transition: all 0.15s ease;
+}
+
+.param-toggle-node.node-off {
+  border-color: #1e293b;
+  color: #64748b;
+}
+
+.param-toggle-node.node-off .node-led {
+  background: #334155;
+  box-shadow: none;
+}
+
+.param-toggle-node.node-off:hover {
+  border-color: #475569;
+  color: #94a3b8;
+}
+
+.param-toggle-node.node-on {
+  border-color: #25e86e;
+  color: #25e86e;
+  background: rgba(37, 232, 110, 0.12);
+  box-shadow: 0 0 10px rgba(37, 232, 110, 0.25);
+}
+
+.param-toggle-node.node-on .node-led {
+  background: #25e86e;
+  box-shadow: 0 0 6px #25e86e, 0 0 12px #25e86e;
+}
+
+.param-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--phosphor-cyan);
+  font-weight: 700;
+}
+
+.param-input-wrap {
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.param-input-wrap.is-bypassed {
+  opacity: 0.35;
+  filter: grayscale(0.8);
+  pointer-events: none;
+}
 
 .param-slider {
   appearance: none;
   background: var(--border-wire);
-  height: 3px;
+  height: 4px;
   outline: none;
   width: 100%;
+  border-radius: 1px;
 }
+
+.param-row.param-active .param-slider {
+  background: linear-gradient(90deg, #00f0ff, #25e86e);
+}
+
 .param-slider::-webkit-slider-thumb {
   appearance: none;
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   background: var(--phosphor-green);
+  border: 1px solid #ffffff;
   cursor: pointer;
+  box-shadow: 0 0 6px rgba(37, 232, 110, 0.6);
 }
 
 .param-select {
@@ -879,6 +992,24 @@ body {
   font-size: 11px;
   padding: 4px 8px;
   outline: none;
+  width: 100%;
+}
+
+.bulk-switch-btn {
+  background: transparent;
+  border: 1px solid var(--border-wire);
+  color: var(--muted-telemetry);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 2px 6px;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  transition: all 0.15s ease;
+}
+
+.bulk-switch-btn:hover {
+  color: var(--phosphor-green);
+  border-color: var(--phosphor-green);
 }
 
 /* =========================================================================

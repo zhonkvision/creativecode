@@ -244,6 +244,20 @@
     -webkit-backdrop-filter: blur(var(--blur));
   }
 
+  /* Clean Embed / Thumbnail Mode — Hide all Glass HUDs and Controls */
+  body.hide-ui #hud,
+  body.hide-ui #stats,
+  body.hide-ui #control-panel,
+  body.hide-ui #controls-toggle {
+    display: none !important;
+  }
+
+  @media (max-width: 580px), (max-height: 440px) {
+    #hud, #stats, #control-panel, #controls-toggle {
+      display: none !important;
+    }
+  }
+
   @media (max-width: 768px) {
     #controls-toggle { display: flex; }
     .toggle-group, .panel-divider { display: none; }
@@ -868,8 +882,29 @@ function setupEvents() {
 
   const toggle = document.getElementById('controls-toggle');
   const panel  = document.getElementById('control-panel');
-  toggle.addEventListener('click', () => panel.classList.toggle('expanded'));
+  if (toggle && panel) {
+    toggle.addEventListener('click', () => panel.classList.toggle('expanded'));
+  }
 }
+
+// Auto-detect iframe thumbnail embedding to hide HUD parameter controls
+if (window.self !== window.top || window.location.search.includes('thumbnail=1') || window.location.search.includes('hide_ui=1')) {
+  document.addEventListener('DOMContentLoaded', () => document.body.classList.add('hide-ui'));
+  if (document.body) document.body.classList.add('hide-ui');
+}
+
+// Live DNA Mutation listener from workbench
+window.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'DNA_MUTATION') {
+    const p = e.data.parameters || {};
+    const enabled = e.data.enabled || e.data.toggles || {};
+    if (enabled.speed !== false && p.speed !== undefined) {
+      if (typeof clock !== 'undefined' && clock) {
+        // speed modulation
+      }
+    }
+  }
+});
 
 window.addEventListener('load', init);
 </script>

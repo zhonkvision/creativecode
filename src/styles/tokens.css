@@ -44,8 +44,8 @@
   --border-width: 1px;
   --corner-bracket-size: 4px;
   --grid-unit: 8px;
-  --layout-max-width: 1560px;
-  --layout-pad-x: 24px;
+  --layout-max-width: 1680px;
+  --layout-pad-x: 20px;
 
   /* Textures & CRT Bloom */
   --scanline-pitch: 3px;

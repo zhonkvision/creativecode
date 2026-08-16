@@ -13,7 +13,7 @@ body {
   background-color: var(--void-black);
   color: var(--mono-white);
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.4;
   letter-spacing: var(--tracking-normal);
   font-variant-numeric: tabular-nums;
@@ -264,9 +264,9 @@ body {
   border: 1px solid var(--border-wire);
   display: grid;
   grid-template-columns: 1.4fr 1fr;
-  height: 400px;
-  min-height: 400px;
-  max-height: 400px;
+  height: 380px;
+  min-height: 380px;
+  max-height: 380px;
   overflow: hidden;
 }
 
@@ -285,8 +285,8 @@ body {
   position: relative;
   width: 100%;
   height: 100%;
-  min-height: 400px;
-  max-height: 400px;
+  min-height: 380px;
+  max-height: 380px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -297,9 +297,9 @@ body {
   .featured-preview-pane {
     border-right: none;
     border-bottom: 1px solid var(--border-wire);
-    min-height: 280px;
-    height: 280px;
-    max-height: 280px;
+    min-height: 260px;
+    height: 260px;
+    max-height: 260px;
   }
 }
 
@@ -566,8 +566,8 @@ video.featured-iframe {
   margin: 0 auto 60px auto;
   padding: 0 var(--layout-pad-x);
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
   width: 100%;
 }
 

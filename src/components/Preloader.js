@@ -80,14 +80,39 @@ export class Preloader {
           </div>
         </div>
 
-        <!-- Interactive ASCII Enter Laboratory Button (Initially Hidden until 100%) -->
+        <!-- Interactive Cyberpunk Enter Laboratory Button -->
         <div class="preloader-enter-section" id="preloaderEnterSection" style="display: none;">
-          <button class="ascii-enter-btn" id="btnEnterLab">
-            <span class="enter-bracket">╔══════════════════════════════════╗</span>
-            <span class="enter-label">║            [ ENTER ]             ║</span>
-            <span class="enter-bracket">╚══════════════════════════════════╝</span>
+          <button class="preloader-enter-btn" id="btnEnterLab" aria-label="Initialize Laboratory">
+            <span class="btn-corner tl"></span>
+            <span class="btn-corner tr"></span>
+            <span class="btn-corner bl"></span>
+            <span class="btn-corner br"></span>
+            
+            <div class="btn-top-meta">
+              <span class="btn-status-beacon">
+                <span class="beacon-dot"></span>
+                <span class="beacon-label">SYSTEM ONLINE</span>
+              </span>
+              <span class="btn-core-id">SYS_VER: 2026.08</span>
+            </div>
+
+            <div class="btn-core-content">
+              <span class="btn-glyph-icon">⚡</span>
+              <span class="btn-headline">INITIALIZE LABORATORY</span>
+              <span class="btn-arrow-motion">➔</span>
+            </div>
+
+            <div class="btn-specs-subtext">
+              <span>60 FPS DETERMINISTIC CANVAS</span>
+              <span class="btn-meta-sep">//</span>
+              <span>STEREO WEB AUDIO</span>
+              <span class="btn-meta-sep">//</span>
+              <span>LIVING DNA MATRIX</span>
+            </div>
+
+            <div class="btn-laser-sweep"></div>
           </button>
-          <div class="enter-subtext">AUDIO ACTIVE &bull; 60 FPS DETERMINISTIC CANVAS &bull; DNA ENGINE READY</div>
+          <div class="enter-subtext">CLICK OR PRESS SPACE / ENTER TO LAUNCH MATRIX</div>
         </div>
 
         <!-- Diagnostic Stream -->
@@ -172,16 +197,27 @@ export class Preloader {
         audioEngine.playHover();
       });
 
-      enterBtn.addEventListener('click', () => {
+      const handleEnter = () => {
         audioEngine.playBoot();
         audioEngine.startAmbient();
         this.dismiss();
-      });
+      };
+
+      enterBtn.addEventListener('click', handleEnter);
+
+      this.keyHandler = (e) => {
+        if (this.isLoaded && (e.code === 'Space' || e.code === 'Enter') && !e.target.matches('input, textarea')) {
+          e.preventDefault();
+          handleEnter();
+        }
+      };
+      window.addEventListener('keydown', this.keyHandler);
     }
   }
 
   dismiss() {
     if (this.glitchInterval) clearInterval(this.glitchInterval);
+    if (this.keyHandler) window.removeEventListener('keydown', this.keyHandler);
     this.container.classList.add('dismissing');
 
     setTimeout(() => {

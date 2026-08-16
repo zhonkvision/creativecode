@@ -80,39 +80,14 @@ export class Preloader {
           </div>
         </div>
 
-        <!-- Interactive Cyberpunk Enter Laboratory Button -->
+        <!-- Clean Minimalist Enter Button -->
         <div class="preloader-enter-section" id="preloaderEnterSection" style="display: none;">
-          <button class="preloader-enter-btn" id="btnEnterLab" aria-label="Initialize Laboratory">
-            <span class="btn-corner tl"></span>
-            <span class="btn-corner tr"></span>
-            <span class="btn-corner bl"></span>
-            <span class="btn-corner br"></span>
-            
-            <div class="btn-top-meta">
-              <span class="btn-status-beacon">
-                <span class="beacon-dot"></span>
-                <span class="beacon-label">SYSTEM ONLINE</span>
-              </span>
-              <span class="btn-core-id">SYS_VER: 2026.08</span>
-            </div>
-
-            <div class="btn-core-content">
-              <span class="btn-glyph-icon">⚡</span>
-              <span class="btn-headline">INITIALIZE LABORATORY</span>
-              <span class="btn-arrow-motion">➔</span>
-            </div>
-
-            <div class="btn-specs-subtext">
-              <span>60 FPS DETERMINISTIC CANVAS</span>
-              <span class="btn-meta-sep">//</span>
-              <span>STEREO WEB AUDIO</span>
-              <span class="btn-meta-sep">//</span>
-              <span>LIVING DNA MATRIX</span>
-            </div>
-
-            <div class="btn-laser-sweep"></div>
+          <button class="preloader-enter-btn" id="btnEnterLab" aria-label="Enter Laboratory">
+            <span class="btn-indicator-dot"></span>
+            <span class="btn-text">ENTER LABORATORY</span>
+            <span class="btn-arrow">&rarr;</span>
           </button>
-          <div class="enter-subtext">CLICK OR PRESS SPACE / ENTER TO LAUNCH MATRIX</div>
+          <div class="enter-subtext">PRESS SPACE OR CLICK TO ENTER</div>
         </div>
 
         <!-- Diagnostic Stream -->

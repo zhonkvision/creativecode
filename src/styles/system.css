@@ -1167,222 +1167,76 @@ video.featured-iframe {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  gap: 10px;
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   width: 100%;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .preloader-enter-btn {
-  position: relative;
-  background: linear-gradient(180deg, #111111 0%, #060606 100%);
-  border: 1px solid #282828;
-  border-radius: 2px;
+  background: #000000;
+  border: 1px solid #2e2e2e;
+  border-radius: 4px;
   cursor: pointer;
-  display: flex;
-  flex-direction: column;
+  display: inline-flex;
   align-items: center;
-  padding: 14px 28px;
-  min-width: 380px;
-  max-width: 100%;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 28px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   outline: none;
   user-select: none;
 }
 
-/* Corner Crosshairs / Precision HUD Brackets */
-.preloader-enter-btn .btn-corner {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border-color: #555555;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  pointer-events: none;
-}
-
-.preloader-enter-btn .btn-corner.tl {
-  top: 4px;
-  left: 4px;
-  border-top: 2px solid;
-  border-left: 2px solid;
-}
-
-.preloader-enter-btn .btn-corner.tr {
-  top: 4px;
-  right: 4px;
-  border-top: 2px solid;
-  border-right: 2px solid;
-}
-
-.preloader-enter-btn .btn-corner.bl {
-  bottom: 4px;
-  left: 4px;
-  border-bottom: 2px solid;
-  border-left: 2px solid;
-}
-
-.preloader-enter-btn .btn-corner.br {
-  bottom: 4px;
-  right: 4px;
-  border-bottom: 2px solid;
-  border-right: 2px solid;
-}
-
-/* Top Meta Header Strip inside Button */
-.preloader-enter-btn .btn-top-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 6px;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  color: #737373;
-}
-
-.preloader-enter-btn .btn-status-beacon {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.preloader-enter-btn .beacon-dot {
+.preloader-enter-btn .btn-indicator-dot {
   width: 6px;
   height: 6px;
   background: var(--signal-red);
   border-radius: 50%;
   box-shadow: 0 0 8px var(--signal-red);
-  animation: beaconPulse 1.4s ease-in-out infinite;
-}
-
-@keyframes beaconPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.8); }
-}
-
-.preloader-enter-btn .beacon-label {
-  color: var(--signal-red);
-  font-weight: 700;
-}
-
-.preloader-enter-btn .btn-core-id {
-  color: #666666;
-}
-
-/* Main Action Row */
-.preloader-enter-btn .btn-core-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin: 4px 0 8px;
-  width: 100%;
-}
-
-.preloader-enter-btn .btn-glyph-icon {
-  font-size: 14px;
-  color: var(--signal-red);
-  filter: drop-shadow(0 0 6px rgba(255, 36, 36, 0.8));
   transition: transform 0.2s ease;
 }
 
-.preloader-enter-btn .btn-headline {
+.preloader-enter-btn .btn-text {
   font-family: var(--font-sans);
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: 0.16em;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
   color: var(--mono-white);
   text-transform: uppercase;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.preloader-enter-btn .btn-arrow-motion {
-  font-size: 14px;
-  color: var(--signal-red);
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Bottom Technical Spec Strip */
-.preloader-enter-btn .btn-specs-subtext {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  color: #8c8c8c;
   transition: color 0.2s ease;
 }
 
-.preloader-enter-btn .btn-meta-sep {
-  color: #404040;
+.preloader-enter-btn .btn-arrow {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  color: var(--signal-red);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Animated Laser Scanner Sweep */
-.preloader-enter-btn .btn-laser-sweep {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 60%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 36, 36, 0.15), rgba(255, 255, 255, 0.2), transparent);
-  transform: skewX(-25deg);
-  pointer-events: none;
-  animation: preloaderLaserSweep 3.5s ease-in-out infinite;
-}
-
-@keyframes preloaderLaserSweep {
-  0% { left: -100%; }
-  40%, 100% { left: 180%; }
-}
-
-/* Hover & Active States */
 .preloader-enter-btn:hover {
-  background: linear-gradient(180deg, #181818 0%, #0c0c0c 100%);
+  background: #0d0d0d;
   border-color: var(--signal-red);
   transform: translateY(-2px);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.9), 0 0 24px rgba(255, 36, 36, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9), 0 0 16px rgba(255, 36, 36, 0.3);
 }
 
-.preloader-enter-btn:hover .btn-corner {
-  border-color: var(--signal-red);
-  box-shadow: 0 0 8px rgba(255, 36, 36, 0.8);
+.preloader-enter-btn:hover .btn-indicator-dot {
+  transform: scale(1.25);
 }
 
-.preloader-enter-btn:hover .btn-corner.tl { transform: translate(-2px, -2px); }
-.preloader-enter-btn:hover .btn-corner.tr { transform: translate(2px, -2px); }
-.preloader-enter-btn:hover .btn-corner.bl { transform: translate(-2px, 2px); }
-.preloader-enter-btn:hover .btn-corner.br { transform: translate(2px, 2px); }
-
-.preloader-enter-btn:hover .btn-headline {
-  color: #ffffff;
-  letter-spacing: 0.2em;
-  text-shadow: 0 0 16px rgba(255, 36, 36, 0.7);
-}
-
-.preloader-enter-btn:hover .btn-glyph-icon {
-  transform: scale(1.15) rotate(5deg);
-}
-
-.preloader-enter-btn:hover .btn-arrow-motion {
-  transform: translateX(6px);
-}
-
-.preloader-enter-btn:hover .btn-specs-subtext {
-  color: #d4d4d4;
+.preloader-enter-btn:hover .btn-arrow {
+  transform: translateX(4px);
 }
 
 .preloader-enter-btn:active {
-  transform: translateY(1px) scale(0.99);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.9), 0 0 12px rgba(255, 36, 36, 0.4);
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
 }
 
 .enter-subtext {

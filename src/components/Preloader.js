@@ -69,6 +69,13 @@ export class Preloader {
           A LIVING TASTE ENGINE & EXPERIMENTAL GENERATIVE LABORATORY FOR CREATIVE CODING
         </div>
 
+        <div class="preloader-desktop-notice">
+          <span class="desktop-notice-pill">
+            <span class="notice-beacon"></span>
+            <span>BEST VIEWED ON DESKTOP FOR FULL EXPERIENCE</span>
+          </span>
+        </div>
+
         <!-- Cyberpunk Loading Progress Bar -->
         <div class="preloader-bar-section" id="preloaderBarSection">
           <div class="preloader-bar-track">
